@@ -1,0 +1,45 @@
+---
+
+  - name: create VPC
+    ec2_vpc_net:
+      cidr_block: 192.168.0.0/16
+      name: "greymatter-ecs-example"
+      state: present
+      resource_tags:
+        Name: "greymatter-ecs-example"
+        ecs/cluster/greymatter-ecs-example: "owned"
+    register: setup_vpc
+
+  - name: check that vpc did not change
+    assert:
+      that:
+        - not setup_vpc.changed
+
+        
+  - name: create private subnets
+    ec2_vpc_subnet:
+      az: 'us-east-2{{ item.zone }}'
+      tags:
+        Name: 'greymatter-ecs-example-private-{{ item.num }}'
+      vpc_id: '{{ setup_vpc.vpc.id }}'
+      cidr: "{{ item.cidr }}"
+      state: present
+    register: setup_subnet
+    with_items:
+      - zone: a
+        cidr: 192.168.0.0/19
+        num: 0
+      - zone: b
+        cidr: 192.168.32.0/19
+        num: 1
+      - zone: c
+        cidr: 192.168.64.0/19
+        num: 2
+
+  - name: create an internet gateway so that ECS agents can talk to ECS
+    ec2_vpc_igw:
+      vpc_id: '{{ setup_vpc.vpc.id }}'
+      state: present
+      tags:
+        Name: 'greymatter-ecs-example-public-gw'
+    register: igw

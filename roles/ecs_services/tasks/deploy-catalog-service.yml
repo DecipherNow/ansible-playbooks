@@ -1,0 +1,150 @@
+---
+
+  - name: Create task definition proxy catalog
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-catalog"
+      network_mode: "host"
+      launch_type: "EC2"
+      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      volumes:
+      - name: certs
+        host:
+          sourcePath: "/home/ec2-user/pki"
+      containers:
+      - name: proxy-catalog
+        cpu: 256
+        essential: true
+        image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
+        repositoryCredentials:
+          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+        memory: 400
+        environment:
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: "catalog"
+        - name: "XDS_HOST"
+          value: "localhost"
+        - name: "XDS_NODE_ID"
+          value: "default"
+        - name: "XDS_PORT"
+          value: "50000"
+        portMappings:
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: "certs"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: us-east-2
+            awslogs-stream-prefix: web
+            
+      - name: catalog
+        cpu: 256
+        essential: true
+        image: "docker-greymatter.di2e.net/greymatter/gm-catalog:1.0.1"
+        repositoryCredentials:
+          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+        memory: 400
+        environment:
+        - name: "CA_CERT_PATH"
+          value: "/etc/pki/certifiable_ca.crt"
+        - name: "CLIENT_ADDRESS"
+          value: "localhost"
+        - name: "CLIENT_CERT"
+          value: "/etc/pki/cert.pem"
+        - name: "CLIENT_CN"
+          value: "di2e.test"
+        - name: "CLIENT_EMAIL"
+          value: "gm-control@deciphernow.com"
+        - name: "CLIENT_IDENTITY"
+          value: >-
+            CN=gm-control,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US
+        - name: "CLIENT_KEY"
+          value: "/etc/pki/private_key.pem"
+        - name: "CLIENT_PORT"
+          value: "8080"
+        - name: "CLIENT_PREFIX"
+          value: "/data"
+        - name: "CLIENT_TRUST"
+          value: "/etc/pki/issuing_ca.pem"
+        - name: "CLIENT_USE_TLS"
+          value: "true"
+        - name: "CONFIG_SOURCE"
+          value: "env"
+        - name: "CONTROL_SERVER_0_ADDRESS"
+          value: 'localhost:50000'
+        - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
+          value: "edge"
+        - name: "CONTROL_SERVER_0_ZONE_NAME"
+          value: "default-zone"
+        - name: "DATA_SOURCE"
+          value: "control"
+        - name: "DEBUG"
+          value: "true"
+        - name: "GMDATA_MAX_RETRIES"
+          value: "100"
+        - name: "GMDATA_RETRY_DELAY"
+          value: "5s"
+        - name: "GMDATA_ROOT_EVENT_NAME"
+          value: "world"
+        - name: "GMDATA_STARTUP_DELAY"
+          value: "10s"
+        - name: "INSTANCE_MAX_SILENCE"
+          value: "15s"
+        - name: "INSTANCE_POLLING_INTERVAL"
+          value: "5s"
+        - name: "METRICS_MAX_RETRIES"
+          value: "3"
+        - name: "METRICS_REQUEST_TIMEOUT"
+          value: "15s"
+        - name: "METRICS_RETRY_DELAY"
+          value: "10s"
+        - name: "PORT"
+          value: "9080"
+        - name: "SERVER_CERT_PATH"
+          value: "/etc/pki/cert.pem"
+        - name: "SERVER_KEY_PATH"
+          value: "/etc/pki/private_key.pem"
+        - name: "USE_TLS"
+          value: "true"
+        - name: "GM_CONTROL_CONSOLE_LEVEL"
+          value: "default-zone"
+        portMappings:
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/pki"
+          sourceVolume: "certs"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: us-east-2
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service
+    ecs_service:
+      state: present
+      name: catalog
+      cluster: "greymatter-ecs-cluster"
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      load_balancers:
+        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
+          containerName: "proxy-catalog"
+          containerPort: "8080"
+    register: "ecs_service"

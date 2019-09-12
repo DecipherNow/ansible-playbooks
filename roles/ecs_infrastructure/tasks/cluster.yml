@@ -1,0 +1,7 @@
+---
+
+  - name: ecs Cluster
+    ecs_cluster:
+      name: "greymatter-ecs-cluster"
+      state: present
+    register: ecs_cluster

@@ -1,0 +1,28 @@
+---
+
+  - name: security group for ec2 instances
+    ec2_group:
+      name: "EC2ContainerService-greymatter-ecs-cluster-EcsSecurityGroup-M4LGALUQHS8W"
+      state: present
+      description: "ECS Allowed Ports"
+      vpc_id: '{{ setup_vpc.vpc.id }}'
+      rules:
+      - from_port: 80
+        to_port: 80
+        cidr_ip: 192.168.0.0/16
+        proto: tcp
+      - from_port: 22
+        to_port: 22
+        cidr_blocks: 50.204.68.162/32
+        proto: "tcp"
+        description: "SSH from office"
+      rules_egress:
+      - proto: "-1"
+        from_port: 0
+        to_port: 0
+        cidr_ip: 0.0.0.0/0
+      - proto: "-1"
+        from_port: 0
+        to_port: 0
+        cidr_ipv6: "::/0"
+    register: ecs_cluster
