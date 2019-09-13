@@ -125,6 +125,7 @@
     cluster: "greymatter-ecs-cluster"
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
     desired_count: 1
+    # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
     load_balancers:
       - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
         containerName: "proxy-catalog"

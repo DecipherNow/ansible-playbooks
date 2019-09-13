@@ -13,6 +13,7 @@
     #     host:
     #       sourcePath: "/home/ec2-user/pki"
     containers:
+      # todo: add sidecar
       - name: slo
         cpu: 256
         essential: true
@@ -23,10 +24,10 @@
         environment:
           - name: "SERVICE_PORT"
             value: "1338"
-          - name: "POSTGRESQL_PASSWORD"
-            value: "{{ lookup('aws_secret', 'postgres-password') }}" # todo: store secret in AWS Secrets Manager
-          - name: DATABASE_URI
-            value: postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb # todo: determine DB dep deployments
+          - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
+            value: "{{ lookup('aws_secret', 'postgres-password') }}"
+          - name: DATABASE_URI # todo: determine DB deployment strategy
+            value: postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb
           - name: DROP_SCHEMA
             value: "false"
           - name: "SSL_ENABLED"
@@ -46,12 +47,13 @@
 - name: ECS service
   ecs_service:
     state: present
-    name: catalog
+    name: slo
     cluster: "greymatter-ecs-cluster"
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
     desired_count: 1
+    # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
     load_balancers:
       - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
-        containerName: "proxy-catalog"
-        containerPort: "8080"
+        containerName: "slo"
+        containerPort: "1338"
   register: "ecs_service"
