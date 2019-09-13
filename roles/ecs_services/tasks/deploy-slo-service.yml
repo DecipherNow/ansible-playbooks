@@ -21,6 +21,8 @@
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
         memory: 400
+        dockerLabels:
+          - gm-cluster: "service-slo"
         environment:
           - name: "SERVICE_PORT"
             value: "1338"

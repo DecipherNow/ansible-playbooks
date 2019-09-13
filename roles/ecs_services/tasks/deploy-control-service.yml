@@ -35,6 +35,8 @@
           value: "us-east-2"
         - name: "GM_CONTROL_ECS_CLUSTERS"
           value: ""
+        - name: "GM_CONTROL_ECS_CLUSTER_TAG"
+          value: "gm-cluster"
         portMappings:
         - containerPort: 50000
           hostPort: 50000
