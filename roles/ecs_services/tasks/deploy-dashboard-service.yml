@@ -24,15 +24,15 @@
         environment:
           - name: "BASE_PATH"
             value: "/"
-          - name: FABRIC_SERVER
+          - name: "FABRIC_SERVER"
             value: "/services/catalog/1.0"
-          - name: CONFIG_SERVER
+          - name: "CONFIG_SERVER"
             value: "/services/control-api/1.0/v1.0"
-          - name: OBJECTIVES_SERVER
-            value: "/services/slo/1.0"
-          # - name: USE_PROMETHEUS
+          - name: "OBJECTIVES_SERVER"
+            value: "/services/slo/latest"
+          # - name: "USE_PROMETHEUS"
           #   value: "true"
-          # - name: PROMETHEUS_SERVER
+          # - name: "PROMETHEUS_SERVER"
           #   value: "/services/prometheus/api/v1/"
           # - name: "ENABLE_SENSE"
           #   value: "true"

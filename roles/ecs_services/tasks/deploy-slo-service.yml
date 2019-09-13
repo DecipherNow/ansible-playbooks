@@ -17,7 +17,7 @@
       - name: slo
         cpu: 256
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-slo:0.5.0"
+        image: "docker-greymatter.di2e.net/greymatter/gm-slo:latest"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
         memory: 400
@@ -26,9 +26,9 @@
             value: "1338"
           - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
             value: "{{ lookup('aws_secret', 'postgres-password') }}"
-          - name: DATABASE_URI # todo: determine DB deployment strategy
-            value: postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb
-          - name: DROP_SCHEMA
+          - name: "DATABASE_URI" # todo: determine DB deployment strategy
+            value: "postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb"
+          - name: "DROP_SCHEMA"
             value: "false"
           - name: "SSL_ENABLED"
             value: "false"
