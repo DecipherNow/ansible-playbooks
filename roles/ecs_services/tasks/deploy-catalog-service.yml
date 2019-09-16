@@ -51,7 +51,6 @@
               awslogs-group: openjobs
               awslogs-region: us-east-2
               awslogs-stream-prefix: web
-
         - name: catalog
           cpu: 256
           essential: true

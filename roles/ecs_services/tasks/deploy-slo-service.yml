@@ -8,12 +8,49 @@
       launch_type: "EC2"
       execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
       task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
-      # volumes:
-      #   - name: certs
-      #     host:
-      #       sourcePath: "/home/ec2-user/pki"
+      volumes:
+        - name: certs
+          host:
+            sourcePath: "/home/ec2-user/pki"
       containers:
-        # todo: add sidecar
+        - name: proxy-slo
+          cpu: 256
+          essential: true
+          image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
+          repositoryCredentials:
+            credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          memory: 400
+          dockerLabels:
+            gm-cluster: "sidecar-slo"
+          environment:
+            - name: "ENVOY_ADMIN_LOG_PATH"
+              value: "/dev/stdout"
+            - name: "PROXY_DYNAMIC"
+              value: "true"
+            - name: "XDS_CLUSTER"
+              value: "slo"
+            - name: "XDS_HOST"
+              value: "localhost"
+            - name: "XDS_NODE_ID"
+              value: "default"
+            - name: "XDS_PORT"
+              value: "50000"
+          portMappings:
+            - containerPort: 9080
+              hostPort: 9080
+              protocol: tcp
+            - containerPort: 8081
+              hostPort: 8081
+              protocol: tcp
+          mountPoints:
+            - containerPath: "/etc/proxy/tls/sidecar"
+              sourceVolume: "certs"
+          logConfiguration:
+            logDriver: awslogs
+            options:
+              awslogs-group: openjobs
+              awslogs-region: us-east-2
+              awslogs-stream-prefix: web
         - name: slo
           cpu: 256
           essential: true
@@ -24,8 +61,6 @@
           dockerLabels:
             gm-cluster: "service-slo"
           environment:
-            - name: "SERVICE_PORT"
-              value: "1338"
             - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
               value: "{{ lookup('aws_secret', 'postgres-password') }}"
             - name: "DATABASE_URI" # todo: determine DB deployment strategy
@@ -35,8 +70,8 @@
             - name: "SSL_ENABLED"
               value: "false"
           portMappings:
-            - containerPort: 1338
-              hostPort: 1338
+            - containerPort: 1337
+              hostPort: 1337
               protocol: tcp
           logConfiguration:
             logDriver: awslogs
@@ -57,5 +92,5 @@
       load_balancers:
         - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
           containerName: "slo"
-          containerPort: "1338"
+          containerPort: "1337"
     register: "ecs_service"

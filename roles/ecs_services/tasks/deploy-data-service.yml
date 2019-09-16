@@ -8,12 +8,49 @@
       launch_type: "EC2"
       execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
       task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
-      # volumes:
-      #   - name: certs
-      #     host:
-      #       sourcePath: "/home/ec2-user/pki"
+      volumes:
+        - name: certs
+          host:
+            sourcePath: "/home/ec2-user/pki"
       containers:
-        # todo: add sidecar
+        - name: proxy-data
+          cpu: 256
+          essential: true
+          image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
+          repositoryCredentials:
+            credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          memory: 400
+          dockerLabels:
+            gm-cluster: "sidecar-data"
+          environment:
+            - name: "ENVOY_ADMIN_LOG_PATH"
+              value: "/dev/stdout"
+            - name: "PROXY_DYNAMIC"
+              value: "true"
+            - name: "XDS_CLUSTER"
+              value: "data"
+            - name: "XDS_HOST"
+              value: "localhost"
+            - name: "XDS_NODE_ID"
+              value: "default"
+            - name: "XDS_PORT"
+              value: "50000"
+          portMappings:
+            - containerPort: 9080
+              hostPort: 9080
+              protocol: tcp
+            - containerPort: 8081
+              hostPort: 8081
+              protocol: tcp
+          mountPoints:
+            - containerPath: "/etc/proxy/tls/sidecar"
+              sourceVolume: "certs"
+          logConfiguration:
+            logDriver: awslogs
+            options:
+              awslogs-group: openjobs
+              awslogs-region: us-east-2
+              awslogs-stream-prefix: web
         - name: data
           cpu: 256
           essential: true
