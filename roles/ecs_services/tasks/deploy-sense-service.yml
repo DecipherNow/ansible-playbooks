@@ -22,8 +22,8 @@
         environment:
           - name: "OC_API_TOKEN" # todo: store secret in AWS Secrets Manager
             value: "{{ lookup('aws_secret', 'oc-api-token') }}"           
-          - name: SAVED_MODEL_PATH
-            value: /opt/gm-sense/sense/policy.pth
+          - name: "SAVED_MODEL_PATH" # todo: how to ref file
+            value: "/opt/gm-sense/sense/policy.pth"
         portMappings:
         - containerPort: 8080
           hostPort: 8080

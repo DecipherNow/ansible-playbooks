@@ -64,8 +64,6 @@
           environment:
             - name: "DEBUG"
               value: "true"
-            - name: "PORT"
-              value: "9080"
             - name: "CONTROL_SERVER_0_ADDRESS"
               value: 'localhost:50000'
             - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
@@ -109,8 +107,8 @@
             # - name: "SERVER_KEY_PATH"
             #   value: "/etc/pki/private_key.pem"
           portMappings:
-            - containerPort: 9080
-              hostPort: 9080
+            - containerPort: 8080
+              hostPort: 8080
               protocol: tcp
           mountPoints:
             - containerPath: "/etc/pki"
