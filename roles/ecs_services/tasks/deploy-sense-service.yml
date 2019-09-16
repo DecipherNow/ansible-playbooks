@@ -1,0 +1,52 @@
+---
+
+  - name: Create task definition sense
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-sense"
+      network_mode: "host"
+      launch_type: "EC2"
+      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      containers:
+      # todo: add sidecar
+      - name: sense
+        cpu: 256
+        essential: true
+        image: "docker-greymatter.di2e.net/greymatter/gm-sense:latest"
+        repositoryCredentials:
+          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+        memory: 400
+        dockerLabels:
+          gm-cluster: "service-sense"
+        environment:
+          - name: "OC_API_TOKEN" # todo: store secret in AWS Secrets Manager
+            value: "{{ lookup('aws_secret', 'oc-api-token') }}"           
+          - name: SAVED_MODEL_PATH
+            value: /opt/gm-sense/sense/policy.pth
+        portMappings:
+        # todo: find workaround -- current container setup will cause port collision
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: us-east-2
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service
+    ecs_service:
+      state: present
+      name: sense
+      cluster: "greymatter-ecs-cluster"
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
+      load_balancers:
+        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
+          containerName: "sense"
+          containerPort: "8080"
+    register: "ecs_service"
