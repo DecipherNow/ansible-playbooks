@@ -36,8 +36,8 @@
             - name: "XDS_PORT"
               value: "50000"
           portMappings:
-            - containerPort: 8080
-              hostPort: 8080
+            - containerPort: 9080
+              hostPort: 9080
               protocol: tcp
             - containerPort: 8081
               hostPort: 8081
@@ -76,10 +76,11 @@
               value: "env" # or gmdata
 
             # These configs are only used if CONFIG_SOURCE=gmdata
+            # The address:port should send requests to gm-data through the mesh
             # - name: "CLIENT_ADDRESS"
             #   value: "localhost"
             # - name: "CLIENT_PORT"
-            #   value: "8080"
+            #   value: "9080"
             # - name: "CLIENT_PREFIX"
             #   value: "/data"
             # - name: "GMDATA_STARTUP_DELAY"
@@ -133,5 +134,5 @@
       load_balancers:
         - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
           containerName: "proxy-catalog"
-          containerPort: "8080"
+          containerPort: "9080"
     register: "ecs_service"

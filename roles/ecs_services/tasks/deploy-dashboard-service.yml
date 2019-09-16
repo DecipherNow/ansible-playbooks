@@ -63,5 +63,5 @@
       load_balancers:
         - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
           containerName: "proxy-dashboard"
-          containerPort: "8080"
+          containerPort: "1337"
     register: "ecs_service"

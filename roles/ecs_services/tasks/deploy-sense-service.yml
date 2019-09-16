@@ -25,7 +25,6 @@
           - name: SAVED_MODEL_PATH
             value: /opt/gm-sense/sense/policy.pth
         portMappings:
-        # todo: find workaround -- current container setup will cause port collision
         - containerPort: 8080
           hostPort: 8080
           protocol: tcp
