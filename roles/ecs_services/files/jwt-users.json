@@ -1,0 +1,357 @@
+{
+  "users": [
+    {
+      "label": "CN=localhost,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["localhost@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=chris.holmes,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["chris.holmes@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=chris.smith,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["chris.smith@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=david.tillery,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["david.tillery@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=daniel.cox,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["daniel.cox@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=doug.fort,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["doug.fort@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=hiromi.suenaga,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["hiromi.suenaga@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=jeff.hemminger,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["jeff.hemminger@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=jon.holmes,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["jon.holmes@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=joseph.knoebel,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["joseph.knoebel@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=joshua.rutherford,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["joshua.rutherford@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=justin.ely,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["justin.ely@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=kyle.felter,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["kyle.felter@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=lewis.moten,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["lewie.moten@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=Martin.Terskin,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["martin.terskin@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=parth.shah,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["parth.shah@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=rob.fielding,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["rob.fielding@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=stephen.friedman,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["stephen.friedman@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=stuart.hanberg,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["stuart.hanberg@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=zinny.ibeagbazi,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["zinny.ibeagbazi@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=reagan.kling,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["reagan.kling@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=mike.schwartz,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["mike.schwartz@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "CN=brian.mendoza,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["brian.mendoza@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "cn=localhost, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["localhost@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=chris.holmes, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["chris.holmes@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "cn=chris.smith, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["chris.smith@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=david.tillery, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["david.tillery@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=daniel.cox, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["daniel.cox@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=doug.fort, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["doug.fort@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=hiromi.suenaga, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["hiromi.suenaga@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=jeff.hemminger, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["jeff.hemminger@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=jon.holmes, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["jon.holmes@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=joseph.knoebel, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["joseph.knoebel@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=joshua.rutherford, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["joshua.rutherford@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=justin.ely, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["justin.ely@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=kyle.felter, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["kyle.felter@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=lewis.moten, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["lewie.moten@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=martin.terskin, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["martin.terskin@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=parth.shah, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["parth.shah@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=rob.fielding, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["rob.fielding@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=stephen.friedman, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["stephen.friedman@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=stuart.hanberg, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["stuart.hanberg@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=zinny.ibeagbazi, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["zinny.ibeagbazi@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=mike.schwartz, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["mike.schwartz@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=reagan.kling, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["reagan.kling@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "cn=brian.mendoza, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["brian.mendoza@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    },
+    {
+      "label": "CN=test.tester10,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["test.tester10@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+---
+
+  - name: Create task definition jwt-security
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-jwt-security"
+      network_mode: "host"
+      launch_type: "EC2"
+      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      # volumes:
+      #   - name: certs
+      #     host:
+      #       sourcePath: "/home/ec2-user/pki"
+      containers:
+        # todo: add sidecar
+        - name: jwt-security
+          cpu: 256
+          essential: true
+          image: "docker-greymatter.di2e.net/greymatter/gm-jwt-security:0.2.0"
+          repositoryCredentials:
+            credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          memory: 400
+          dockerLabels:
+            gm-cluster: "service-jwt-security"
+          environment:
+            # - name: KAFKA_PEERS
+            #   value: "kafka-0.kafka.kafka.svc.cluster.local:9092,kafka-1.kafka.kafka.svc.cluster.local:9092,kafka-2.kafka.kafka.svc.cluster.local:9092"
+            - name: "HTTP_PORT"
+              value: "8080"
+            - name: "USERS_JSON"
+              value: "{{ lookup('file', 'jwt-users.json') }}"
+            - name: "PRIVATE_KEY"
+              value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
+            - name: "TOKEN_EXP_TIME"
+            - name: "REDIS_HOST" # todo: determine DB deployment strategy
+              value: "redis.host.ip"
+            - name: "REDIS_PORT"
+              value: "6379"
+            - name: "REDIS_DB"
+              value: "1"
+            - name: "REDIS_PASS"
+              value: "{{ lookup('aws_secret', 'redis-pass') }}"
+            - name: "JWT_API_KEY"
+              value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
+            - name: "ENABLE_TLS"
+              value: "false"
+            - name: "DEFAULT_PATH"
+              value: "/services/"
+          portMappings:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: tcp
+          logConfiguration:
+            logDriver: awslogs
+            options:
+              awslogs-group: openjobs
+              awslogs-region: us-east-2
+              awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service
+    ecs_service:
+      state: present
+      name: jwt-security
+      cluster: "greymatter-ecs-cluster"
+        task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
+      load_balancers:
+        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
+          containerName: "proxy-jwt-security"
+          containerPort: "1337"
+    register: "ecs_service"
