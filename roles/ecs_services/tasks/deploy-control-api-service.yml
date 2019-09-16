@@ -18,7 +18,7 @@
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
         memory: 400
         dockerLabels:
-          - gm-cluster: "service-control-api"
+          gm-cluster: "service-control-api"
         environment:
         - name: "GM_CONTROL_API_ADDRESS"
           value: "0.0.0.0:5555"

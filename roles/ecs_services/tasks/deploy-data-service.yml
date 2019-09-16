@@ -22,7 +22,7 @@
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
         memory: 400
         dockerLabels:
-          - gm-cluster: "service-data"
+          gm-cluster: "service-data"
         environment:
           - name: "GMDATA_NAMESPACE"
             value: "world"
