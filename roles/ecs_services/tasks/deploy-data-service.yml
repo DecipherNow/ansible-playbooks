@@ -23,28 +23,28 @@
         dockerLabels:
           gm-cluster: "sidecar-data"
         environment:
-          - name: "ENVOY_ADMIN_LOG_PATH"
-            value: "/dev/stdout"
-          - name: "PROXY_DYNAMIC"
-            value: "true"
-          - name: "XDS_CLUSTER"
-            value: "data"
-          - name: "XDS_HOST"
-            value: "localhost"
-          - name: "XDS_PORT"
-            value: "50000"
-          - name: "XDS_NODE_ID"
-            value: "default-node"
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: "data"
+        - name: "XDS_HOST"
+          value: "localhost"
+        - name: "XDS_PORT"
+          value: "50000"
+        - name: "XDS_NODE_ID"
+          value: "default-node"
         portMappings:
-          - containerPort: 9080
-            hostPort: 9080
-            protocol: tcp
-          - containerPort: 8081
-            hostPort: 8081
-            protocol: tcp
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
         mountPoints:
-          - containerPath: "/etc/proxy/tls/sidecar"
-            sourceVolume: "certs"
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:
@@ -61,79 +61,79 @@
         dockerLabels:
           gm-cluster: "service-data"
         environment:
-          - name: "GMDATA_NAMESPACE"
-            value: "world"
-          - name: "GMDATA_NAMESPACE_USERFIELD"
-            value: "email"
-          - name: "USES3"
-            value: "true"
-          - name: "AWS_S3_BUCKET"
-            value: "decipher-development-data"
-          - name: "AWS_S3_ENDPOINT"
-          - name: "AWS_S3_PARTITION"
-            value: "gmdatax"
-          - name: "AWS_REGION"
-            value: "us-east-2"
-          - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
-            value: "{{ lookup('aws_secret', 'aws-access-key-id') }}"
-          - name: "AWS_SECRET_ACCESS_KEY" # todo: figure out how to lookup
-            value: "{{ lookup('aws_secret', 'aws-secret-access-key') }}"
-          - name: "BIND_ADDRESS"
-          - name: "BIND_PORT"
-          - name: "DISABLE_LOOKUPS"
-          - name: "DONT_PANIC"
-          - name: "GMDATAX_CATCH_PANIC"
-            value: "true"
-          - name: "GMDATAX_SESSION_MAX"
-            value: "10000"
-          - name: "HTTP_CACHE_SECONDS"
-            value: "10"
-          - name: "IPFS_HOSTKEY"
-          - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
-            value: "{{ lookup('aws_secret', 'jwt-pub') }}"
-          - name: "OBS_TOPIC_ERROR"
-            value: "gmdatax-error"
-          - name: "OBS_TOPIC_READ"
-            value: "gmdatax-read"
-          - name: "OBS_TOPIC_UPDATE"
-            value: "gmdatax-update"
-          - name: "LESS_CHATTY_INFO"
-            value: "false"
-          - name: "MASTERKEY"
-            value: "foo"
-          - name: "MONGO_INITDB_ROOT_USERNAME"
-            value: "{{ lookup('aws_secret', 'mongo-init-username') }}"
-          - name: "MONGO_INITDB_ROOT_PASSWORD"
-            value: "{{ lookup('aws_secret', 'mongo-init-password') }}"
-          - name: "MONGOHOST" # todo: determine DB deployment strategy
-            value: "mongo.localhost:27017"
-          - name: "MONGODB"
-            value: "data"
-          - name: "MONGOCERT"
-          - name: "MONGOKEY"
-          - name: "MONGOTRUST"
-          - name: "PRETTY_PRINT"
-          - name: "REKOGNITION_FACE_INDEX"
-          - name: "S3_TASKS"
-            value: "4096"
-          - name: "USEIPFS"
-          - name: "ZEROLOG_LEVEL"
-          - name: "JWT_API_KEY"
-            value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
-          - name: "CLIENT_PREFIX"
-            value: "/services/data/latest"
-          - name: "CLIENT_JWT_PREFIX"
-            value: "/jwt"
-          - name: "CLIENT_JWT_ENDPOINT_ADDRESS"
-            value: "localhost"
-          - name: "CLIENT_JWT_ENDPOINT_PORT"
-            value: "9080"
-          - name: "CLIENT_JWT_ENDPOINT_PREFIX"
-            value: "/jwt"
+        - name: "GMDATA_NAMESPACE"
+          value: "world"
+        - name: "GMDATA_NAMESPACE_USERFIELD"
+          value: "email"
+        - name: "USES3"
+          value: "true"
+        - name: "AWS_S3_BUCKET"
+          value: "decipher-development-data"
+        - name: "AWS_S3_ENDPOINT"
+        - name: "AWS_S3_PARTITION"
+          value: "gmdatax"
+        - name: "AWS_REGION"
+          value: "us-east-2"
+        - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
+          value: "{{ lookup('aws_secret', 'aws-access-key-id') }}"
+        - name: "AWS_SECRET_ACCESS_KEY" # todo: figure out how to lookup
+          value: "{{ lookup('aws_secret', 'aws-secret-access-key') }}"
+        - name: "BIND_ADDRESS"
+        - name: "BIND_PORT"
+        - name: "DISABLE_LOOKUPS"
+        - name: "DONT_PANIC"
+        - name: "GMDATAX_CATCH_PANIC"
+          value: "true"
+        - name: "GMDATAX_SESSION_MAX"
+          value: "10000"
+        - name: "HTTP_CACHE_SECONDS"
+          value: "10"
+        - name: "IPFS_HOSTKEY"
+        - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
+          value: "{{ lookup('aws_secret', 'jwt-pub') }}"
+        - name: "OBS_TOPIC_ERROR"
+          value: "gmdatax-error"
+        - name: "OBS_TOPIC_READ"
+          value: "gmdatax-read"
+        - name: "OBS_TOPIC_UPDATE"
+          value: "gmdatax-update"
+        - name: "LESS_CHATTY_INFO"
+          value: "false"
+        - name: "MASTERKEY"
+          value: "foo"
+        - name: "MONGO_INITDB_ROOT_USERNAME"
+          value: "{{ lookup('aws_secret', 'mongo-init-username') }}"
+        - name: "MONGO_INITDB_ROOT_PASSWORD"
+          value: "{{ lookup('aws_secret', 'mongo-init-password') }}"
+        - name: "MONGOHOST" # todo: determine DB deployment strategy
+          value: "mongo.localhost:27017"
+        - name: "MONGODB"
+          value: "data"
+        - name: "MONGOCERT"
+        - name: "MONGOKEY"
+        - name: "MONGOTRUST"
+        - name: "PRETTY_PRINT"
+        - name: "REKOGNITION_FACE_INDEX"
+        - name: "S3_TASKS"
+          value: "4096"
+        - name: "USEIPFS"
+        - name: "ZEROLOG_LEVEL"
+        - name: "JWT_API_KEY"
+          value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
+        - name: "CLIENT_PREFIX"
+          value: "/services/data/latest"
+        - name: "CLIENT_JWT_PREFIX"
+          value: "/jwt"
+        - name: "CLIENT_JWT_ENDPOINT_ADDRESS"
+          value: "localhost"
+        - name: "CLIENT_JWT_ENDPOINT_PORT"
+          value: "9080"
+        - name: "CLIENT_JWT_ENDPOINT_PREFIX"
+          value: "/jwt"
         portMappings:
-          - containerPort: 8181
-            hostPort: 8181
-            protocol: tcp
+        - containerPort: 8181
+          hostPort: 8181
+          protocol: tcp
         logConfiguration:
           logDriver: awslogs
           options:
@@ -147,7 +147,7 @@
       state: present
       name: data
       cluster: "greymatter-ecs-cluster"
-        task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
       load_balancers:

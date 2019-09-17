@@ -23,28 +23,28 @@
         dockerLabels:
           gm-cluster: "sidecar-jwt"
         environment:
-          - name: "ENVOY_ADMIN_LOG_PATH"
-            value: "/dev/stdout"
-          - name: "PROXY_DYNAMIC"
-            value: "true"
-          - name: "XDS_CLUSTER"
-            value: "jwt"
-          - name: "XDS_HOST"
-            value: "localhost"
-          - name: "XDS_PORT"
-            value: "50000"
-          - name: "XDS_NODE_ID"
-            value: "default-node"
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: "jwt"
+        - name: "XDS_HOST"
+          value: "localhost"
+        - name: "XDS_PORT"
+          value: "50000"
+        - name: "XDS_NODE_ID"
+          value: "default-node"
         portMappings:
-          - containerPort: 9080
-            hostPort: 9080
-            protocol: tcp
-          - containerPort: 8081
-            hostPort: 8081
-            protocol: tcp
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
         mountPoints:
-          - containerPath: "/etc/proxy/tls/sidecar"
-            sourceVolume: "certs"
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:
@@ -61,33 +61,33 @@
         dockerLabels:
           gm-cluster: "service-jwt"
         environment:
-          # - name: KAFKA_PEERS
-          #   value: "kafka-0.kafka.kafka.svc.cluster.local:9092,kafka-1.kafka.kafka.svc.cluster.local:9092,kafka-2.kafka.kafka.svc.cluster.local:9092"
-          - name: "HTTP_PORT"
-            value: "8080"
-          - name: "USERS_JSON"
-            value: "{{ lookup('file', 'jwt-users.json') }}"
-          - name: "PRIVATE_KEY"
-            value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
-          - name: "TOKEN_EXP_TIME"
-          - name: "REDIS_HOST" # todo: determine DB deployment strategy
-            value: "redis.host.ip"
-          - name: "REDIS_PORT"
-            value: "6379"
-          - name: "REDIS_DB"
-            value: "1"
-          - name: "REDIS_PASS"
-            value: "{{ lookup('aws_secret', 'redis-pass') }}"
-          - name: "JWT_API_KEY"
-            value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
-          - name: "ENABLE_TLS"
-            value: "false"
-          - name: "DEFAULT_PATH"
-            value: "/services/"
+        # - name: KAFKA_PEERS
+        #   value: "kafka-0.kafka.kafka.svc.cluster.local:9092,kafka-1.kafka.kafka.svc.cluster.local:9092,kafka-2.kafka.kafka.svc.cluster.local:9092"
+        - name: "HTTP_PORT"
+          value: "8080"
+        - name: "USERS_JSON"
+          value: "{{ lookup('file', 'jwt-users.json') }}"
+        - name: "PRIVATE_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
+        - name: "TOKEN_EXP_TIME"
+        - name: "REDIS_HOST" # todo: determine DB deployment strategy
+          value: "redis.host.ip"
+        - name: "REDIS_PORT"
+          value: "6379"
+        - name: "REDIS_DB"
+          value: "1"
+        - name: "REDIS_PASS"
+          value: "{{ lookup('aws_secret', 'redis-pass') }}"
+        - name: "JWT_API_KEY"
+          value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
+        - name: "ENABLE_TLS"
+          value: "false"
+        - name: "DEFAULT_PATH"
+          value: "/services/"
         portMappings:
-          - containerPort: 8080
-            hostPort: 8080
-            protocol: tcp
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: tcp
         logConfiguration:
           logDriver: awslogs
           options:
@@ -101,7 +101,7 @@
       state: present
       name: jwt
       cluster: "greymatter-ecs-cluster"
-        task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
       load_balancers:

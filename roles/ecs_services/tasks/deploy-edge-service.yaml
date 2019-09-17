@@ -23,28 +23,28 @@
         dockerLabels:
           gm-cluster: "edge"
         environment:
-          - name: "ENVOY_ADMIN_LOG_PATH"
-            value: "/dev/stdout"
-          - name: "PROXY_DYNAMIC"
-            value: "true"
-          - name: "XDS_CLUSTER"
-            value: "edge"
-          - name: "XDS_HOST"
-            value: "localhost"
-          - name: "XDS_PORT"
-            value: "50000"
-          - name: "XDS_NODE_ID"
-            value: "default-node"
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: "edge"
+        - name: "XDS_HOST"
+          value: "localhost"
+        - name: "XDS_PORT"
+          value: "50000"
+        - name: "XDS_NODE_ID"
+          value: "default-node"
         portMappings:
-          - containerPort: 80
-            hostPort: 80
-            protocol: tcp
-          - containerPort: 8081
-            hostPort: 8081
-            protocol: tcp
+        - containerPort: 80
+          hostPort: 80
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
         mountPoints:
-          - containerPath: "/etc/proxy/tls/sidecar"
-            sourceVolume: "certs"
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:
@@ -58,7 +58,7 @@
       state: present
       name: edge
       cluster: "greymatter-ecs-cluster"
-        task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       load_balancers:
         - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"

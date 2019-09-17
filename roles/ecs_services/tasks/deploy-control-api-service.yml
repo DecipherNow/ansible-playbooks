@@ -23,28 +23,28 @@
         dockerLabels:
           gm-cluster: "sidecar-control-api"
         environment:
-          - name: "ENVOY_ADMIN_LOG_PATH"
-            value: "/dev/stdout"
-          - name: "PROXY_DYNAMIC"
-            value: "true"
-          - name: "XDS_CLUSTER"
-            value: "control-api"
-          - name: "XDS_HOST"
-            value: "localhost"
-          - name: "XDS_PORT"
-            value: "50000"
-          - name: "XDS_NODE_ID"
-            value: "default-node"
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: "control-api"
+        - name: "XDS_HOST"
+          value: "localhost"
+        - name: "XDS_PORT"
+          value: "50000"
+        - name: "XDS_NODE_ID"
+          value: "default-node"
         portMappings:
-          - containerPort: 9080
-            hostPort: 9080
-            protocol: tcp
-          - containerPort: 8081
-            hostPort: 8081
-            protocol: tcp
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
         mountPoints:
-          - containerPath: "/etc/proxy/tls/sidecar"
-            sourceVolume: "certs"
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:

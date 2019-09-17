@@ -23,28 +23,28 @@
         dockerLabels:
           gm-cluster: "sidecar-catalog"
         environment:
-          - name: "ENVOY_ADMIN_LOG_PATH"
-            value: "/dev/stdout"
-          - name: "PROXY_DYNAMIC"
-            value: "true"
-          - name: "XDS_CLUSTER"
-            value: "catalog"
-          - name: "XDS_HOST"
-            value: "localhost" # todo point to gm-control
-          - name: "XDS_PORT"
-            value: "50000"
-          - name: "XDS_NODE_ID"
-            value: "default-node"
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: "catalog"
+        - name: "XDS_HOST"
+          value: "localhost" # todo point to gm-control
+        - name: "XDS_PORT"
+          value: "50000"
+        - name: "XDS_NODE_ID"
+          value: "default-node"
         portMappings:
-          - containerPort: 9080
-            hostPort: 9080
-            protocol: tcp
-          - containerPort: 8081
-            hostPort: 8081
-            protocol: tcp
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
         mountPoints:
-          - containerPath: "/etc/proxy/tls/sidecar"
-            sourceVolume: "certs"
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:
@@ -61,55 +61,55 @@
         dockerLabels:
           gm-cluster: "service-catalog"
         environment:
-          - name: "DEBUG"
-            value: "true"
-          - name: "CONTROL_SERVER_0_ADDRESS"
-            value: 'localhost:50000'
-          - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
-            value: "edge"
-          - name: "CONTROL_SERVER_0_ZONE_NAME"
-            value: "default-zone"
-          - name: "CONFIG_SOURCE"
-            value: "env" # or gmdata
-          # These configs are only used if CONFIG_SOURCE=gmdata
-          # The address:port should send requests to gm-data through the mesh
-          # - name: "CLIENT_ADDRESS"
-          #   value: "localhost"
-          # - name: "CLIENT_PORT"
-          #   value: "9080"
-          # - name: "CLIENT_PREFIX"
-          #   value: "/data"
-          # - name: "GMDATA_STARTUP_DELAY"
-          #   value: "10s"
-          # - name: "GMDATA_MAX_RETRIES"
-          #   value: "100"
-          # - name: "GMDATA_RETRY_DELAY"
-          #   value: "5s"
-          # - name: "GMDATA_ROOT_EVENT_NAME"
-          #   value: "world"
-          # - name: "CLIENT_USE_TLS"
-          #   value: "false"
-          # - name: "CLIENT_IDENTITY"
-          #   value: >-
-          #     CN=gm-control,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US
-          # - name: "CLIENT_EMAIL"
-          #   value: "gm-control@deciphernow.com"
-          # In the new mesh, certs are configured via sidecar
-          # - name: "USE_TLS"
-          #   value: "true"
-          # - name: "CA_CERT_PATH"
-          #   value: "/etc/pki/certifiable_ca.crt"
-          # - name: "SERVER_CERT_PATH"
-          #   value: "/etc/pki/cert.pem"
-          # - name: "SERVER_KEY_PATH"
-          #   value: "/etc/pki/private_key.pem"
+        - name: "DEBUG"
+          value: "true"
+        - name: "CONTROL_SERVER_0_ADDRESS"
+          value: 'localhost:50000'
+        - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
+          value: "edge"
+        - name: "CONTROL_SERVER_0_ZONE_NAME"
+          value: "default-zone"
+        - name: "CONFIG_SOURCE"
+          value: "env" # or gmdata
+        # These configs are only used if CONFIG_SOURCE=gmdata
+        # The address:port should send requests to gm-data through the mesh
+        # - name: "CLIENT_ADDRESS"
+        #   value: "localhost"
+        # - name: "CLIENT_PORT"
+        #   value: "9080"
+        # - name: "CLIENT_PREFIX"
+        #   value: "/data"
+        # - name: "GMDATA_STARTUP_DELAY"
+        #   value: "10s"
+        # - name: "GMDATA_MAX_RETRIES"
+        #   value: "100"
+        # - name: "GMDATA_RETRY_DELAY"
+        #   value: "5s"
+        # - name: "GMDATA_ROOT_EVENT_NAME"
+        #   value: "world"
+        # - name: "CLIENT_USE_TLS"
+        #   value: "false"
+        # - name: "CLIENT_IDENTITY"
+        #   value: >-
+        #     CN=gm-control,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US
+        # - name: "CLIENT_EMAIL"
+        #   value: "gm-control@deciphernow.com"
+        # In the new mesh, certs are configured via sidecar
+        # - name: "USE_TLS"
+        #   value: "true"
+        # - name: "CA_CERT_PATH"
+        #   value: "/etc/pki/certifiable_ca.crt"
+        # - name: "SERVER_CERT_PATH"
+        #   value: "/etc/pki/cert.pem"
+        # - name: "SERVER_KEY_PATH"
+        #   value: "/etc/pki/private_key.pem"
         portMappings:
-          - containerPort: 8080
-            hostPort: 8080
-            protocol: tcp
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: tcp
         mountPoints:
-          - containerPath: "/etc/pki"
-            sourceVolume: "certs"
+        - containerPath: "/etc/pki"
+          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:
