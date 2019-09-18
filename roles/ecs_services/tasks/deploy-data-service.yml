@@ -102,11 +102,11 @@
         - name: "MASTERKEY"
           value: "foo"
         - name: "MONGO_INITDB_ROOT_USERNAME"
-          value: "{{ lookup('aws_secret', 'mongo-init-username') }}"
+          value: "{{ lookup('aws_secret', 'mongo-user') }}"
         - name: "MONGO_INITDB_ROOT_PASSWORD"
-          value: "{{ lookup('aws_secret', 'mongo-init-password') }}"
-        - name: "MONGOHOST" # todo: determine DB deployment strategy
-          value: "mongo.localhost:27017"
+          value: "{{ lookup('aws_secret', 'mongo-password') }}"
+        - name: "MONGOHOST"
+          value: "localhost:27017"
         - name: "MONGODB"
           value: "data"
         - name: "MONGOCERT"
@@ -134,6 +134,34 @@
         - containerPort: 8181
           hostPort: 8181
           protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: us-east-2
+            awslogs-stream-prefix: web
+      - name: mongo
+        cpu: 256
+        essential: true
+        image: "docker.io/centos/mongodb-32-centos7"
+        repositoryCredentials:
+          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+        memory: 400
+        environment:
+        - name: "MONGODB_USER"
+          value: "{{ lookup('aws_secret', 'mongo-user') }}"
+        - name: "MONGODB_PASSWORD"
+          value: "{{ lookup('aws_secret', 'mongo-password') }}"
+        - name: "MONGODB_ADMIN_PASSWORD"
+          value: "{{ lookup('aws_secret', 'mongo-admin-password') }}"
+        - name: "MONGODB_DATABASE"
+          value: "data"
+        portMappings:
+        - containerPort: 27017
+          hostPort: 27017
+        mountPoints:
+        - containerPath: "/var/lib/mongodb/data"
+          sourceVolume: "data"
         logConfiguration:
           logDriver: awslogs
           options:

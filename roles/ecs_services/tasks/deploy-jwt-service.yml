@@ -70,14 +70,14 @@
         - name: "PRIVATE_KEY"
           value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
         - name: "TOKEN_EXP_TIME"
-        - name: "REDIS_HOST" # todo: determine DB deployment strategy
-          value: "redis.host.ip"
+        - name: "REDIS_HOST"
+          value: "localhost"
         - name: "REDIS_PORT"
           value: "6379"
         - name: "REDIS_DB"
           value: "1"
         - name: "REDIS_PASS"
-          value: "{{ lookup('aws_secret', 'redis-pass') }}"
+          value: "{{ lookup('aws_secret', 'redis-password') }}"
         - name: "JWT_API_KEY"
           value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         - name: "ENABLE_TLS"
@@ -88,6 +88,25 @@
         - containerPort: 8080
           hostPort: 8080
           protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: us-east-2
+            awslogs-stream-prefix: web
+      - name: redis
+        cpu: 256
+        essential: true
+        image: "docker.io/centos/redis-32-centos7"
+        repositoryCredentials:
+          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+        memory: 400
+        environment:
+        - name: "REDIS_PASSWORD"
+          value: "{{ lookup('aws_secret', 'redis-password') }}"
+        portMappings:
+        - containerPort: 6379
+          hostPort: 6379
         logConfiguration:
           logDriver: awslogs
           options:

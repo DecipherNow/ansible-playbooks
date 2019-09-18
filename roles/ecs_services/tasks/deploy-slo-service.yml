@@ -63,7 +63,7 @@
         environment:
         - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
           value: "{{ lookup('aws_secret', 'postgres-password') }}"
-        - name: "DATABASE_URI" # todo: determine DB deployment strategy
+        - name: "DATABASE_URI" # todo: update to point to RDS DB
           value: "postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb"
         - name: "DROP_SCHEMA"
           value: "false"
