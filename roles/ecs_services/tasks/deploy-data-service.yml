@@ -12,6 +12,12 @@
       - name: certs
         host:
           sourcePath: "/home/ec2-user/pki"
+      # ref: Specifying a Docker Volume in your Task Definition
+      # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
+      - name: mongo-data
+        dockerVolumeConfiguration:
+          scope: "task"
+          autoprovision: true
       containers:
       - name: proxy-data
         cpu: 256
@@ -161,7 +167,7 @@
           hostPort: 27017
         mountPoints:
         - containerPath: "/var/lib/mongodb/data"
-          sourceVolume: "data"
+          sourceVolume: "mongo-data"
         logConfiguration:
           logDriver: awslogs
           options:
