@@ -107,9 +107,6 @@
         - containerPort: 8080
           hostPort: 8080
           protocol: tcp
-        mountPoints:
-        - containerPath: "/etc/pki"
-          sourceVolume: "certs"
         logConfiguration:
           logDriver: awslogs
           options:
