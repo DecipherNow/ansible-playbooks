@@ -73,7 +73,7 @@
           value: "email"
         - name: "USES3"
           value: "true"
-        - name: "AWS_S3_BUCKET"
+        - name: "AWS_S3_BUCKET" # todo: use separate bucket for ECS-specific data
           value: "decipher-development-data"
         - name: "AWS_S3_ENDPOINT"
         - name: "AWS_S3_PARTITION"

@@ -93,7 +93,7 @@
         #   value: >-
         #     CN=gm-control,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US
         # - name: "CLIENT_EMAIL"
-        #   value: "gm-control@deciphernow.com"
+        #   value: "localhost@deciphernow.com"
         # In the new mesh, certs are configured via sidecar
         # - name: "USE_TLS"
         #   value: "true"
