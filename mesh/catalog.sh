@@ -101,3 +101,20 @@ greymatter create route < <(echo '{
   "route_key": "service-catalog-route",
   "path": "/",
 }')
+
+# Add entry to Catalog
+# todo: Determine strategy for connecting to Catalog
+curl -X POST address-to-catalog/clusters -data '{
+  "zoneName": "default-zone",
+  "clusterName": "sidecar-catalog",
+  "name": "Grey Matter Catalog",
+  "version": "1.0",
+  "owner": "Decipher",
+  "capability": "Grey Matter",
+  "documentation": "/services/catalog/1.0/",
+  "maxInstances": 1,
+  "minInstances": 1,
+  "enableInstanceMetrics": true,
+  "enableHistoricalMetrics": false,
+  "metricsPort": 8081
+}'

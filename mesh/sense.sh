@@ -101,3 +101,20 @@ greymatter create route < <(echo '{
   "route_key": "service-sense-route",
   "path": "/",
 }')
+
+# Add entry to Catalog
+# todo: Determine strategy for connecting to Catalog
+curl -X POST catalog-host:8080/clusters -data '{
+  "zoneName": "default-zone",
+  "clusterName": "sidecar-sense",
+  "name": "Grey Matter Sense",
+  "version": "1.0",
+  "owner": "Decipher",
+  "capability": "Grey Matter",
+  "documentation": "/services/sense/1.0/",
+  "maxInstances": 1,
+  "minInstances": 1,
+  "enableInstanceMetrics": true,
+  "enableHistoricalMetrics": false,
+  "metricsPort": 8081
+}'

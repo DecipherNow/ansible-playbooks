@@ -30,8 +30,8 @@ greymatter create route < <(echo '{
   "domain_key": "edge",
   "shared_rules_key": "to-sidecar-dashboard-rule",
   "route_key": "sidecar-dashboard-route",
-  "path": "/services/dashboard/1.0",
-  "prefix_rewrite": "/services/dashboard/1.0/",
+  "path": "/services/dashboard/latest",
+  "prefix_rewrite": "/services/dashboard/latest/",
 }')
 
 # Add route #2 from edge to sidecar (with trailing slash)
@@ -40,7 +40,7 @@ greymatter create route < <(echo '{
   "domain_key": "edge",
   "shared_rules_key": "to-sidecar-dashboard-rule"
   "route_key": "sidecar-dashboard-route-slash",
-  "path": "/services/dashboard/1.0/",
+  "path": "/services/dashboard/latest/",
   "prefix_rewrite": "/",
 }')
 
@@ -101,3 +101,20 @@ greymatter create route < <(echo '{
   "route_key": "service-dashboard-route",
   "path": "/",
 }')
+
+# Add entry to Catalog
+# todo: Determine strategy for connecting to Catalog
+curl -X POST catalog-host:8080/clusters -data '{
+  "zoneName": "default-zone",
+  "clusterName": "sidecar-dashboard",
+  "name": "Grey Matter Dashboard",
+  "version": "latest",
+  "owner": "Decipher",
+  "capability": "Grey Matter",
+  "documentation": "",
+  "maxInstances": 1,
+  "minInstances": 1,
+  "enableInstanceMetrics": true,
+  "enableHistoricalMetrics": false,
+  "metricsPort": 8081
+}'
