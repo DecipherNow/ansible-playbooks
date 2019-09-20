@@ -4,8 +4,9 @@
     ecs_taskdefinition:
       state: present
       family: "greymatter-catalog"
-      network_mode: "host"
-      launch_type: "EC2"
+      network_mode: awsvpc
+      launch_type: EC2
+      region: "us-east-2"
       execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
       task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
       volumes:
@@ -26,13 +27,13 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: "true"
+          value: true
         - name: "XDS_CLUSTER"
-          value: "catalog"
+          value: catalog
         - name: "XDS_HOST"
-          value: "localhost" # todo point to gm-control
+          value: localhost # todo point to gm-control
         - name: "XDS_PORT"
-          value: "50000"
+          value: 50000
         - name: "XDS_NODE_ID"
           value: "default-node"
         portMappings:
@@ -44,12 +45,12 @@
           protocol: tcp
         mountPoints:
         - containerPath: "/etc/proxy/tls/sidecar"
-          sourceVolume: "certs"
+          sourceVolume: certs
         logConfiguration:
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "us-east-2"
             awslogs-stream-prefix: web
       - name: catalog
         cpu: 256
@@ -62,31 +63,31 @@
           gm-cluster: "service-catalog"
         environment:
         - name: "DEBUG"
-          value: "true"
+          value: true
         - name: "CONTROL_SERVER_0_ADDRESS"
-          value: 'localhost:50000'
+          value: "localhost:50000"
         - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
-          value: "edge"
+          value: edge
         - name: "CONTROL_SERVER_0_ZONE_NAME"
           value: "default-zone"
         - name: "CONFIG_SOURCE"
-          value: "gmdata"
+          value: gmdata
         - name: "CLIENT_ADDRESS"
-          value: "localhost"
+          value: localhost
         - name: "CLIENT_PORT"
-          value: "9080"
+          value: 9080
         - name: "CLIENT_PREFIX"
           value: "/data"
         - name: "GMDATA_STARTUP_DELAY"
-          value: "10s"
+          value: 10s
         - name: "GMDATA_MAX_RETRIES"
-          value: "100"
+          value: 100
         - name: "GMDATA_RETRY_DELAY"
-          value: "5s"
+          value: 5s
         - name: "GMDATA_ROOT_EVENT_NAME"
-          value: "world"
+          value: world
         - name: "CLIENT_USE_TLS"
-          value: "false"
+          value: false
         - name: "CLIENT_IDENTITY"
           value: "CN=localhost,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US"
         - name: "CLIENT_EMAIL"
@@ -99,7 +100,7 @@
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "us-east-2"
             awslogs-stream-prefix: web
     register: task_output
 
@@ -110,7 +111,14 @@
       cluster: "greymatter-ecs-cluster"
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
-      # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
+      network_configuration:
+        assign_public_ip: ENABLED
+        security_groups:
+        - "sg-058ff37fcba82d64e"
+        subnets:
+        - "subnet-0e06fb4f956d9f5f8"
+        - "subnet-0a0d8c7178470ccfd"
+        - "subnet-04b7db2914fabe8e3"
       load_balancers:
         - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
           containerName: "proxy-catalog"
