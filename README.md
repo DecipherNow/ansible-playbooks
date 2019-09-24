@@ -29,20 +29,15 @@ Some of the infrastructure already exists in AWS, but is currently being moved o
 
 Assuming you have `aws-vault` correctly configured for the Decipher dev environment and named the profile `dev`...
 
-1) You can run the Ansible playbook that just creates services with
-
- ``` console
- aws-vault exec dev -- ansible-playbook services_deployment.yml
- ```
- 
- 2) You can run the Ansible playbook that just creates AWS infrastructure with
+ 1) You can run the Ansible playbook that just creates AWS infrastructure with
 
  ``` console
  aws-vault exec dev -- ansible-playbook infrastructure_deployment.yml
  ```
- 
- 3) You can run the Ansible playbook that creates the whole shebang (a->z, vpc->services) with
+
+1) You can run the Ansible playbook that just creates services with
+
  ``` console
- aws-vault exec dev -- ansible-playbook full_deployment.yml
+ aws-vault exec dev -- ansible-playbook services_deployment.yml
  ```
 
