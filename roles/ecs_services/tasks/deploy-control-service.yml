@@ -16,7 +16,7 @@
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
+          credentialsParameter: "{{ credentials_parameter }}"
         environment:
         - name: "GM_CONTROL_API_HOST"
           value: "localhost:5555"
@@ -51,9 +51,6 @@
   - name: ECS service control
     ecs_service:
       state: present
-      network_configuration:
-        security_groups: "{{ security_group }}"
-        subnets: "{{ subnet_list }}"
       name: control
       cluster: "{{ cluster_name }}"
       region: "{{ aws_region }}"

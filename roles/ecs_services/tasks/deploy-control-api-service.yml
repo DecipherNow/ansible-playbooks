@@ -18,7 +18,7 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
+          credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
           gm-cluster: "sidecar-control-api"
         environment:
@@ -43,18 +43,18 @@
           protocol: tcp
         mountPoints:
         - containerPath: "/etc/proxy/tls/sidecar"
-          sourceVolume: "certs"
+          sourceVolume: certs
         logConfiguration:
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: control-api
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
+          credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
           gm-cluster: "service-control-api"
         environment:

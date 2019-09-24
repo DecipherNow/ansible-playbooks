@@ -8,17 +8,17 @@
       launch_type: FARGATE
       cpu: 512
       memory: 1024
-      region: "us-east-1"
-      execution_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
-      task_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
       volumes:
       - name: certs
       containers:
       - name: "proxy-jwt"
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
+        image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
+          credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
           gm-cluster: "sidecar-jwt"
         environment:
@@ -48,13 +48,13 @@
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: jwt
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-jwt-security:0.2.0"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
+          credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
           gm-cluster: "service-jwt"
         environment:
@@ -96,7 +96,7 @@
         essential: true
         image: "docker.io/centos/redis-32-centos7"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
+          credentialsParameter: "{{ credentials_parameter }}"
         memory: 400
         # environment:
         # - name: "REDIS_PASSWORD"
@@ -108,7 +108,7 @@
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
     register: task_output
 
@@ -116,21 +116,17 @@
     ecs_service:
       state: present
       name: jwt
-      cluster: "greymatter-ecs-cluster"
-      region: "us-east-1"
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
       launch_type: FARGATE
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       network_configuration:
         assign_public_ip: true
-        security_groups:
-        - "sg-058ff37fcba82d64e"
-        subnets:
-        - "subnet-0e06fb4f956d9f5f8"
-        - "subnet-0a0d8c7178470ccfd"
-        - "subnet-04b7db2914fabe8e3"
+        security_groups: "{{ security_group }}"
+        subnets: "{{ subnet_list }}"
       load_balancers:
-        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-1:706634194319:targetgroup/greymatter-ecs-alb-tg-ip/826faf9b835b9140"
+        - targetGroupArn: "{{ task_target_group }}"
           containerName: "proxy-jwt"
           containerPort: 9080
     register: "ecs_service"

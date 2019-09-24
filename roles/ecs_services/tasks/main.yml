@@ -1,10 +1,10 @@
 ---
-# - include: deploy-edge-service.yml
-# - include: deploy-sense-service.yml
-# - include: deploy-jwt-service.yml
+- include: deploy-edge-service.yml
+- include: deploy-sense-service.yml
+- include: deploy-jwt-service.yml
 - include: deploy-data-service.yml
-# - include: deploy-slo-service.yml
-# - include: deploy-dashboard-service.yml
-# - include: deploy-catalog-service.yml
-# - include: deploy-control-api-service.yml
-# - include: deploy-control-service.yml
+- include: deploy-slo-service.yml
+- include: deploy-dashboard-service.yml
+- include: deploy-catalog-service.yml
+- include: deploy-control-api-service.yml
+- include: deploy-control-service.yml
