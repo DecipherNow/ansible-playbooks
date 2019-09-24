@@ -13,14 +13,12 @@
       task_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
       volumes:
       - name: certs
-        host:
-          sourcePath: "/home/ec2-user/pki"
       containers:
       - name: "proxy-jwt"
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "sidecar-jwt"
         environment:
@@ -45,7 +43,7 @@
           protocol: tcp
         mountPoints:
         - containerPath: "/etc/proxy/tls/sidecar"
-          sourceVolume: "certs"
+          sourceVolume: certs
         logConfiguration:
           logDriver: awslogs
           options:
@@ -56,33 +54,33 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-jwt-security:0.2.0"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "service-jwt"
         environment:
-        # - name: KAFKA_PEERS
-        #   value: "kafka-0.kafka.kafka.svc.cluster.local:9092,kafka-1.kafka.kafka.svc.cluster.local:9092,kafka-2.kafka.kafka.svc.cluster.local:9092"
         - name: "HTTP_PORT"
           value: 8080
-        - name: "USERS_JSON"
-          value: "{{ lookup('file', 'jwt-users.json') }}"
-        - name: "PRIVATE_KEY"
-          value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
-        - name: "TOKEN_EXP_TIME"
+        # - name: "TOKEN_EXP_TIME"
         - name: "REDIS_HOST"
           value: localhost
         - name: "REDIS_PORT"
           value: 6379
         - name: "REDIS_DB"
           value: 1
-        - name: "REDIS_PASS"
-          value: "{{ lookup('aws_secret', 'redis-password') }}"
-        - name: "JWT_API_KEY"
-          value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         - name: "ENABLE_TLS"
           value: false
         - name: "DEFAULT_PATH"
           value: "/services/"
+        # - name: KAFKA_PEERS
+        #   value: "kafka-0.kafka.kafka.svc.cluster.local:9092,kafka-1.kafka.kafka.svc.cluster.local:9092,kafka-2.kafka.kafka.svc.cluster.local:9092"
+        # - name: "USERS_JSON"
+          # value: "{{ lookup('file', 'jwt-users.json') }}"
+        # - name: "PRIVATE_KEY"
+          # value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
+        # - name: "REDIS_PASS"
+          # value: "{{ lookup('aws_secret', 'redis-password') }}"
+        # - name: "JWT_API_KEY"
+          # value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         portMappings:
         - containerPort: 8080
           hostPort: 8080
@@ -98,11 +96,11 @@
         essential: true
         image: "docker.io/centos/redis-32-centos7"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         memory: 400
-        environment:
-        - name: "REDIS_PASSWORD"
-          value: "{{ lookup('aws_secret', 'redis-password') }}"
+        # environment:
+        # - name: "REDIS_PASSWORD"
+          # value: "{{ lookup('aws_secret', 'redis-password') }}"
         portMappings:
         - containerPort: 6379
           hostPort: 6379

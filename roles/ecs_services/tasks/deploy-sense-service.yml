@@ -18,7 +18,7 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "sidecar-sense"
         environment:
@@ -54,12 +54,12 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-sense:latest"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "service-sense"
         environment:
-        - name: "OC_API_TOKEN" # todo: store secret in AWS Secrets Manager
-          value: "{{ lookup('aws_secret', 'oc-api-token') }}"           
+        # - name: "OC_API_TOKEN" # todo: store secret in AWS Secrets Manager
+          # value: "{{ lookup('aws_secret', 'oc-api-token') }}"           
         - name: "SAVED_MODEL_PATH" # todo: how to ref file
           value: "/opt/gm-sense/sense/policy.pth"
         portMappings:

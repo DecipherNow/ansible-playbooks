@@ -16,7 +16,7 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-control:0.5.1"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         environment:
         - name: "GM_CONTROL_API_HOST"
           value: "localhost:5555"

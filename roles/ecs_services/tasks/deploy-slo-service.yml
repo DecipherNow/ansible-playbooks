@@ -18,7 +18,7 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "sidecar-slo"
         environment:
@@ -54,14 +54,14 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-slo:latest"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "service-slo"
         environment:
-        - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
-          value: "{{ lookup('aws_secret', 'postgres-password') }}"
-        - name: "DATABASE_URI" # todo: update to point to RDS DB
-          value: "postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb"
+        # - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
+          # value: "{{ lookup('aws_secret', 'postgres-password') }}"
+        # - name: "DATABASE_URI" # todo: update to point to RDS DB
+          # value: "postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb"
         - name: "DROP_SCHEMA"
           value: false
         - name: "SSL_ENABLED"

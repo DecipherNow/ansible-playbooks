@@ -20,7 +20,7 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         memory: 400
         dockerLabels:
           gm-cluster: "sidecar-data"
@@ -57,7 +57,7 @@
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-data:latest"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         dockerLabels:
           gm-cluster: "service-data"
         environment:
@@ -69,28 +69,16 @@
           value: true
         - name: "AWS_S3_BUCKET" # todo: use separate bucket for ECS-specific data
           value: "decipher-development-data"
-        - name: "AWS_S3_ENDPOINT"
         - name: "AWS_S3_PARTITION"
           value: gmdatax
         - name: "AWS_REGION"
           value: "us-east-2"
-        - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
-          value: "{{ lookup('aws_secret', 'aws-access-key-id') }}"
-        - name: "AWS_SECRET_ACCESS_KEY" # todo: figure out how to lookup
-          value: "{{ lookup('aws_secret', 'aws-secret-access-key') }}"
-        - name: "BIND_ADDRESS"
-        - name: "BIND_PORT"
-        - name: "DISABLE_LOOKUPS"
-        - name: "DONT_PANIC"
         - name: "GMDATAX_CATCH_PANIC"
           value: true
         - name: "GMDATAX_SESSION_MAX"
           value: 10000
         - name: "HTTP_CACHE_SECONDS"
           value: 10
-        - name: "IPFS_HOSTKEY"
-        - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
-          value: "{{ lookup('aws_secret', 'jwt-pub') }}"
         - name: "OBS_TOPIC_ERROR"
           value: "gmdatax-error"
         - name: "OBS_TOPIC_READ"
@@ -101,25 +89,12 @@
           value: false
         - name: "MASTERKEY"
           value: foo
-        - name: "MONGO_INITDB_ROOT_USERNAME"
-          value: "{{ lookup('aws_secret', 'mongo-user') }}"
-        - name: "MONGO_INITDB_ROOT_PASSWORD"
-          value: "{{ lookup('aws_secret', 'mongo-password') }}"
         - name: "MONGOHOST"
           value: "localhost:27017"
         - name: "MONGODB"
           value: data
-        - name: "MONGOCERT"
-        - name: "MONGOKEY"
-        - name: "MONGOTRUST"
-        - name: "PRETTY_PRINT"
-        - name: "REKOGNITION_FACE_INDEX"
         - name: "S3_TASKS"
           value: 4096
-        - name: "USEIPFS"
-        - name: "ZEROLOG_LEVEL"
-        - name: "JWT_API_KEY"
-          value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         - name: "CLIENT_PREFIX"
           value: "/services/data/latest"
         - name: "CLIENT_JWT_PREFIX"
@@ -130,6 +105,31 @@
           value: 9080
         - name: "CLIENT_JWT_ENDPOINT_PREFIX"
           value: "/jwt"
+        # - name: "AWS_S3_ENDPOINT"
+        # - name: "IPFS_HOSTKEY"
+        # - name: "MONGOCERT"
+        # - name: "MONGOKEY"
+        # - name: "MONGOTRUST"
+        # - name: "PRETTY_PRINT"
+        # - name: "REKOGNITION_FACE_INDEX"
+        # - name: "USEIPFS"
+        # - name: "ZEROLOG_LEVEL"
+        # - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
+          # value: "{{ lookup('aws_secret', 'aws-access-key-id') }}"
+        # - name: "AWS_SECRET_ACCESS_KEY" # todo: figure out how to lookup
+          # value: "{{ lookup('aws_secret', 'aws-secret-access-key') }}"
+        # - name: "BIND_ADDRESS"
+        # - name: "BIND_PORT"
+        # - name: "DISABLE_LOOKUPS"
+        # - name: "DONT_PANIC"
+        # - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
+          # value: "{{ lookup('aws_secret', 'jwt-pub') }}"
+        # - name: "MONGO_INITDB_ROOT_USERNAME"
+          # value: "{{ lookup('aws_secret', 'mongo-user') }}"
+        # - name: "MONGO_INITDB_ROOT_PASSWORD"
+          # value: "{{ lookup('aws_secret', 'mongo-password') }}"
+        # - name: "JWT_API_KEY"
+          # value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         portMappings:
         - containerPort: 8181
           hostPort: 8181
@@ -144,16 +144,16 @@
         essential: true
         image: "docker.io/centos/mongodb-32-centos7"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR"
         environment:
-        - name: "MONGODB_USER"
-          value: "{{ lookup('aws_secret', 'mongo-user') }}"
-        - name: "MONGODB_PASSWORD"
-          value: "{{ lookup('aws_secret', 'mongo-password') }}"
-        - name: "MONGODB_ADMIN_PASSWORD"
-          value: "{{ lookup('aws_secret', 'mongo-admin-password') }}"
         - name: "MONGODB_DATABASE"
           value: "data"
+        # - name: "MONGODB_USER"
+          # value: "{{ lookup('aws_secret', 'mongo-user') }}"
+        # - name: "MONGODB_PASSWORD"
+          # value: "{{ lookup('aws_secret', 'mongo-password') }}"
+        # - name: "MONGODB_ADMIN_PASSWORD"
+          # value: "{{ lookup('aws_secret', 'mongo-admin-password') }}"
         portMappings:
         - containerPort: 27017
           hostPort: 27017
