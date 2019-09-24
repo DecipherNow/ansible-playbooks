@@ -1,9 +1,0 @@
----
-
-- hosts: localhost
-  connection: local
-  tasks:
-  - import_role:
-      name: ecs_services
-  - import_role:
-      name: ecs_infrastructure

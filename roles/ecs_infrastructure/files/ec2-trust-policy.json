@@ -4,11 +4,12 @@
          {
             "Sid": "",
             "Effect": "Allow",
-            "Principal":
-                  {
-                       "Service": "ec2.amazonaws.com",
-                       "Service": "ecs-tasks.amazonaws.com"
-                  },
+            "Principal": {
+		"Service": [
+		    "ec2.amazonaws.com",
+		    "ecs-tasks.amazonaws.com"
+		]
+	    },
             "Action": "sts:AssumeRole"
          }
       ]

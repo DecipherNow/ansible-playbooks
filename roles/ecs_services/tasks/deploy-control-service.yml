@@ -4,15 +4,15 @@
     ecs_taskdefinition:
       state: present
       family: "greymatter-control"
-      network_mode: "host"
+      network_mode: "awsvpc"
       launch_type: "EC2"
-      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
-      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
       containers:
       - name: control
         cpu: 256
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-control:0.5.1"
+        image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
         memory: 400
@@ -43,19 +43,22 @@
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
     register: task_output
 
-  - name: ECS service
+  - name: ECS service control
     ecs_service:
       state: present
+      network_configuration:
+        security_groups: "{{ security_group }}"
+        subnets: "{{ subnet_list }}"
       name: control
-      cluster: "greymatter-ecs-cluster"
+      cluster: "{{ cluster_name }}"
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       load_balancers:
-        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
+        - targetGroupArn: "{{ task_target_group }}"
           containerName: "control"
           containerPort: "50000"
     register: "ecs_service"
