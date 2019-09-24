@@ -4,37 +4,36 @@
     ecs_taskdefinition:
       state: present
       family: "greymatter-control"
-      network_mode: "host"
-      launch_type: "EC2"
-      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
-      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      network_mode: awsvpc
+      launch_type: FARGATE
+      cpu: 512
+      memory: 1024
+      region: "us-east-1"
+      execution_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
+      task_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
       containers:
       - name: control
-        cpu: 256
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-control:0.5.1"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
-        memory: 400
         environment:
         - name: "GM_CONTROL_API_HOST"
           value: "localhost:5555"
         - name: "GM_CONTROL_API_KEY"
-          value: "xxx"
+          value: xxx
         - name: "GM_CONTROL_API_SSL"
-          value: "false"
+          value: false
         - name: "GM_CONTROL_API_ZONE_NAME"
           value: "default-zone"
         - name: "GM_CONTROL_CMD"
-          value: "ecs"
+          value: ecs
         - name: "GM_CONTROL_CONSOLE_LEVEL"
-          value: "debug"
+          value: debug
         - name: "GM_CONTROL_XDS_ADS_ENABLED"
-          value: "true"
+          value: true
         - name: "GM_CONTROL_ECS_AWS_REGION"
-          value: "us-east-2"
-        - name: "GM_CONTROL_ECS_CLUSTERS"
-          value: ""
+          value: "us-east-1"
         - name: "GM_CONTROL_ECS_CLUSTER_TAG"
           value: "gm-cluster"
         portMappings:
@@ -54,10 +53,20 @@
       state: present
       name: control
       cluster: "greymatter-ecs-cluster"
+      region: "us-east-1"
+      launch_type: FARGATE
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
+      network_configuration:
+        assign_public_ip: true
+        security_groups:
+        - "sg-058ff37fcba82d64e"
+        subnets:
+        - "subnet-0e06fb4f956d9f5f8"
+        - "subnet-0a0d8c7178470ccfd"
+        - "subnet-04b7db2914fabe8e3"
       load_balancers:
-        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
-          containerName: "control"
-          containerPort: "50000"
+        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-1:706634194319:targetgroup/greymatter-ecs-alb-tg-ip/826faf9b835b9140"
+          containerName: control
+          containerPort: 50000
     register: "ecs_service"

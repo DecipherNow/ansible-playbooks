@@ -4,35 +4,34 @@
     ecs_taskdefinition:
       state: present
       family: "greymatter-slo"
-      network_mode: "host"
-      launch_type: "EC2"
-      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
-      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      network_mode: awsvpc
+      launch_type: FARGATE
+      cpu: 512
+      memory: 1024
+      region: "us-east-1"
+      execution_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
+      task_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
       volumes:
       - name: certs
-        host:
-          sourcePath: "/home/ec2-user/pki"
       containers:
-      - name: proxy-slo
-        cpu: 256
+      - name: "proxy-slo"
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
-        memory: 400
         dockerLabels:
           gm-cluster: "sidecar-slo"
         environment:
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: "true"
+          value: true
         - name: "XDS_CLUSTER"
-          value: "slo"
+          value: slo
         - name: "XDS_HOST"
-          value: "localhost"
+          value: localhost # todo point to gm-control
         - name: "XDS_PORT"
-          value: "50000"
+          value: 50000
         - name: "XDS_NODE_ID"
           value: "default-node"
         portMappings:
@@ -52,12 +51,10 @@
             awslogs-region: us-east-2
             awslogs-stream-prefix: web
       - name: slo
-        cpu: 256
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-slo:latest"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
-        memory: 400
         dockerLabels:
           gm-cluster: "service-slo"
         environment:
@@ -66,9 +63,9 @@
         - name: "DATABASE_URI" # todo: update to point to RDS DB
           value: "postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb"
         - name: "DROP_SCHEMA"
-          value: "false"
+          value: false
         - name: "SSL_ENABLED"
-          value: "false"
+          value: false
         portMappings:
         - containerPort: 1337
           hostPort: 1337
@@ -86,11 +83,20 @@
       state: present
       name: slo
       cluster: "greymatter-ecs-cluster"
+      region: "us-east-1"
+      launch_type: FARGATE
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
-      # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
+      network_configuration:
+        assign_public_ip: true
+        security_groups:
+        - "sg-058ff37fcba82d64e"
+        subnets:
+        - "subnet-0e06fb4f956d9f5f8"
+        - "subnet-0a0d8c7178470ccfd"
+        - "subnet-04b7db2914fabe8e3"
       load_balancers:
-        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
-          containerName: "slo"
-          containerPort: "1337"
+        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-1:706634194319:targetgroup/greymatter-ecs-alb-tg-ip/826faf9b835b9140"
+          containerName: "proxy-slo"
+          containerPort: 9080
     register: "ecs_service"

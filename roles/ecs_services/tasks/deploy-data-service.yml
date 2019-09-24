@@ -4,22 +4,18 @@
     ecs_taskdefinition:
       state: present
       family: "greymatter-data"
-      network_mode: "host"
-      launch_type: "EC2"
-      execution_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
-      task_role_arn: "arn:aws:iam::151736245382:role/ecsInstanceRole"
+      network_mode: awsvpc
+      launch_type: FARGATE
+      cpu: 512
+      memory: 1024
+      region: "us-east-1"
+      execution_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
+      task_role_arn: "arn:aws:iam::706634194319:role/ecsInstanceRole"
       volumes:
       - name: certs
-        host:
-          sourcePath: "/home/ec2-user/pki"
-      # ref: Specifying a Docker Volume in your Task Definition
-      # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
-      - name: mongo-data
-        dockerVolumeConfiguration:
-          scope: "task"
-          autoprovision: true
+      - name: "mongo-data"
       containers:
-      - name: proxy-data
+      - name: "proxy-data"
         cpu: 256
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
@@ -32,13 +28,13 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: "true"
+          value: true
         - name: "XDS_CLUSTER"
-          value: "data"
+          value: data
         - name: "XDS_HOST"
-          value: "localhost"
+          value: localhost
         - name: "XDS_PORT"
-          value: "50000"
+          value: 50000
         - name: "XDS_NODE_ID"
           value: "default-node"
         portMappings:
@@ -50,7 +46,7 @@
           protocol: tcp
         mountPoints:
         - containerPath: "/etc/proxy/tls/sidecar"
-          sourceVolume: "certs"
+          sourceVolume: certs
         logConfiguration:
           logDriver: awslogs
           options:
@@ -58,26 +54,24 @@
             awslogs-region: us-east-2
             awslogs-stream-prefix: web
       - name: data
-        cpu: 256
         essential: true
         image: "docker-greymatter.di2e.net/greymatter/gm-data:latest"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
-        memory: 400
         dockerLabels:
           gm-cluster: "service-data"
         environment:
         - name: "GMDATA_NAMESPACE"
-          value: "world"
+          value: world
         - name: "GMDATA_NAMESPACE_USERFIELD"
-          value: "email"
+          value: email
         - name: "USES3"
-          value: "true"
+          value: true
         - name: "AWS_S3_BUCKET" # todo: use separate bucket for ECS-specific data
           value: "decipher-development-data"
         - name: "AWS_S3_ENDPOINT"
         - name: "AWS_S3_PARTITION"
-          value: "gmdatax"
+          value: gmdatax
         - name: "AWS_REGION"
           value: "us-east-2"
         - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
@@ -89,11 +83,11 @@
         - name: "DISABLE_LOOKUPS"
         - name: "DONT_PANIC"
         - name: "GMDATAX_CATCH_PANIC"
-          value: "true"
+          value: true
         - name: "GMDATAX_SESSION_MAX"
-          value: "10000"
+          value: 10000
         - name: "HTTP_CACHE_SECONDS"
-          value: "10"
+          value: 10
         - name: "IPFS_HOSTKEY"
         - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
           value: "{{ lookup('aws_secret', 'jwt-pub') }}"
@@ -104,9 +98,9 @@
         - name: "OBS_TOPIC_UPDATE"
           value: "gmdatax-update"
         - name: "LESS_CHATTY_INFO"
-          value: "false"
+          value: false
         - name: "MASTERKEY"
-          value: "foo"
+          value: foo
         - name: "MONGO_INITDB_ROOT_USERNAME"
           value: "{{ lookup('aws_secret', 'mongo-user') }}"
         - name: "MONGO_INITDB_ROOT_PASSWORD"
@@ -114,14 +108,14 @@
         - name: "MONGOHOST"
           value: "localhost:27017"
         - name: "MONGODB"
-          value: "data"
+          value: data
         - name: "MONGOCERT"
         - name: "MONGOKEY"
         - name: "MONGOTRUST"
         - name: "PRETTY_PRINT"
         - name: "REKOGNITION_FACE_INDEX"
         - name: "S3_TASKS"
-          value: "4096"
+          value: 4096
         - name: "USEIPFS"
         - name: "ZEROLOG_LEVEL"
         - name: "JWT_API_KEY"
@@ -131,9 +125,9 @@
         - name: "CLIENT_JWT_PREFIX"
           value: "/jwt"
         - name: "CLIENT_JWT_ENDPOINT_ADDRESS"
-          value: "localhost"
+          value: localhost
         - name: "CLIENT_JWT_ENDPOINT_PORT"
-          value: "9080"
+          value: 9080
         - name: "CLIENT_JWT_ENDPOINT_PREFIX"
           value: "/jwt"
         portMappings:
@@ -147,12 +141,10 @@
             awslogs-region: us-east-2
             awslogs-stream-prefix: web
       - name: mongo
-        cpu: 256
         essential: true
         image: "docker.io/centos/mongodb-32-centos7"
         repositoryCredentials:
           credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
-        memory: 400
         environment:
         - name: "MONGODB_USER"
           value: "{{ lookup('aws_secret', 'mongo-user') }}"
@@ -181,11 +173,20 @@
       state: present
       name: data
       cluster: "greymatter-ecs-cluster"
+      region: "us-east-1"
+      launch_type: FARGATE
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
-      # todo: load balance service/sidecar pairs -- each instance is a sidecar->service
+      network_configuration:
+        assign_public_ip: true
+        security_groups:
+        - "sg-058ff37fcba82d64e"
+        subnets:
+        - "subnet-0e06fb4f956d9f5f8"
+        - "subnet-0a0d8c7178470ccfd"
+        - "subnet-04b7db2914fabe8e3"
       load_balancers:
-        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-2:151736245382:targetgroup/greymatter-ecs-alb-target-group2/6a3fddf3a004d6fe"
-          containerName: "data"
-          containerPort: "8181"
+        - targetGroupArn: "arn:aws:elasticloadbalancing:us-east-1:706634194319:targetgroup/greymatter-ecs-alb-tg-ip/826faf9b835b9140"
+          containerName: "proxy-data"
+          containerPort: 9080
     register: "ecs_service"
