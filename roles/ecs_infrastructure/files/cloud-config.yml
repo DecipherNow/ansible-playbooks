@@ -1,0 +1,3 @@
+#!/bin/bash
+echo ECS_CLUSTER="greymatter-ecs-cluster" >> /etc/ecs/ecs.config;echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;echo ECS_AVAILABLE_LOGGING_DRIVERS='["awslogs"]' >> /etc/ecs/ecs.config
+

@@ -2,6 +2,7 @@
 
   - name: ecs Cluster
     ecs_cluster:
-      name: "greymatter-ecs-cluster"
+      name: "{{ cluster_name }}"
       state: present
+      region: "{{ aws_region }}"
     register: ecs_cluster
