@@ -170,6 +170,7 @@
     ecs_service:
       state: present
       name: data
+      cluster: "{{ cluster_name }}"
       region: "{{ aws_region }}"
       launch_type: FARGATE
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
