@@ -13,6 +13,9 @@
       task_role_arn: "{{ ecs_instance_role }}"
       volumes:
       - name: certs
+      - name: "pg-config"
+      - name: "pg-certs"
+      - name: "pg-sla-data"
       containers:
       - name: "proxy-slo"
         essential: true
@@ -65,10 +68,37 @@
         # - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
           # value: "{{ lookup('aws_secret', 'postgres-password') }}"
         # - name: "DATABASE_URI" # todo: update to point to RDS DB
-          # value: "postgres://slauser:$(POSTGRESQL_PASSWORD)@localhost:5432/slodb"
+          # value: "postgres://slauser:{{ lookup('aws_secret', 'postgres-password') }}@localhost:5432/slodb"
         portMappings:
         - containerPort: 1337
           hostPort: 1337
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/var/lib/postgresql"
+          sourceVolume: "pg-config"
+        - containerPath: "/var/lib/postgresql/certs"
+          sourceVolume: "pg-certs"
+        - containerPath: "/var/lib/pgsql/data1"
+          sourceVolume: "pg-sla-data"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: postgres
+        essential: true
+        image: "docker.io/centos/postgresql-95-centos7"
+        environment:
+        - name: POSTGRESQL_USER
+          value: slauser
+        # - name: POSTGRESQL_PASSWORD
+          # value: "{{ lookup('aws_secret', 'postgres-password') }}"
+        - name: POSTGRESQL_DATABASE
+          value: slodb
+        portMappings:
+        - containerPort: 5432
+          hostPort: 5432
           protocol: tcp
         logConfiguration:
           logDriver: awslogs
