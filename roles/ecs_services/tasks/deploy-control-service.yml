@@ -14,7 +14,7 @@
       containers:
       - name: control
         essential: true
-        image: "{{ greymatter_proxy_image }}"
+        image: "docker-greymatter.di2e.net/greymatter/gm-control:0.5.1"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:
