@@ -16,7 +16,7 @@
       containers:
       - name: "proxy-control-api"
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1"
+        image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
@@ -52,7 +52,7 @@
             awslogs-stream-prefix: web
       - name: control-api
         essential: true
-        image: "{{ greymatter_proxy_image }}"
+        image: "docker-greymatter.di2e.net/greymatter/gm-control-api:0.8.1"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
