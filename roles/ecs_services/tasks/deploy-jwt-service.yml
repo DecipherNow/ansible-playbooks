@@ -60,7 +60,6 @@
         environment:
         - name: "HTTP_PORT"
           value: 8080
-        # - name: "TOKEN_EXP_TIME"
         - name: "REDIS_HOST"
           value: localhost
         - name: "REDIS_PORT"
@@ -71,16 +70,14 @@
           value: false
         - name: "DEFAULT_PATH"
           value: "/services/"
-        # - name: KAFKA_PEERS
-        #   value: "kafka-0.kafka.kafka.svc.cluster.local:9092,kafka-1.kafka.kafka.svc.cluster.local:9092,kafka-2.kafka.kafka.svc.cluster.local:9092"
-        # - name: "USERS_JSON"
-          # value: "{{ lookup('file', 'jwt-users.json') }}"
+        - name: "USERS_JSON"
+          value: "{{ lookup('file', 'jwt-users.json') }}"
         # - name: "PRIVATE_KEY"
           # value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
-        # - name: "REDIS_PASS"
-          # value: "{{ lookup('aws_secret', 'redis-password') }}"
         # - name: "JWT_API_KEY"
           # value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
+        # - name: "REDIS_PASS"
+          # value: "{{ lookup('aws_secret', 'redis-password') }}"
         portMappings:
         - containerPort: 8080
           hostPort: 8080
@@ -92,12 +89,8 @@
             awslogs-region: us-east-2
             awslogs-stream-prefix: web
       - name: redis
-        cpu: 256
         essential: true
         image: "docker.io/centos/redis-32-centos7"
-        repositoryCredentials:
-          credentialsParameter: "{{ credentials_parameter }}"
-        memory: 400
         # environment:
         # - name: "REDIS_PASSWORD"
           # value: "{{ lookup('aws_secret', 'redis-password') }}"

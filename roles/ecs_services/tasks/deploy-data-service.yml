@@ -141,8 +141,6 @@
       - name: mongo
         essential: true
         image: "docker.io/centos/mongodb-32-centos7"
-        repositoryCredentials:
-          credentialsParameter: "{{ credentials_parameter }}"
         environment:
         - name: "MONGODB_DATABASE"
           value: "data"
