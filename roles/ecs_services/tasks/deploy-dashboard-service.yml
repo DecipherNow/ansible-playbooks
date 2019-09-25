@@ -1,9 +1,9 @@
 ---
 
-  - name: Create task definition catalog
+  - name: Create task definition dashboard
     ecs_taskdefinition:
       state: present
-      family: "greymatter-catalog"
+      family: "greymatter-dashboard"
       network_mode: awsvpc
       launch_type: FARGATE
       cpu: 512
@@ -14,20 +14,20 @@
       volumes:
       - name: certs
       containers:
-      - name: "proxy-catalog"
+      - name: "proxy-dashboard"
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
-          gm-cluster: "sidecar-catalog"
+          gm-cluster: "sidecar-dashboard"
         environment:
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
           value: true
         - name: "XDS_CLUSTER"
-          value: catalog
+          value: dashboard
         - name: "XDS_HOST"
           value: localhost # todo point to gm-control
         - name: "XDS_PORT"
@@ -50,47 +50,33 @@
             awslogs-group: openjobs
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
-      - name: catalog
+      - name: dashboard
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-catalog:1.0.1"
+        image: "docker-greymatter.di2e.net/greymatter/gm-dashboard:3.1.0"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
-          gm-cluster: "service-catalog"
+          gm-cluster: "service-dashboard"
         environment:
-        - name: "DEBUG"
+        - name: "BASE_PATH"
+          value: "/"
+        - name: "FABRIC_SERVER"
+          value: "/services/catalog/1.0"
+        - name: "CONFIG_SERVER"
+          value: "/services/control-api/1.0/v1.0"
+        - name: "OBJECTIVES_SERVER"
+          value: "/services/slo/1.0"
+        - name: "ENABLE_SENSE"
           value: true
-        - name: "CONTROL_SERVER_0_ADDRESS"
-          value: "localhost:50000"
-        - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
-          value: edge
-        - name: "CONTROL_SERVER_0_ZONE_NAME"
-          value: "default-zone"
-        - name: "CONFIG_SOURCE"
-          value: gmdata
-        - name: "CLIENT_ADDRESS"
-          value: localhost
-        - name: "CLIENT_PORT"
-          value: 9080
-        - name: "CLIENT_PREFIX"
-          value: "/data"
-        - name: "GMDATA_STARTUP_DELAY"
-          value: 10s
-        - name: "GMDATA_MAX_RETRIES"
-          value: 100
-        - name: "GMDATA_RETRY_DELAY"
-          value: 5s
-        - name: "GMDATA_ROOT_EVENT_NAME"
-          value: world
-        - name: "CLIENT_USE_TLS"
-          value: false
-        - name: "CLIENT_IDENTITY"
-          value: "CN=localhost,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US"
-        - name: "CLIENT_EMAIL"
-          value: "localhost@deciphernow.com"
+        - name: "SENSE_SERVER"
+          value: "/services/sense/1.0"
+        # - name: "USE_PROMETHEUS"
+        #   value: "true"
+        # - name: "PROMETHEUS_SERVER"
+        #   value: "/services/prometheus/api/v1/"
         portMappings:
-        - containerPort: 8080
-          hostPort: 8080
+        - containerPort: 1337
+          hostPort: 1337
           protocol: tcp
         logConfiguration:
           logDriver: awslogs
@@ -100,10 +86,10 @@
             awslogs-stream-prefix: web
     register: task_output
 
-  - name: ECS service catalog
+  - name: ECS service dashboard
     ecs_service:
       state: present
-      name: catalog
+      name: dashboard
       cluster: "{{ cluster_name }}"
       region: "{{ aws_region }}"
       launch_type: FARGATE
@@ -115,6 +101,6 @@
         subnets: "{{ subnet_list }}"
       load_balancers:
         - targetGroupArn: "{{ task_target_group }}"
-          containerName: "proxy-catalog"
+          containerName: "proxy-dashboard"
           containerPort: 9080
     register: "ecs_service"

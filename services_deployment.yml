@@ -6,9 +6,10 @@
   - import_role:
       name: ecs_services
     vars:
-      cluster_name: 'greymatter-ecs-cluster-2'
+      cluster_name: 'greymatter-ecs-cluster'
       aws_region: 'us-east-1'
       task_target_group: 'arn:aws:elasticloadbalancing:us-east-1:706634194319:targetgroup/greymatter-ecs-alb-tg-ip/826faf9b835b9140'
+      credentials_parameter: 'arn:aws:secretsmanager:us-east-1:706634194319:secret:ecs-greymatter-ci-emFEzR'
       subnet_list: 'subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8'
       security_group: 'sg-058ff37fcba82d64e'
       ecs_instance_role: 'arn:aws:iam::706634194319:role/ecsInstanceRole'

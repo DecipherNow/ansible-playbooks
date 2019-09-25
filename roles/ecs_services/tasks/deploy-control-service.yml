@@ -4,37 +4,38 @@
     ecs_taskdefinition:
       state: present
       family: "greymatter-control"
-      network_mode: "awsvpc"
-      launch_type: "EC2"
+      network_mode: awsvpc
+      launch_type: FARGATE
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
       execution_role_arn: "{{ ecs_instance_role }}"
       task_role_arn: "{{ ecs_instance_role }}"
       containers:
       - name: control
-        cpu: 256
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-2:151736245382:secret:ecs-greymatter/zGREYMATTER-ci-6WOFGP"
-        memory: 400
+          credentialsParameter: "{{ credentials_parameter }}"
         environment:
         - name: "GM_CONTROL_API_HOST"
           value: "localhost:5555"
         - name: "GM_CONTROL_API_KEY"
-          value: "xxx"
+          value: xxx
         - name: "GM_CONTROL_API_SSL"
-          value: "false"
+          value: false
         - name: "GM_CONTROL_API_ZONE_NAME"
           value: "default-zone"
         - name: "GM_CONTROL_CMD"
-          value: "ecs"
+          value: ecs
         - name: "GM_CONTROL_CONSOLE_LEVEL"
-          value: "debug"
+          value: debug
         - name: "GM_CONTROL_XDS_ADS_ENABLED"
-          value: "true"
+          value: true
         - name: "GM_CONTROL_ECS_AWS_REGION"
-          value: "us-east-2"
-        - name: "GM_CONTROL_ECS_CLUSTERS"
-          value: ""
+          value: "us-east-1"
+        - name: "GM_CONTROL_ECS_CLUSTER_TAG"
+          value: "gm-cluster"
         portMappings:
         - containerPort: 50000
           hostPort: 50000
@@ -50,15 +51,18 @@
   - name: ECS service control
     ecs_service:
       state: present
-      network_configuration:
-        security_groups: "{{ security_group }}"
-        subnets: "{{ subnet_list }}"
       name: control
       cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: FARGATE
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
+      network_configuration:
+        assign_public_ip: true
+        security_groups: "{{ security_group }}"
+        subnets: "{{ subnet_list }}"
       load_balancers:
         - targetGroupArn: "{{ task_target_group }}"
-          containerName: "control"
-          containerPort: "50000"
+          containerName: control
+          containerPort: 50000
     register: "ecs_service"

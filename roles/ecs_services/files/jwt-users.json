@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "label": "CN=localhost,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US",
+      "values": {
+        "email": ["localhost@deciphernow.com"],
+        "org": ["www.deciphernow.com"],
+        "privilege": ["root"]
+      }
+    },
+    {
+      "label": "cn=localhost, dc=deciphernow, dc=com",
+      "values": {
+        "email": ["localhost@deciphernow.com"],
+        "org": ["www.deciphernow.com"]
+      }
+    }
+  ]
+}
