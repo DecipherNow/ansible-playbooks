@@ -68,7 +68,7 @@
         # - name: "POSTGRESQL_PASSWORD" # todo: store secret in AWS Secrets Manager
           # value: "{{ lookup('aws_secret', 'postgres-password') }}"
         # - name: "DATABASE_URI" # todo: update to point to RDS DB
-          # value: "postgres://slauser:{{ lookup('aws_secret', 'postgres-password') }}@localhost:5432/slodb"
+          # value: "postgres://slo-user:{{ lookup('aws_secret', 'postgres-password') }}@localhost:5432/slodb"
         portMappings:
         - containerPort: 1337
           hostPort: 1337
@@ -84,7 +84,7 @@
         image: "docker.io/centos/postgresql-95-centos7"
         environment:
         - name: POSTGRESQL_USER
-          value: slauser
+          value: "slo-user"
         # - name: POSTGRESQL_PASSWORD
           # value: "{{ lookup('aws_secret', 'postgres-password') }}"
         - name: POSTGRESQL_DATABASE
