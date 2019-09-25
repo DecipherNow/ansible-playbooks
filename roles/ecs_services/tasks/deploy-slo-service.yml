@@ -13,9 +13,9 @@
       task_role_arn: "{{ ecs_instance_role }}"
       volumes:
       - name: certs
-      - name: "pg-config"
-      - name: "pg-certs"
-      - name: "pg-sla-data"
+      - name: "postgres-config"
+      - name: "postgres-certs"
+      - name: "postgres-sla-data"
       containers:
       - name: "proxy-slo"
         essential: true
@@ -75,11 +75,14 @@
           protocol: tcp
         mountPoints:
         - containerPath: "/var/lib/postgresql"
-          sourceVolume: "pg-config"
+          sourceVolume: "postgres-config"
+          readOnly: true
         - containerPath: "/var/lib/postgresql/certs"
-          sourceVolume: "pg-certs"
+          sourceVolume: "postgres-certs"
+          readOnly: true
         - containerPath: "/var/lib/pgsql/data1"
-          sourceVolume: "pg-sla-data"
+          sourceVolume: "postgres-sla-data"
+          readOnly: true
         logConfiguration:
           logDriver: awslogs
           options:
