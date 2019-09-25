@@ -73,16 +73,6 @@
         - containerPort: 1337
           hostPort: 1337
           protocol: tcp
-        mountPoints:
-        - containerPath: "/var/lib/postgresql"
-          sourceVolume: "postgres-config"
-          readOnly: true
-        - containerPath: "/var/lib/postgresql/certs"
-          sourceVolume: "postgres-certs"
-          readOnly: true
-        - containerPath: "/var/lib/pgsql/data1"
-          sourceVolume: "postgres-sla-data"
-          readOnly: true
         logConfiguration:
           logDriver: awslogs
           options:
@@ -103,6 +93,16 @@
         - containerPort: 5432
           hostPort: 5432
           protocol: tcp
+        mountPoints:
+        - containerPath: "/var/lib/postgresql"
+          sourceVolume: "postgres-config"
+          readOnly: true
+        - containerPath: "/var/lib/postgresql/certs"
+          sourceVolume: "postgres-certs"
+          readOnly: true
+        - containerPath: "/var/lib/pgsql/data1"
+          sourceVolume: "postgres-sla-data"
+          readOnly: true
         logConfiguration:
           logDriver: awslogs
           options:
