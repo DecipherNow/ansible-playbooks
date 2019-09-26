@@ -12,10 +12,10 @@
         ecs/cluster/greymatter-ecs-example: "owned"
     register: setup_vpc
 
-  - name: check that vpc did not change
-    assert:
-      that:
-        - not setup_vpc.changed
+ # - name: check that vpc did not change
+ #   assert:
+ #     that:
+ #       - not setup_vpc.changed
 
         
   - name: create private subnets
@@ -98,10 +98,6 @@
       description: "ECS Allowed Ports"
       vpc_id: '{{ setup_vpc.vpc.id }}'
       rules:
-      - proto: tcp
-        from_port: 22
-        cidr_blocks: 50.204.68.162/32
-        type: ssh
       - from_port: 80
         to_port: 80
         cidr_ip: 192.168.0.0/16
@@ -204,5 +200,4 @@
       replace_all_instances: yes
       region: "{{ aws_region }}"
       health_check_type: EC2
-      target_group_arns:
-      - '{{ elb_target_group_instance.target_group_arn }}'
+      target_group_arns: "{{ elb_target_group_instance.target_group_arn }}"
