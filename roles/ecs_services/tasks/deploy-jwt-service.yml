@@ -52,7 +52,7 @@
             awslogs-stream-prefix: web
       - name: jwt
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-jwt-security:0.2.0"
+        image: "docker.production.deciphernow.com/deciphernow/gm-jwt-security:0.2.0"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:

@@ -52,7 +52,7 @@
             awslogs-stream-prefix: web
       - name: dashboard
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-dashboard:3.1.0"
+        image: "docker.production.deciphernow.com/deciphernow/gm-dashboard:3.1.0"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:

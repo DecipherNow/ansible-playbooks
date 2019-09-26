@@ -14,7 +14,7 @@
       containers:
       - name: control
         essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-control:0.5.1"
+        image: "docker.production.deciphernow.com/deciphernow/gm-control:0.5.1"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:

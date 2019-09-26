@@ -13,4 +13,4 @@
       subnet_list: 'subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8'
       security_group: 'sg-058ff37fcba82d64e'
       ecs_instance_role: 'arn:aws:iam::706634194319:role/ecsInstanceRole'
-      greymatter_proxy_image: 'docker-greymatter.di2e.net/greymatter/gm-proxy:0.8.1'
+      greymatter_proxy_image: 'docker.production.deciphernow.com/deciphernow/gm-proxy:0.8.1'
