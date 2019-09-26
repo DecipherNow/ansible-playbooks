@@ -1,4 +1,4 @@
-Create a `main.yml` file in this folder that looks like...
+Create a `main.yml` file in this folder that looks like the following:
 
 ``` yaml
 ---
@@ -6,7 +6,6 @@ Create a `main.yml` file in this folder that looks like...
 greymatter_ro_secret:
   username: "username"
   password: "password"
-
 
 jwt_secret:
   api_key: "api_key"
