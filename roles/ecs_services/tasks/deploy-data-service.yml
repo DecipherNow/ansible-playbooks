@@ -64,15 +64,15 @@
         - name: "GMDATA_NAMESPACE_USERFIELD"
           value: email
         - name: "USES3"
-          value: true
+          value: "true" # gm-data doesn't parse "True" or "False"
         - name: "AWS_S3_BUCKET" # todo: use separate bucket for ECS-specific data
           value: "decipher-development-data"
         - name: "AWS_S3_PARTITION"
           value: gmdatax
         - name: "AWS_REGION"
-          value: "us-east-2"
+          value: "{{ aws_region }}"
         - name: "GMDATAX_CATCH_PANIC"
-          value: true
+          value: "true" # gm-data doesn't parse "True" or "False"
         - name: "GMDATAX_SESSION_MAX"
           value: 10000
         - name: "HTTP_CACHE_SECONDS"
@@ -84,7 +84,7 @@
         - name: "OBS_TOPIC_UPDATE"
           value: "gmdatax-update"
         - name: "LESS_CHATTY_INFO"
-          value: false
+          value: "false" # gm-data doesn't parse "True" or "False"
         - name: "MASTERKEY"
           value: foo
         - name: "MONGOHOST"

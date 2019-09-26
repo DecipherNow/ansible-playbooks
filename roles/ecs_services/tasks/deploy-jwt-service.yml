@@ -51,27 +51,21 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: jwt
-        essential: true
+        essential: false
         image: "docker.production.deciphernow.com/deciphernow/gm-jwt-security:0.2.0"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
           gm-cluster: "service-jwt"
         environment:
-        - name: "HTTP_PORT"
-          value: 8080
         - name: "REDIS_HOST"
           value: localhost
         - name: "REDIS_PORT"
           value: 6379
-        - name: "REDIS_DB"
-          value: 1
         - name: "ENABLE_TLS"
-          value: false
-        - name: "DEFAULT_PATH"
-          value: "/services/"
+          value: "false" # gm-jwt doesn't parse "True" or "False"
         - name: "USERS_JSON"
-          value: "{{ lookup('file', 'jwt-users.json') }}"
+          value: "{{ lookup('file', 'jwt-users.json') | b64encode }}"
         - name: "PRIVATE_KEY"
           value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('private_key') }}"
         - name: "JWT_API_KEY"
@@ -86,10 +80,10 @@
           logDriver: awslogs
           options:
             awslogs-group: openjobs
-            awslogs-region: us-east-2
+            awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: redis
-        essential: true
+        essential: false
         image: "docker.io/centos/redis-32-centos7"
         environment:
         - name: "REDIS_PASSWORD"
