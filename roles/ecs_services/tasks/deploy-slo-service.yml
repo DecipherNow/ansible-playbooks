@@ -28,7 +28,7 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: true
+          value: "true"
         - name: "XDS_CLUSTER"
           value: slo
         - name: "XDS_HOST"
@@ -62,9 +62,9 @@
           gm-cluster: "service-slo"
         environment:
         - name: "DROP_SCHEMA"
-          value: false
+          value: "false"
         - name: "SSL_ENABLED"
-          value: false
+          value: "false"
         - name: "DATABASE_URI" # todo: update to point to RDS DB
           value: "postgres://slo-user:{{ lookup('aws_secret', 'slo-psql-pass') }}@localhost:5432/slodb"
         portMappings:
@@ -119,7 +119,6 @@
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       network_configuration:
-        assign_public_ip: true
         security_groups: "{{ security_group }}"
         subnets: "{{ subnet_list }}"
       load_balancers:

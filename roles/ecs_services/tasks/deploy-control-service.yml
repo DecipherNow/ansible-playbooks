@@ -23,7 +23,7 @@
         - name: "GM_CONTROL_API_KEY"
           value: xxx
         - name: "GM_CONTROL_API_SSL"
-          value: false
+          value: "false"
         - name: "GM_CONTROL_API_ZONE_NAME"
           value: "default-zone"
         - name: "GM_CONTROL_CMD"
@@ -31,7 +31,7 @@
         - name: "GM_CONTROL_CONSOLE_LEVEL"
           value: debug
         - name: "GM_CONTROL_XDS_ADS_ENABLED"
-          value: true
+          value: "true"
         - name: "GM_CONTROL_ECS_AWS_REGION"
           value: "us-east-1"
         - name: "GM_CONTROL_ECS_CLUSTER_TAG"

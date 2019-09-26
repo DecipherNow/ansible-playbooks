@@ -25,7 +25,7 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: true
+          value: "true"
         - name: "XDS_CLUSTER"
           value: catalog
         - name: "XDS_HOST"
@@ -59,7 +59,7 @@
           gm-cluster: "service-catalog"
         environment:
         - name: "DEBUG"
-          value: true
+          value: "true"
         - name: "CONTROL_SERVER_0_ADDRESS"
           value: "localhost:50000"
         - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
@@ -83,7 +83,7 @@
         - name: "GMDATA_ROOT_EVENT_NAME"
           value: world
         - name: "CLIENT_USE_TLS"
-          value: false
+          value: "false"
         - name: "CLIENT_IDENTITY"
           value: "CN=localhost,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US"
         - name: "CLIENT_EMAIL"
@@ -110,7 +110,6 @@
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       network_configuration:
-        assign_public_ip: true
         security_groups: "{{ security_group }}"
         subnets: "{{ subnet_list }}"
       load_balancers:

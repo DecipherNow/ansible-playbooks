@@ -25,7 +25,7 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: true
+          value: "true"
         - name: "XDS_CLUSTER"
           value: dashboard
         - name: "XDS_HOST"
@@ -67,7 +67,7 @@
         - name: "OBJECTIVES_SERVER"
           value: "/services/slo/1.0"
         - name: "ENABLE_SENSE"
-          value: true
+          value: "true"
         - name: "SENSE_SERVER"
           value: "/services/sense/1.0"
         # - name: "USE_PROMETHEUS"

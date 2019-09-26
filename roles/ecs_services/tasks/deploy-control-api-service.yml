@@ -25,7 +25,7 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: true
+          value: "true"
         - name: "XDS_CLUSTER"
           value: "control-api"
         - name: "XDS_HOST"
@@ -94,7 +94,6 @@
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       network_configuration:
-        assign_public_ip: true
         security_groups: "{{ security_group }}"
         subnets: "{{ subnet_list }}"
       load_balancers:
