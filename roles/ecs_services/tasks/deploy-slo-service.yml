@@ -18,7 +18,7 @@
       - name: "postgres-sla-data"
       containers:
       - name: "proxy-slo"
-        essential: true
+        essential: false
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -54,7 +54,7 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: slo
-        essential: true
+        essential: false
         image: "docker.production.deciphernow.com/deciphernow/gm-slo:latest"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -78,7 +78,7 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: postgres
-        essential: true
+        essential: false
         image: "docker.io/centos/postgresql-95-centos7"
         environment:
         - name: POSTGRESQL_USER

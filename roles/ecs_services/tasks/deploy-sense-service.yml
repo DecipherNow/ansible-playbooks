@@ -15,7 +15,7 @@
       - name: certs
       containers:
       - name: "proxy-sense"
-        essential: true
+        essential: false
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -51,7 +51,7 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: sense
-        essential: true
+        essential: false
         image: "docker.production.deciphernow.com/deciphernow/gm-sense:latest"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"

@@ -16,7 +16,7 @@
       - name: "mongo-data"
       containers:
       - name: "proxy-data"
-        essential: true
+        essential: false
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -52,7 +52,7 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: data
-        essential: true
+        essential: false
         image: "docker.production.deciphernow.com/deciphernow/gm-data:latest"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -126,7 +126,7 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: mongo
-        essential: true
+        essential: false
         image: "docker.io/centos/mongodb-32-centos7"
         environment:
         - name: "MONGODB_DATABASE"

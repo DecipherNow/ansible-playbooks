@@ -13,9 +13,10 @@
       task_role_arn: "{{ ecs_instance_role }}"
       volumes:
       - name: certs
+      - name: users
       containers:
       - name: "proxy-jwt"
-        essential: true
+        essential: false
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -76,6 +77,9 @@
         - containerPort: 8080
           hostPort: 8080
           protocol: tcp
+        mountPoints:
+        - containerPath: "/gm-jwt-security/etc"
+          sourceVolume: users
         logConfiguration:
           logDriver: awslogs
           options:
