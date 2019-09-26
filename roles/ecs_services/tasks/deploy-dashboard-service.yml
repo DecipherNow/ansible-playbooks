@@ -15,7 +15,7 @@
       - name: certs
       containers:
       - name: "proxy-dashboard"
-        essential: false
+        essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"

@@ -18,7 +18,7 @@
       - name: "postgres-sla-data"
       containers:
       - name: "proxy-slo"
-        essential: false
+        essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
@@ -119,6 +119,7 @@
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
       network_configuration:
+        assign_public_ip: true
         security_groups: "{{ security_group }}"
         subnets: "{{ subnet_list }}"
       load_balancers:
