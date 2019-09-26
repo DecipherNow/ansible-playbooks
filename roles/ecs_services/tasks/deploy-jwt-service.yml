@@ -72,12 +72,12 @@
           value: "/services/"
         - name: "USERS_JSON"
           value: "{{ lookup('file', 'jwt-users.json') }}"
-        # - name: "PRIVATE_KEY"
-          # value: "{{ lookup('aws_secret', 'jwt-private-key') }}"
-        # - name: "JWT_API_KEY"
-          # value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
-        # - name: "REDIS_PASS"
-          # value: "{{ lookup('aws_secret', 'redis-password') }}"
+        - name: "PRIVATE_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('private_key') }}"
+        - name: "JWT_API_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('api_key') }}"
+        - name: "REDIS_PASS"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('redis_pass') }}"
         portMappings:
         - containerPort: 8080
           hostPort: 8080
@@ -91,9 +91,9 @@
       - name: redis
         essential: true
         image: "docker.io/centos/redis-32-centos7"
-        # environment:
-        # - name: "REDIS_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'redis-password') }}"
+        environment:
+        - name: "REDIS_PASSWORD"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('redis_pass') }}"
         portMappings:
         - containerPort: 6379
           hostPort: 6379

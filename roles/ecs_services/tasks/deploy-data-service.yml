@@ -103,31 +103,18 @@
           value: 9080
         - name: "CLIENT_JWT_ENDPOINT_PREFIX"
           value: "/jwt"
-        # - name: "AWS_S3_ENDPOINT"
-        # - name: "IPFS_HOSTKEY"
-        # - name: "MONGOCERT"
-        # - name: "MONGOKEY"
-        # - name: "MONGOTRUST"
-        # - name: "PRETTY_PRINT"
-        # - name: "REKOGNITION_FACE_INDEX"
-        # - name: "USEIPFS"
-        # - name: "ZEROLOG_LEVEL"
+        - name: "MONGO_INITDB_ROOT_USERNAME"
+          value: "data-user"
+        - name: "MONGO_INITDB_ROOT_PASSWORD"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('mongo_pass') }}"
+        - name: "JWT_API_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('api_key') }}"
+        - name: "JWT_PUB"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('jwt_pub') }}"
         # - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
           # value: "{{ lookup('aws_secret', 'aws-access-key-id') }}"
         # - name: "AWS_SECRET_ACCESS_KEY" # todo: figure out how to lookup
           # value: "{{ lookup('aws_secret', 'aws-secret-access-key') }}"
-        # - name: "BIND_ADDRESS"
-        # - name: "BIND_PORT"
-        # - name: "DISABLE_LOOKUPS"
-        # - name: "DONT_PANIC"
-        # - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
-          # value: "{{ lookup('aws_secret', 'jwt-pub') }}"
-        # - name: "MONGO_INITDB_ROOT_USERNAME"
-          # value: "{{ lookup('aws_secret', 'mongo-user') }}"
-        # - name: "MONGO_INITDB_ROOT_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'mongo-password') }}"
-        # - name: "JWT_API_KEY"
-          # value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         portMappings:
         - containerPort: 8181
           hostPort: 8181
@@ -144,12 +131,12 @@
         environment:
         - name: "MONGODB_DATABASE"
           value: "data"
-        # - name: "MONGODB_USER"
-          # value: "{{ lookup('aws_secret', 'mongo-user') }}"
-        # - name: "MONGODB_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'mongo-password') }}"
-        # - name: "MONGODB_ADMIN_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'mongo-admin-password') }}"
+        - name: "MONGODB_USER"
+          value: "data-user"
+        - name: "MONGODB_PASSWORD"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('mongo_pass') }}"
+        - name: "MONGODB_ADMIN_PASSWORD"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('mongo_admin_pass') }}"
         portMappings:
         - containerPort: 27017
           hostPort: 27017
