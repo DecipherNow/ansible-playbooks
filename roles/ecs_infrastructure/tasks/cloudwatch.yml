@@ -1,0 +1,6 @@
+---
+
+  - name: IAM role for ec2 instances and services
+    cloudwatchlogs_log_group:
+      state: present
+      log_group_name: openjobs

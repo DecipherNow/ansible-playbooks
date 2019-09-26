@@ -1,0 +1,9 @@
+---
+
+  - name: create greymatter ro secret in AWS secrets manager
+    aws_secret:
+      name: "ecs-greymatter-ci"
+      state: present
+      secret_type: 'string'
+      secret: "{{ greymatter_ro_secret | to_json }}"
+    register: ecs_greymatter_ci_secret
