@@ -25,7 +25,7 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: true
+          value: "true"
         - name: "XDS_CLUSTER"
           value: catalog
         - name: "XDS_HOST"
@@ -51,15 +51,15 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: catalog
-        essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-catalog:1.0.1"
+        essential: false
+        image: "docker.production.deciphernow.com/deciphernow/gm-catalog:1.0.1"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
           gm-cluster: "service-catalog"
         environment:
         - name: "DEBUG"
-          value: true
+          value: "true"
         - name: "CONTROL_SERVER_0_ADDRESS"
           value: "localhost:50000"
         - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
@@ -83,7 +83,7 @@
         - name: "GMDATA_ROOT_EVENT_NAME"
           value: world
         - name: "CLIENT_USE_TLS"
-          value: false
+          value: "false"
         - name: "CLIENT_IDENTITY"
           value: "CN=localhost,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US"
         - name: "CLIENT_EMAIL"
