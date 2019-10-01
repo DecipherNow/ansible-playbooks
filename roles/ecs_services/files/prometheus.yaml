@@ -1,0 +1,31 @@
+global:
+  scrape_interval:     5s
+  evaluation_interval: 2m
+
+# References the recording rules YAML file below
+rule_files:
+  - "/etc/prometheus/recording_rules.yaml"
+
+scrape_configs:
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: kubernetes
+    metrics_path: /prometheus
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - "greymatter3"
+    relabel_configs:
+    # Drop all named ports that are not "metrics"
+    - source_labels: ['__meta_kubernetes_pod_container_port_name']
+      regex: 'metrics'
+      action: 'keep'
+    # Relabel Jobs to the service name and version of the zk path
+    - source_labels: ['__meta_kubernetes_pod_label_app']
+      regex: '(.*)'
+      target_label:  'job'
+      #replacement:   '${1}'
+      replacement:   '${1}'
