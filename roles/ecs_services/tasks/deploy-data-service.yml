@@ -26,7 +26,7 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: true
+          value: "true"
         - name: "XDS_CLUSTER"
           value: data
         - name: "XDS_HOST"
@@ -52,8 +52,8 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: data
-        essential: true
-        image: "docker-greymatter.di2e.net/greymatter/gm-data:latest"
+        essential: false
+        image: "docker.production.deciphernow.com/deciphernow/gm-data:latest"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:
@@ -64,15 +64,15 @@
         - name: "GMDATA_NAMESPACE_USERFIELD"
           value: email
         - name: "USES3"
-          value: true
+          value: "true" # gm-data doesn't parse "True" or "False"
         - name: "AWS_S3_BUCKET" # todo: use separate bucket for ECS-specific data
           value: "decipher-development-data"
         - name: "AWS_S3_PARTITION"
           value: gmdatax
         - name: "AWS_REGION"
-          value: "us-east-2"
+          value: "{{ aws_region }}"
         - name: "GMDATAX_CATCH_PANIC"
-          value: true
+          value: "true" # gm-data doesn't parse "True" or "False"
         - name: "GMDATAX_SESSION_MAX"
           value: 10000
         - name: "HTTP_CACHE_SECONDS"
@@ -84,7 +84,7 @@
         - name: "OBS_TOPIC_UPDATE"
           value: "gmdatax-update"
         - name: "LESS_CHATTY_INFO"
-          value: false
+          value: "false" # gm-data doesn't parse "True" or "False"
         - name: "MASTERKEY"
           value: foo
         - name: "MONGOHOST"
@@ -103,31 +103,18 @@
           value: 9080
         - name: "CLIENT_JWT_ENDPOINT_PREFIX"
           value: "/jwt"
-        # - name: "AWS_S3_ENDPOINT"
-        # - name: "IPFS_HOSTKEY"
-        # - name: "MONGOCERT"
-        # - name: "MONGOKEY"
-        # - name: "MONGOTRUST"
-        # - name: "PRETTY_PRINT"
-        # - name: "REKOGNITION_FACE_INDEX"
-        # - name: "USEIPFS"
-        # - name: "ZEROLOG_LEVEL"
+        - name: "MONGO_INITDB_ROOT_USERNAME"
+          value: "data-user"
+        - name: "MONGO_INITDB_ROOT_PASSWORD"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('mongo_pass') }}"
+        - name: "JWT_API_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('api_key') }}"
+        - name: "JWT_PUB"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('jwt_pub') }}"
         # - name: "AWS_ACCESS_KEY_ID" # todo: figure out how to lookup
           # value: "{{ lookup('aws_secret', 'aws-access-key-id') }}"
         # - name: "AWS_SECRET_ACCESS_KEY" # todo: figure out how to lookup
           # value: "{{ lookup('aws_secret', 'aws-secret-access-key') }}"
-        # - name: "BIND_ADDRESS"
-        # - name: "BIND_PORT"
-        # - name: "DISABLE_LOOKUPS"
-        # - name: "DONT_PANIC"
-        # - name: "JWT_PUB" # todo: store secret in AWS Secrets Manager
-          # value: "{{ lookup('aws_secret', 'jwt-pub') }}"
-        # - name: "MONGO_INITDB_ROOT_USERNAME"
-          # value: "{{ lookup('aws_secret', 'mongo-user') }}"
-        # - name: "MONGO_INITDB_ROOT_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'mongo-password') }}"
-        # - name: "JWT_API_KEY"
-          # value: "{{ lookup('aws_secret', 'data-jwt-api-key') }}"
         portMappings:
         - containerPort: 8181
           hostPort: 8181
@@ -139,19 +126,17 @@
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
       - name: mongo
-        essential: true
+        essential: false
         image: "docker.io/centos/mongodb-32-centos7"
-        repositoryCredentials:
-          credentialsParameter: "{{ credentials_parameter }}"
         environment:
         - name: "MONGODB_DATABASE"
           value: "data"
-        # - name: "MONGODB_USER"
-          # value: "{{ lookup('aws_secret', 'mongo-user') }}"
-        # - name: "MONGODB_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'mongo-password') }}"
-        # - name: "MONGODB_ADMIN_PASSWORD"
-          # value: "{{ lookup('aws_secret', 'mongo-admin-password') }}"
+        - name: "MONGODB_USER"
+          value: "data-user"
+        - name: "MONGODB_PASSWORD"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('mongo_pass') }}"
+        - name: "MONGODB_ADMIN_PASSWORD"
+          value: "{{ lookup('aws_secret', 'data-secret') | from_json | json_query('mongo_admin_pass') }}"
         portMappings:
         - containerPort: 27017
           hostPort: 27017
