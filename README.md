@@ -5,9 +5,11 @@ This is the repo for the Ansible-based deployment of Grey Matter 2.0 in Amazon E
 
 This repository contains playbooks made to deploy the AWS infrastructure and Grey Matter services to the Decipher dev AWS environment. It is recommended to set up `aws-vault`, as described [here](https://github.com/99designs/aws-vault) with your credentials in order to run Ansible smoothly.
 
-There are two Ansible roles defined:
+There are three Ansible roles defined:
 - `ecs-infrastructure` spins up the underlying AWS infrastructure (security groups, IAM roles, VPC, etc)
 - `ecs_services` spins up the Grey Matter core services (control, control-api, catalog, etc)
+
+- `ecs_secrets` spins up various necessary secrets into AWS Secrets Manager
 
 ### Launch Types
 
@@ -47,3 +49,10 @@ Assuming you have `aws-vault` correctly configured for the Decipher dev environm
  aws-vault exec dev -- ansible-playbook services_deployment.yml
  ```
 
+1) You can run the Ansible playbook that just creates secrets with
+
+ ``` console
+ aws-vault exec dev -- ansible-playbook secrets.yml
+ ```
+
+Alternatively, you can skip the `aws-vault` part of the command (while we aren't using MFA) if you [export your AWS profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).

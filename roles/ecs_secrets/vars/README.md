@@ -21,4 +21,14 @@ slo_psql_pass: "psql_pass"
 
 sense_oc_api_token: "oc_api_token"
 
+sidecar_certs_cert_b64: "b64 cert"
+
+sidecar_certs_key_b64: "b64 cert"
+
+sidecar_certs_server_b64: "b64 cert:
+
+sidecar_certs_server_key_b64: "b64 cert"
+
+sidecar_certs_ca: "b64 cert"
+
 ```
