@@ -8,3 +8,4 @@
 - include: deploy-catalog-service.yml
 - include: deploy-control-api-service.yml
 - include: deploy-control-service.yml
+- include: deploy-prometheus.yml
