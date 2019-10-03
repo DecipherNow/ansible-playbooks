@@ -6,8 +6,8 @@
             "Effect": "Allow",
             "Principal": {
 		"Service": [
-		    "ec2.amazonaws.com",
-		    "ecs-tasks.amazonaws.com"
+		    "ecs-tasks.amazonaws.com",
+		    "ec2.amazonaws.com"
 		]
 	    },
             "Action": "sts:AssumeRole"

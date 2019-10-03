@@ -44,3 +44,48 @@
       secret_type: 'string'
       secret: "{{ sense_oc_api_token }}"
     register: sense_oc_api_token
+
+  - name: create base64 sidecar cert b64 secret in AWS secrets manager
+    aws_secret:
+      name: "sidecar-certs-cert-b64"
+      description: "base64 sidecar certs"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ sidecar_certs_cert_b64 | to_json }}"
+    register: sidecar_certs
+
+  - name: create base64 sidecar key secret in AWS secrets manager
+    aws_secret:
+      name: "sidecar-certs-key-b64"
+      description: "base64 sidecar certs"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ sidecar_certs_key_b64 | to_json }}"
+    register: sidecar_certs
+
+  - name: create base64 sidecar server b64 secret in AWS secrets manager
+    aws_secret:
+      name: "sidecar-certs-server-b64"
+      description: "base64 sidecar certs"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ sidecar_certs_server_b64 | to_json }}"
+    register: sidecar_certs
+
+  - name: create base64 sidecar server key b64 secret in AWS secrets manager
+    aws_secret:
+      name: "sidecar-certs-server-key-b64"
+      description: "base64 sidecar certs"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ sidecar_certs_server_key_b64 | to_json }}"
+    register: sidecar_certs
+
+  - name: create base64 sidecar cert ca secrets in AWS secrets manager
+    aws_secret:
+      name: "sidecar-certs-ca"
+      description: "base64 sidecar certs"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ sidecar_certs_ca | to_json }}"
+    register: sidecar_certs

@@ -113,6 +113,30 @@
         cidr_ipv6: "::/0"
     register: setup_sg
 
+  - name: update security group for ec2 instances
+    ec2_group:
+      name: "EC2ContainerService-greymatter-ecs-cluster-EcsSecurityGroup-M4LGALUQHS8W"
+      state: present
+      description: "ECS Allowed Ports"
+      vpc_id: '{{ setup_vpc.vpc.id }}'
+      rules:
+      - from_port: 80
+        to_port: 80
+        cidr_ip: 192.168.0.0/16
+        proto: tcp
+      - group_id: "{{ setup_sg.group_id }}"
+        proto: all
+      rules_egress:
+      - proto: "-1"
+        from_port: 0
+        to_port: 0
+        cidr_ip: 0.0.0.0/0
+      - proto: "-1"
+        from_port: 0
+        to_port: 0
+        cidr_ipv6: "::/0"
+
+        
 
     # instances
 
@@ -129,7 +153,7 @@
 
   - name: create instance target group
     elb_target_group:
-        name: "greymatter-ecs-alb-tg-inst"
+        name: "gm-ecs-alb-tg-inst"
         state: present
         protocol: http
         port: 80
@@ -137,19 +161,29 @@
         target_type: instance
     register: elb_target_group_instance
 
-  - name: create ip target group
+  - name: create ip target group control api
     elb_target_group:
-        name: "greymatter-ecs-alb-tg-ip"
+        name: "gm-ecs-alb-tg-ip-control-api"
         state: present
         protocol: http
         port: 80
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: ip
-    register: elb_target_group_ip
+    register: elb_target_group_ip_control_api
 
-  - name: create load balancer
+  - name: create ip target group control
+    elb_target_group:
+        name: "gm-ecs-alb-tg-ip-control"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: ip
+    register: elb_target_group_ip_control
+
+  - name: create load balancer for control
     elb_application_lb:
-      name: "greymatter-ecs-alb"
+      name: "greymatter-ecs-alb-control"
       state: present
       scheme: internal
       security_groups: '{{ setup_sg.group_id }}'
@@ -159,12 +193,27 @@
           Port: 80
           DefaultActions:
             - Type: forward
-              TargetGroupName: "greymatter-ecs-alb-tg-inst"
+              TargetGroupName: "gm-ecs-alb-tg-inst"
         - Protocol: HTTP
           Port: 81
           DefaultActions:
             - Type: forward
-              TargetGroupName: "greymatter-ecs-alb-tg-ip"
+              TargetGroupName: "gm-ecs-alb-tg-ip-control"
+    register: setup_elb
+
+  - name: create load balancer for control api
+    elb_application_lb:
+      name: "greymatter-ecs-alb-control-api"
+      state: present
+      scheme: internal
+      security_groups: '{{ setup_sg.group_id }}'
+      subnets: "{{ setup_public_subnet.results | json_query('[].subnet.id') }}"
+      listeners:
+        - Protocol: HTTP
+          Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-ip-control-api"
     register: setup_elb
 
   - name: create a key pair to use for creating an ec2 instance

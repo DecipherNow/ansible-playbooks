@@ -3,8 +3,10 @@
   - name: IAM role for ec2 instances and services
     iam_role:
       name: ecsInstanceRole
-      assume_role_policy_document: "{{ lookup('file', 'ec2-trust-policy.json')}}"
-      state: present
+      assume_role_policy_document: "{{ lookup('file','ec2-trust-policy.json') }}"
       create_instance_profile: yes
-      managed_policy: 'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role,arn:aws:iam::aws:policy/AmazonECS_FullAccess,arn:aws:iam::aws:policy/SecretsManagerReadWrite'
+      managed_policy:
+        - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+        - "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+        - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
     register: iam_role

@@ -18,8 +18,6 @@
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:
-        - name: "GM_CONTROL_API_HOST"
-          value: "localhost:5555"
         - name: "GM_CONTROL_API_KEY"
           value: xxx
         - name: "GM_CONTROL_API_SSL"
@@ -34,8 +32,12 @@
           value: "true"
         - name: "GM_CONTROL_ECS_AWS_REGION"
           value: "us-east-1"
+        - name: "GM_CONTROL_ECS_CLUSTERS"
+          value: ""
         - name: "GM_CONTROL_ECS_CLUSTER_TAG"
           value: "gm-cluster"
+        - name: "GM_CONTROL_API_HOST"
+          value: "{{ elb_control_api }}:80"
         portMappings:
         - containerPort: 50000
           hostPort: 50000
@@ -62,7 +64,7 @@
         security_groups: "{{ security_group }}"
         subnets: "{{ subnet_list }}"
       load_balancers:
-        - targetGroupArn: "{{ task_target_group }}"
+        - targetGroupArn: "{{ task_target_group_control }}"
           containerName: control
           containerPort: 50000
     register: "ecs_service"
