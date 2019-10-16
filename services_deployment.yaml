@@ -4,7 +4,7 @@
   connection: local
   tasks:
   - import_role:
-      name: ecs_services
+      name: ecs_services_fargate
     vars:
       aws_region: 'us-east-1'
       cluster_name: 'greymatter-ecs-cluster'
