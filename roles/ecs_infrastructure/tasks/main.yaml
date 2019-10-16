@@ -1,0 +1,6 @@
+---
+#- include: cluster.yaml
+- include: efs.yaml
+#- include: iam.yaml
+#- include: network.yaml
+#- include: cloudwatch.yaml

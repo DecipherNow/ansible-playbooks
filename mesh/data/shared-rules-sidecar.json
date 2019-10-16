@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-data-rule",
+  "name": "data",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-data",
+      "weight": 1
+    }]
+  }
+}

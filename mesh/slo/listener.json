@@ -1,0 +1,9 @@
+{
+  "zone_key": "default-zone",
+  "listener_key": "slo-listener",
+  "domain_keys": ["slo"],
+  "name": "slo",
+  "ip": "0.0.0.0",
+  "port": 9080,
+  "protocol": "http_auto"
+}

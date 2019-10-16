@@ -1,0 +1,7 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "dashboard",
+  "shared_rules_key": "dashboard-sidecar-to-service-rule",
+  "route_key": "service-dashboard-route",
+  "path": "/"
+}

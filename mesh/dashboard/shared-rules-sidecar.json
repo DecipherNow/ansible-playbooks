@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-dashboard-rule",
+  "name": "dashboard",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-dashboard",
+      "weight": 1
+    }]
+  }
+}

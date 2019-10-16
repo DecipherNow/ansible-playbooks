@@ -1,0 +1,9 @@
+{
+  "zone_key": "default-zone",
+  "listener_key": "data-listener",
+  "domain_keys": ["data"],
+  "name": "data",
+  "ip": "0.0.0.0",
+  "port": 9080,
+  "protocol": "http_auto"
+}

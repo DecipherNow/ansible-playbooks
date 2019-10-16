@@ -1,0 +1,13 @@
+{
+  "zone_key": "default-zone",
+  "cluster_key": "service-slo",
+  "name": "service",
+  "circuit_breakers": {
+    "max_connections": 500,
+    "max_requests": 500
+  },
+  "instances": [{
+    "host": "localhost",
+    "port": 8080
+  }]
+}

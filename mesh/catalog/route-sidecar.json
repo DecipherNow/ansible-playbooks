@@ -1,0 +1,8 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-catalog-rule",
+  "route_key": "sidecar-catalog-route",
+  "path": "/services/catalog/1.0",
+  "prefix_rewrite": "/services/catalog/1.0/"
+}

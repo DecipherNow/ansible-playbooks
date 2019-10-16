@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-catalog-rule",
+  "name": "catalog",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-catalog",
+      "weight": 1
+    }]
+  }
+}

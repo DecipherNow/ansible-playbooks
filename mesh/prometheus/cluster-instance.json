@@ -1,0 +1,9 @@
+{
+  "zone_key": "default-zone",
+  "cluster_key": "sidecar-prometheus",
+  "name": "sidecar-prometheus",
+  "circuit_breakers": {
+    "max_connections": 500,
+    "max_requests": 500
+  }
+}

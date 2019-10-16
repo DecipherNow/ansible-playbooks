@@ -1,0 +1,18 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "name": "external-greymatter-ecs-alb-edge-1901967166.us-east-1.elb.amazonaws.com",
+  "port": 80,
+  "ssl_config": {
+    "cipher_filter": "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH",
+    "protocols": ["SSLv3", "SSLv2", "TLSv1", "TLSv1.1", "TLSv1.2"],
+    "require_client_certs": true,
+    "trust_file": "/app/certs/ca.crt",
+    "cert_key_pairs": [
+        {
+            "certificate_path": "/app/certs/wildcard.development.deciphernow.com.crt",
+            "key_path": "/app/certs/wildcard.development.deciphernow.com.key"
+        }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "zone_key": "default-zone",
+  "listener_key": "jwt-listener",
+  "domain_keys": ["jwt"],
+  "name": "jwt",
+  "ip": "0.0.0.0",
+  "port": 9080,
+  "protocol": "http_auto"
+}

@@ -1,0 +1,8 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-jwt-rule",
+  "route_key": "sidecar-jwt-route-slash",
+  "path": "/services/jwt/1.0/",
+  "prefix_rewrite": "/"
+}

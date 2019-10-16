@@ -1,0 +1,8 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-prometheus-rule",
+  "route_key": "sidecar-prometheus-route",
+  "path": "/services/prometheus",
+  "prefix_rewrite": "/services/prometheus/"
+}

@@ -1,0 +1,9 @@
+{
+  "zone_key": "default-zone",
+  "cluster_key": "sidecar-control-api",
+  "name": "sidecar-control-api",
+  "circuit_breakers": {
+    "max_connections": 500,
+    "max_requests": 500
+  }
+}

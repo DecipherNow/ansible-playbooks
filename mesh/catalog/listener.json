@@ -1,0 +1,9 @@
+{
+  "zone_key": "default-zone",
+  "listener_key": "catalog-listener",
+  "domain_keys": ["catalog"],
+  "name": "catalog",
+  "ip": "0.0.0.0",
+  "port": 9080,
+  "protocol": "http_auto"
+}
