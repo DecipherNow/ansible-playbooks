@@ -1,10 +1,13 @@
-## An Overview of ECS
+## An Overview of ECS with EC2 Backing
 
 Within a single ECS cluster (ours is called `greymatter-ecs-cluster`), there are multiple ECS services.
 
-Each ECS service is a logical grouping of any number of ECS task-definition revisions.  
+Each ECS service is a logical grouping of any number of ECS task-definition revisions.
 
-A single service can run multiple instances of a single task definition.  You can optionally connect a service to a load balancer, which is what we did for Grey Matter Control and Grey Matter Control API services to allow them to connect to each other dynamically.  The load balancer can load balance betwen multiple task definitions within a service, but more importantly it gives us a way to dynamically access the IP(s) associated with a task.
+Each task is run with bridge networking in order to allow for appropriate discovery of the proxies by the control plane.  It appears that awsvpc and host networking don't quite work, but it's possible they might with a bit of finagling.
 
-Each time a task restarts, it gets a new IP.  This is a result of using AWS Fargate over having a series of EC2 instances across which our tasks would run.  Fargate is instance-free, and essentially makes it such that each task is its own "container" with its own IP.
+Currently, service discovery via the control plane only works with `PROXY_DYNAMIC=false` and `USE_HTTP2=false` configured in the proxies.
+
+Control and Control API talk to each other via load balancers, and via the Control load balancer the various proxies are configured to talk to Control.
+
 
