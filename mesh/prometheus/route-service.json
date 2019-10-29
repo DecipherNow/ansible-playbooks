@@ -1,0 +1,7 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "prometheus",
+  "shared_rules_key": "prometheus-sidecar-to-service-rule",
+  "route_key": "service-prometheus-route",
+  "path": "/"
+}

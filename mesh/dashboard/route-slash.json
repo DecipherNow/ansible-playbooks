@@ -1,0 +1,8 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-dashboard-rule",
+  "route_key": "sidecar-dashboard-route-slash",
+  "path": "/services/dashboard/latest/",
+  "prefix_rewrite": "/"
+}

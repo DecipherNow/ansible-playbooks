@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+echo "Define cluster for sidecar's discovered instances"
+/opt/mesh/greymatter create cluster < <(echo '{
+  "zone_key": "default-zone",
+  "cluster_key": "sidecar-data",
+  "name": "sidecar-data",
+  "circuit_breakers": {
+    "max_connections": 500,
+    "max_requests": 500
+  }
+}')
+
+echo "Define rule for directing traffic to sidecar cluster"
+/opt/mesh/greymatter create shared_rules < <(echo '{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-data-rule",
+  "name": "data",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-data",
+      "weight": 1
+    }]
+  }
+}')
+
+echo "Add route 1 from edge to sidecar (no trailing slash)"
+/opt/mesh/greymatter create route < <(echo '{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-data-rule",
+  "route_key": "sidecar-data-route",
+  "path": "/services/data/1.0",
+  "prefix_rewrite": "/services/data/1.0/",
+}')
+
+echo "Add route 2 from edge to sidecar (with trailing slash)"
+/opt/mesh/greymatter create route < <(echo '{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-data-rule"
+  "route_key": "sidecar-data-route-slash",
+  "path": "/services/data/1.0/",
+  "prefix_rewrite": "/",
+}')
+
+
+echo "Define cluster for a sidecars service"
+# Note: Service is at localhost:port (same EC2)
+/opt/mesh/greymatter create cluster < <(echo '{
+  "zone_key": "default-zone",
+  "cluster_key": "service-data",
+  "name": "service",
+  "circuit_breakers": {
+    "max_connections": 500,
+    "max_requests": 500
+  },
+  "instances": [{
+    "host": "localhost",
+    "port": 8080
+  }]
+}')
+
+echo "Define rule for directing traffic to service cluster"
+/opt/mesh/greymatter create shared_rules < <(echo '{
+  "zone_key": "default-zone",
+  "shared_rules_key": "data-sidecar-to-service-rule",
+  "name": "data",
+  "default": {
+    "light": [{
+      "cluster_key": "service-data",
+      "weight": 1
+    }]
+  }
+}')
+
+echo "Define domain for sidecar route to its service"
+/opt/mesh/greymatter create domain < <(echo '{
+  "zone_key": "default-zone",
+  "domain_key": "data",
+  "name": "*",
+  "port": 9080
+}')
+
+echo "Define listener for downstream requests to sidecar"
+/opt/mesh/greymatter create listener < <(echo '{
+  "zone_key": "default-zone",
+  "listener_key": "data-listener",
+  "domain_keys": ["data"],
+  "name": "data",
+  "ip": "0.0.0.0",
+  "port": 9080,
+  "protocol": "http_auto"
+}')
+
+echo "Add route from sidecar to service cluster"
+/opt/mesh/greymatter create route < <(echo '{
+  "zone_key": "default-zone",
+  "domain_key": "data",
+  "shared_rules_key": "data-sidecar-to-service-rule",
+  "route_key": "service-data-route",
+  "path": "/",
+}')
+
+echo "Add route from catalogs sidecar to datas sidecar"
+# Note: This is how to specify intra-mesh communication
+/opt/mesh/greymatter create route < <(echo '{
+  "zone_key": "default-zone",
+  "domain_key": "catalog",
+  "shared_rules_key": "to-sidecar-data-rule",
+  "route_key": "catalog-to-data-route",
+  "path": "/data/",
+  "prefix_rewrite": "/",
+}')

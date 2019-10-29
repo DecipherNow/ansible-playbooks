@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "dashboard-sidecar-to-service-rule",
+  "name": "dashboard",
+  "default": {
+    "light": [{
+      "cluster_key": "service-dashboard",
+      "weight": 1
+    }]
+  }
+}

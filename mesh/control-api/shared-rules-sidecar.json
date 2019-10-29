@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-control-api-rule",
+  "name": "control-api",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-control-api",
+      "weight": 1
+    }]
+  }
+}

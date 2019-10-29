@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-slo-rule",
+  "name": "slo",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-slo",
+      "weight": 1
+    }]
+  }
+}

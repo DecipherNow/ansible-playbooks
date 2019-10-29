@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-sense-rule",
+  "name": "sense",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-sense",
+      "weight": 1
+    }]
+  }
+}

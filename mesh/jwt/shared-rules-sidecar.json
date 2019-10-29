@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "to-sidecar-jwt-rule",
+  "name": "jwt",
+  "default": {
+    "light": [{
+      "cluster_key": "sidecar-jwt",
+      "weight": 1
+    }]
+  }
+}

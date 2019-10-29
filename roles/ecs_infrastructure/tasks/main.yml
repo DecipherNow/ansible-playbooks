@@ -1,5 +1,0 @@
----
-- include: cluster.yml
-- include: iam.yml
-- include: network.yml
-- include: cloudwatch.yml

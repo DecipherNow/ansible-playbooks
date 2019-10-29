@@ -1,0 +1,6 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "slo",
+  "name": "*",
+  "port": 9080
+}

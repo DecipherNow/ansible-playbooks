@@ -1,0 +1,8 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-slo-rule",
+  "route_key": "sidecar-slo-route-slash",
+  "path": "/services/slo/1.0/",
+  "prefix_rewrite": "/"
+}

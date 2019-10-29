@@ -1,0 +1,8 @@
+{
+  "zone_key": "default-zone",
+  "domain_key": "edge",
+  "shared_rules_key": "to-sidecar-sense-rule",
+  "route_key": "sidecar-sense-route",
+  "path": "/services/sense/1.0",
+  "prefix_rewrite": "/services/sense/1.0/"
+}

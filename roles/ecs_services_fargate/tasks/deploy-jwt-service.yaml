@@ -1,0 +1,119 @@
+---
+
+  - name: Create task definition jwt
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-jwt"
+      network_mode: awsvpc
+      launch_type: FARGATE
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
+      volumes:
+      - name: certs
+      - name: users
+      containers:
+      - name: "proxy-jwt"
+        essential: true
+        image: "{{ greymatter_proxy_image }}"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        dockerLabels:
+          gm-cluster: "sidecar-jwt"
+        environment:
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "true"
+        - name: "XDS_CLUSTER"
+          value: jwt
+        - name: "XDS_HOST"
+          value: "{{ elb_control }}" # todo point to gm-control
+        - name: "XDS_PORT"
+          value: 50000
+        - name: "XDS_NODE_ID"
+          value: "default-node"
+        portMappings:
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        - containerPort: 8081
+          hostPort: 8081
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: certs
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: jwt
+        essential: false
+        image: "docker.production.deciphernow.com/deciphernow/gm-jwt-security:0.2.0"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        dockerLabels:
+          gm-cluster: "service-jwt"
+        environment:
+        - name: "REDIS_HOST"
+          value: localhost
+        - name: "REDIS_PORT"
+          value: 6379
+        - name: "ENABLE_TLS"
+          value: "false" # gm-jwt doesn't parse "True" or "False"
+        - name: "USERS_JSON"
+          value: "{{ lookup('file', 'jwt-users.json') | b64encode }}"
+        - name: "PRIVATE_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('private_key') }}"
+        - name: "JWT_API_KEY"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('api_key') }}"
+        - name: "REDIS_PASS"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('redis_pass') }}"
+        portMappings:
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/gm-jwt-security/etc"
+          sourceVolume: users
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: redis
+        essential: false
+        image: "docker.io/centos/redis-32-centos7"
+        environment:
+        - name: "REDIS_PASSWORD"
+          value: "{{ lookup('aws_secret', 'jwt-secret') | from_json | json_query('redis_pass') }}"
+        portMappings:
+        - containerPort: 6379
+          hostPort: 6379
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service
+    ecs_service:
+      state: present
+      name: jwt
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: FARGATE
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      network_configuration:
+        assign_public_ip: true
+        security_groups: "{{ security_group }}"
+        subnets: "{{ subnet_list }}"
+    register: "ecs_service"

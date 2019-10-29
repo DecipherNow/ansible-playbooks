@@ -1,0 +1,11 @@
+{
+  "zone_key": "default-zone",
+  "shared_rules_key": "prometheus-sidecar-to-service-rule",
+  "name": "prometheus",
+  "default": {
+    "light": [{
+      "cluster_key": "service-prometheus",
+      "weight": 1
+    }]
+  }
+}
