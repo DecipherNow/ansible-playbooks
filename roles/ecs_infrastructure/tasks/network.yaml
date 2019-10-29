@@ -12,10 +12,10 @@
         ecs/cluster/greymatter-ecs-example: "owned"
     register: setup_vpc
 
- # - name: check that vpc did not change
- #   assert:
- #     that:
- #       - not setup_vpc.changed
+  - name: check that vpc did not change
+    assert:
+     that:
+       - not setup_vpc.changed
 
         
   - name: create private subnets
@@ -140,18 +140,18 @@
 
     # instances
 
-  - name: find a suitable AMI
-    ec2_ami_facts:
-      owner: amazon
-      filters:
-        description: "Amazon Linux AMI* ECS *"
-    register: ec2_ami_facts
+  # - name: find a suitable AMI
+  #   ec2_ami_facts:
+  #     owner: amazon
+  #     filters:
+  #       description: "Amazon Linux AMI * ECS *"
+  #   register: ec2_ami_facts
       
   - name: set image id fact
     set_fact:
-      ecs_image_id: "{{ (ec2_ami_facts.images|first).image_id }}"
+      ecs_image_id: "ami-05085b57e47cdc27d"
 
-  - name: create instance target group
+  - name: create instance target group for autoscaling
     elb_target_group:
         name: "gm-ecs-alb-tg-inst"
         state: present
@@ -161,6 +161,24 @@
         target_type: instance
     register: elb_target_group_instance
 
+  - name: create instance target group for control api
+    elb_target_group:
+        name: "gm-ecs-alb-tg-inst-control-api"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: instance
+
+  - name: create instance target group for control api proxy
+    elb_target_group:
+        name: "gm-ecs-alb-tg-inst-ctrl-api-pxy"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: instance
+
   - name: create ip target group control api
     elb_target_group:
         name: "gm-ecs-alb-tg-ip-control-api"
@@ -169,7 +187,15 @@
         port: 80
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: ip
-    register: elb_target_group_ip_control_api
+
+  - name: create instance target group for control
+    elb_target_group:
+        name: "gm-ecs-alb-tg-inst-control"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: instance
 
   - name: create ip target group control
     elb_target_group:
@@ -179,7 +205,15 @@
         port: 80
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: ip
-    register: elb_target_group_ip_control
+
+  - name: create instance target group for edge
+    elb_target_group:
+        name: "gm-ecs-alb-tg-inst-edge"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: instance
 
   - name: create ip target group edge
     elb_target_group:
@@ -189,7 +223,20 @@
         port: 80
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: ip
-    register: elb_target_group_ip_edge
+
+  - name: create load balancer for autoscaling
+    elb_application_lb:
+      name: "greymatter-ecs-alb-autscaling"
+      state: present
+      scheme: internal
+      security_groups:  '{{ setup_sg.group_id }}'
+      subnets: "{{ setup_public_subnet.results | json_query('[].subnet.id') }}"
+      listeners:
+        - Protocol: HTTP
+          Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst"
 
   - name: create load balancer for control
     elb_application_lb:
@@ -203,8 +250,27 @@
           Port: 80
           DefaultActions:
             - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst-control"
+        - Protocol: HTTP
+          Port: 81
+          DefaultActions:
+            - Type: forward
               TargetGroupName: "gm-ecs-alb-tg-ip-control"
     register: setup_elb_control
+
+  - name: create load balancer for control api proxy
+    elb_application_lb:
+      name: "greymatter-ecs-alb-ctrl-api-pxy"
+      state: present
+      scheme: internal
+      security_groups: '{{ setup_sg.group_id }}'
+      subnets: "{{ setup_public_subnet.results | json_query('[].subnet.id') }}"
+      listeners:
+        - Protocol: HTTP
+          Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst-ctrl-api-pxy"
 
   - name: create load balancer for control api
     elb_application_lb:
@@ -216,6 +282,11 @@
       listeners:
         - Protocol: HTTP
           Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst-control-api"
+        - Protocol: HTTP
+          Port: 81
           DefaultActions:
             - Type: forward
               TargetGroupName: "gm-ecs-alb-tg-ip-control-api"
@@ -230,6 +301,11 @@
       listeners:
         - Protocol: HTTP
           Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst-edge"
+        - Protocol: HTTP
+          Port: 81
           DefaultActions:
             - Type: forward
               TargetGroupName: "gm-ecs-alb-tg-ip-edge"

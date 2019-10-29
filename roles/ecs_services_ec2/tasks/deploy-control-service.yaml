@@ -1,0 +1,83 @@
+---
+
+  - name: Create task definition control
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-control"
+      network_mode: bridge
+      launch_type: EC2
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
+      containers:
+      - name: greymatter_init
+        essential: false
+        image: "docker-greymatter.di2e.net/misc/configure-mesh:latest"
+        repositoryCredentials:
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:greymatter-di2e-docker-secret-KLbLa6"
+        dependsOn:
+         - containerName: control
+           condition: START
+        environment:
+        - name: "GREYMATTER_API_HOST"
+          value: "{{ elb_control_api }}:80"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: control
+        essential: true
+        image: "docker.production.deciphernow.com/deciphernow/gm-control:0.5.1"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        environment:
+        - name: "GM_CONTROL_API_KEY"
+          value: xxx
+        - name: "GM_CONTROL_API_SSL"
+          value: "false"
+        - name: "GM_CONTROL_API_ZONE_NAME"
+          value: "default-zone"
+        - name: "GM_CONTROL_CMD"
+          value: ecs
+        - name: "GM_CONTROL_CONSOLE_LEVEL"
+          value: debug
+        - name: "GM_CONTROL_XDS_ADS_ENABLED"
+          value: "true"
+        - name: "GM_CONTROL_ECS_AWS_REGION"
+          value: "us-east-1"
+        - name: "GM_CONTROL_ECS_CLUSTERS"
+          value: "greymatter-ecs-cluster"
+        #- name: "GM_CONTROL_ECS_CLUSTER_TAG"
+        #  value: "tbn-cluster"
+        - name: "GM_CONTROL_API_HOST"
+          value: "{{ elb_control_api }}:80"
+        portMappings:
+        - containerPort: 50000
+          hostPort: 50000
+          protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service control
+    ecs_service:
+      state: present
+      name: control
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: EC2
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      load_balancers:
+        - targetGroupArn: "{{ task_target_group_control }}"
+          containerName: control
+          containerPort: 50000
+    register: "ecs_service"

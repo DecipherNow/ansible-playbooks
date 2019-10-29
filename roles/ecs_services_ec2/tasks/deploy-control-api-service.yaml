@@ -1,0 +1,128 @@
+---
+
+  - name: Create task definition control api
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-control-api"
+      network_mode: bridge
+      launch_type: EC2
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
+      containers:
+      - name: "proxy-control-api"
+        essential: true
+        image: "{{ greymatter_proxy_image }}"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        dependsOn:
+         - containerName: control-api
+           condition: START
+        dockerLabels:
+          tbn-cluster: "sidecar-control-api:5080"
+        secrets:
+        - name: INGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
+        - name: INGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-key-b64-jRhKhv
+        - name: EGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-b64-nf57aF
+        - name: EGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-key-b64-EwBU9t
+        - name: EGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        - name: INGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        environment:
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "false"
+        - name: "USE_HTTP2"
+          value: "false"
+        - name: "EGRESS_USE_TLS"
+          value: "false"
+        - name: "SERVICE_HOST"
+          value: "{{ elb_control }}"
+        - name: "SERVICE_PORT"
+          value: 80
+        - name: "XDS_CLUSTER"
+          value: "sidecar-control-api"
+        - name: "XDS_PORT"
+          value: 80
+        - name: "XDS_NODE_ID"
+          value: "default-node"
+        - name: "XDS_HOST"
+          value: "{{ elb_control }}"
+        - name: "METRICS_PORT"
+          value: 5081
+        - name: "PORT"
+          value: 5080
+        - name: "ACCEPT_HTTP_10"
+          value: "true"
+        portMappings:
+        - containerPort: 5080
+          hostPort: 5080
+          protocol: tcp
+        - containerPort: 5081
+          hostPort: 5081
+          protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: "control-api"
+        essential: true
+        image: "docker.production.deciphernow.com/deciphernow/gm-control-api:0.8.1"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        environment:
+        - name: "GM_CONTROL_API_ADDRESS"
+          value: "0.0.0.0:5555"
+        - name: "GM_CONTROL_API_LOG_LEVEL"
+          value: debug
+        - name: "GM_CONTROL_API_ORG_KEY"
+          value: deciphernow
+        - name: "GM_CONTROL_API_PERSISTER_PATH"
+          value: "app/control-api/data/backend.json"
+        - name: "GM_CONTROL_CMD"
+          value: ecs
+        - name: "GM_CONTROL_API_PERSISTER_TYPE"
+          value: file
+        - name: "GM_CONTROL_API_ZONE_KEY"
+          value: "default-zone"
+        - name: "GM_CONTROL_API_ZONE_NAME"
+          value: "default-zone"
+        portMappings:
+        - containerPort: 5555
+          hostPort: 5555
+          protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service control api proxy
+    ecs_service:
+      state: present
+      name: sidecar-control-api
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: EC2
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      load_balancers:
+        - targetGroupArn: "{{ task_target_group_control_api_proxy }}"
+          containerName: "proxy-control-api"
+          containerPort: 5080
+        - targetGroupArn: "{{ task_target_group_control_api }}"
+          containerName: "control-api"
+          containerPort: 5555
+    register: "ecs_service"
