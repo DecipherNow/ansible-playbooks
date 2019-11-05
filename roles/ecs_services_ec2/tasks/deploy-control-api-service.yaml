@@ -52,12 +52,17 @@
           value: 5081
         - name: "PORT"
           value: 5080
+        - name: "ENVOY_ADMIN_PORT"
+          value: 5001
         portMappings:
         - containerPort: 5080
           hostPort: 5080
           protocol: tcp
         - containerPort: 5081
           hostPort: 5081
+          protocol: tcp
+        - containerPort: 5001
+          hostPort: 5001
           protocol: tcp
         logConfiguration:
           logDriver: awslogs

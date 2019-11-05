@@ -49,12 +49,17 @@
           value: 7081
         - name: "PORT"
           value: 7080
+        - name: "ENVOY_ADMIN_PORT"
+          value: 7001
         portMappings:
         - containerPort: 7081
           hostPort: 7081
           protocol: tcp
         - containerPort: 7080
           hostPort: 7080
+          protocol: tcp
+        - containerPort: 7001
+          hostPort: 7001
           protocol: tcp
         logConfiguration:
           logDriver: awslogs
