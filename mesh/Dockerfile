@@ -9,7 +9,7 @@ RUN mkdir /opt/mesh/catalog
 RUN mkdir /opt/mesh/data
 
 # COPY debug_key.pub /root/.ssh/
-# RUN mkdir -p /var/run/sshd /root/.ssh
+RUN mkdir -p /var/run/sshd /root/.ssh
 # RUN cat /root/.ssh/debug_key.pub >> /root/.ssh/authorized_keys
 # RUN sed -i 's/prohibit-password/yes/' /etc/ssh/sshd_config
 # RUN chown -R root:root /root/.ssh;chmod -R 700 /root/.ssh
