@@ -6,6 +6,7 @@ RUN mkdir -p /opt/mesh/control-api
 RUN mkdir /opt/mesh/edge
 RUN mkdir /opt/mesh/dashboard
 RUN mkdir /opt/mesh/catalog
+RUN mkdir /opt/mesh/data
 
 COPY debug_key.pub /root/.ssh/
 RUN mkdir -p /var/run/sshd /root/.ssh
@@ -25,6 +26,7 @@ COPY control-api/* /opt/mesh/control-api/
 COPY edge/* /opt/mesh/edge/
 COPY dashboard/* /opt/mesh/dashboard/
 COPY catalog/* /opt/mesh/catalog/
+COPY data/* /opt/mesh/data/
 
 ENV EDITOR=/usr/bin/vi
 ENV GREYMATTER_API_HOST="control-api:5555"
