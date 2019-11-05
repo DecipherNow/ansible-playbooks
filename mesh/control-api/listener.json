@@ -4,6 +4,6 @@
   "domain_keys": ["control-api"],
   "name": "control-api",
   "ip": "0.0.0.0",
-  "port": 9080,
+  "port": 5080,
   "protocol": "http_auto"
 }

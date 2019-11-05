@@ -224,6 +224,24 @@
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: ip
 
+  - name: create instance target group for data to connect to catalog
+    elb_target_group:
+        name: "gm-ecs-alb-tg-inst-data"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: instance
+
+  - name: create instance target group for jwt to connect to data
+    elb_target_group:
+        name: "gm-ecs-alb-tg-inst-jwt"
+        state: present
+        protocol: http
+        port: 80
+        vpc_id: '{{ setup_vpc.vpc.id }}'
+        target_type: instance
+
   - name: create load balancer for autoscaling
     elb_application_lb:
       name: "greymatter-ecs-alb-autscaling"
@@ -311,6 +329,36 @@
               TargetGroupName: "gm-ecs-alb-tg-ip-edge"
     register: setup_elb_edge
 
+  - name: create internal load balancer for data
+    elb_application_lb:
+      name: "greymatter-ecs-alb-data"
+      state: present
+      scheme: internal
+      security_groups: '{{ setup_sg.group_id }}'
+      subnets: "{{ setup_public_subnet.results | json_query('[].subnet.id') }}"
+      listeners:
+        - Protocol: HTTP
+          Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst-data"
+    register: setup_elb_data
+
+  - name: create internal load balancer for jwt
+    elb_application_lb:
+      name: "greymatter-ecs-alb-jwt"
+      state: present
+      scheme: internal
+      security_groups: '{{ setup_sg.group_id }}'
+      subnets: "{{ setup_public_subnet.results | json_query('[].subnet.id') }}"
+      listeners:
+        - Protocol: HTTP
+          Port: 80
+          DefaultActions:
+            - Type: forward
+              TargetGroupName: "gm-ecs-alb-tg-inst-jwt"
+    register: setup_elb_jwt
+
   - name: create a key pair to use for creating an ec2 instance
     ec2_key:
       name: 'enter_greymatter_ecs_cluster'
@@ -338,7 +386,7 @@
       vpc_zone_identifier: "{{ setup_public_subnet.results | json_query('[].subnet.id') }}"
       min_size: 0
       max_size: 3
-      desired_capacity: 2
+      desired_capacity: 3
       state: present
       launch_config_name: 'greymatter-ecs-launch-config'
       replace_all_instances: yes

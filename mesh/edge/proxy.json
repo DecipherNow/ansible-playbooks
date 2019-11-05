@@ -4,10 +4,10 @@
   "domain_keys": ["edge"],
   "listener_keys": ["edge-listener"],
   "name": "edge",
-  "active_proxy_filters": ["gm.metrics"],
+  "active_proxy_filters": ["gm.metrics", "gm.inheaders"],
   "proxy_filters": {
     "gm_metrics": {
-      "metrics_port": 8081,
+      "metrics_port": 7081,
       "metrics_host": "0.0.0.0",
       "metrics_dashboard_uri_path": "/metrics",
       "metrics_prometheus_uri_path": "/prometheus",

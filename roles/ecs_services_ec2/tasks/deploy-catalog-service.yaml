@@ -1,0 +1,160 @@
+---
+
+  - name: Create task definition catalog
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-catalog"
+      network_mode: bridge
+      launch_type: EC2
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
+      volumes:
+      - name: "greymatter-ecs-volumes"
+        host:
+          sourcePath: "/home/ec2-user/pki/"
+        # dockerVolumeConfiguration:
+        #   autoprovision: false
+        #   scope: "shared"
+        #   driver: "rexray/s3fs"
+      containers:
+      - name: "sidecar-catalog"
+        essential: true
+        image: "{{ greymatter_proxy_image }}"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter_proxy }}"
+        dockerLabels:
+          gm-cluster: "catalog:6080"
+        secrets:
+        - name: INGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
+        - name: INGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-key-b64-jRhKhv
+        - name: EGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-b64-nf57aF
+        - name: EGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-key-b64-EwBU9t
+        - name: EGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        - name: INGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        environment:
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "false"
+        - name: "USE_HTTP2"
+          value: "false"
+        - name: "EGRESS_USE_TLS"
+          value: "false"
+        - name: "SERVICE_HOST"
+          value: "{{ elb_control }}"
+        - name: "SERVICE_PORT"
+          value: 80
+        - name: "XDS_CLUSTER"
+          value: catalog
+        - name: "XDS_HOST"
+          value: "{{ elb_control }}" # todo point to gm-control
+        - name: "XDS_PORT"
+          value: 50000
+        - name: "XDS_NODE_ID"
+          value: "default-node"
+        - name: "METRICS_PORT"
+          value: 6081
+        - name: "PORT"
+          value: 6080
+        portMappings:
+        - containerPort: 6080
+          hostPort: 6080
+          protocol: tcp
+        - containerPort: 6081
+          hostPort: 6081
+          protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: catalog
+        essential: false
+        image: "docker.production.deciphernow.com/deciphernow/gm-catalog:1.0.1"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        secrets:
+        - name: "CLIENT_CERT"
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-b64-nf57aF
+        - name: "CLIENT_KEY"
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-key-b64-jRhKhv
+        - name: "CLIENT_TRUST"
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        environment:
+        - name: "CA_CERT_PATH"
+          value: "/etc/pki/issuing_ca.pem"
+        - name: "CLIENT_CN"
+          value: "di2e.test"
+        - name: "CLIENT_EMAIL"
+          value: "gm-control@deciphernow.com"
+        - name: "DEBUG"
+          value: "true"
+        - name: "CONTROL_SERVER_0_ADDRESS"
+          value: "{{ elb_control }}:50000"
+        - name: "CONTROL_SERVER_0_REQUEST_CLUSTER_NAME"
+          value: edge
+        - name: "CONTROL_SERVER_0_ZONE_NAME"
+          value: "default-zone"
+        - name: "CONFIG_SOURCE"
+          value: gmdata
+        - name: "CLIENT_ADDRESS"
+          value: "{{ elb_data }}"
+        - name: "CLIENT_PORT"
+          value: 80
+        - name: "CLIENT_PREFIX"
+          value: "/data"
+        - name: "GMDATA_STARTUP_DELAY"
+          value: 10s
+        - name: "GMDATA_MAX_RETRIES"
+          value: 100
+        - name: "GMDATA_RETRY_DELAY"
+          value: 5s
+        - name: "GMDATA_ROOT_EVENT_NAME"
+          value: world
+        - name: "CLIENT_USE_TLS"
+          value: "false"
+        - name: "CLIENT_IDENTITY"
+          value: "C=US, ST=Virginia, O=Decipher Technology Studios, LLC., OU=Engineering, CN=Decipher DI2E Intermediate CA"
+        - name: "CLIENT_EMAIL"
+          value: "localhost@deciphernow.com"
+        - name: "SERVER_CERT_PATH"
+          value: "/etc/pki/cert.pem"
+        - name: "SERVER_KEY_PATH"
+          value: "/etc/pki/private_key.pem"
+        - name: "USE_TLS"
+          value: "true"
+        portMappings:
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/pki"
+          sourceVolume: "greymatter-ecs-volumes"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service catalog
+    ecs_service:
+      state: present
+      name: catalog
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: EC2
+      task_definition: "{{ task_output.taskdefinition[\"family\"] }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+    register: "ecs_service"

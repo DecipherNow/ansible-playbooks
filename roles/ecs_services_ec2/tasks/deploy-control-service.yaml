@@ -76,6 +76,12 @@
       launch_type: EC2
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
+      placement_constraints:
+        - type: memberOf
+          expression: 'attribute:constraint == control'
+      placement_strategy:
+        - type: spread
+          field: "attribute:constraint"
       load_balancers:
         - targetGroupArn: "{{ task_target_group_control }}"
           containerName: control

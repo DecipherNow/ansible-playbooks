@@ -1,9 +1,9 @@
 ---
 
-  - name: Create task definition control api
+  - name: Create task definition dashboard
     ecs_taskdefinition:
       state: present
-      family: "greymatter-control-api"
+      family: "greymatter-dashboard"
       network_mode: bridge
       launch_type: EC2
       cpu: 512
@@ -11,17 +11,16 @@
       region: "{{ aws_region }}"
       execution_role_arn: "{{ ecs_instance_role }}"
       task_role_arn: "{{ ecs_instance_role }}"
+      volumes:
+      - name: certs
       containers:
-      - name: "sidecar-control-api"
+      - name: "proxy-dashboard"
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter_proxy }}"
-        dependsOn:
-         - containerName: control-api
-           condition: START
         dockerLabels:
-          tbn-cluster: "sidecar-control-api:5080"
+          tbn-cluster: "dashboard:7080"
         secrets:
         - name: INGRESS_TLS_CERT
           valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
@@ -39,57 +38,65 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: "true"
+          value: "false"
+        - name: "USE_HTTP2"
+          value: "false"
+        - name: "EGRESS_USE_TLS"
+          value: "false"
+        - name: "SERVICE_HOST"
+          value: "{{ elb_control }}"
+        - name: "SERVICE_PORT"
+          value: 80
         - name: "XDS_CLUSTER"
-          value: "sidecar-control-api"
+          value: dashboard
+        - name: "XDS_HOST"
+          value: "control" # todo point to gm-control
         - name: "XDS_PORT"
           value: 50000
         - name: "XDS_NODE_ID"
           value: "default-node"
-        - name: "XDS_HOST"
-          value: "{{ control_ip }}"
         - name: "METRICS_PORT"
-          value: 5081
+          value: "7081"
         - name: "PORT"
-          value: 5080
+          value: "7080"
         portMappings:
-        - containerPort: 5080
-          hostPort: 5080
+        - containerPort: 7080
           protocol: tcp
-        - containerPort: 5081
-          hostPort: 5081
+        - containerPort: 7081
           protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: certs
         logConfiguration:
           logDriver: awslogs
           options:
             awslogs-group: openjobs
             awslogs-region: "{{ aws_region }}"
             awslogs-stream-prefix: web
-      - name: "control-api"
-        essential: true
-        image: "docker.production.deciphernow.com/deciphernow/gm-control-api:0.8.1"
+      - name: dashboard
+        essential: false
+        image: "docker.production.deciphernow.com/deciphernow/gm-dashboard:3.1.0"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:
-        - name: "GM_CONTROL_API_ADDRESS"
-          value: "0.0.0.0:5555"
-        - name: "GM_CONTROL_API_LOG_LEVEL"
-          value: debug
-        - name: "GM_CONTROL_API_ORG_KEY"
-          value: deciphernow
-        - name: "GM_CONTROL_API_PERSISTER_PATH"
-          value: "app/control-api/data/backend.json"
-        - name: "GM_CONTROL_CMD"
-          value: ecs
-        - name: "GM_CONTROL_API_PERSISTER_TYPE"
-          value: file
-        - name: "GM_CONTROL_API_ZONE_KEY"
-          value: "default-zone"
-        - name: "GM_CONTROL_API_ZONE_NAME"
-          value: "default-zone"
+        - name: "BASE_PATH"
+          value: "/"
+        - name: "FABRIC_SERVER"
+          value: "/services/catalog/1.0"
+        - name: "CONFIG_SERVER"
+          value: "/services/control-api/1.0/v1.0"
+        - name: "OBJECTIVES_SERVER"
+          value: "/services/slo/1.0"
+        - name: "ENABLE_SENSE"
+          value: "true"
+        - name: "SENSE_SERVER"
+          value: "/services/sense/1.0"
+        # - name: "USE_PROMETHEUS"
+        #   value: "true"
+        # - name: "PROMETHEUS_SERVER"
+        #   value: "/services/prometheus/api/v1/"
         portMappings:
-        - containerPort: 5555
-          hostPort: 5555
+        - containerPort: 1337
           protocol: tcp
         logConfiguration:
           logDriver: awslogs
@@ -99,20 +106,13 @@
             awslogs-stream-prefix: web
     register: task_output
 
-  - name: ECS service control api proxy
+  - name: ECS service dashboard
     ecs_service:
       state: present
-      name: control-api
+      name: dashboard
       cluster: "{{ cluster_name }}"
       region: "{{ aws_region }}"
       launch_type: EC2
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
-      load_balancers:
-        - targetGroupArn: "{{ task_target_group_control_api_proxy }}"
-          containerName: "sidecar-control-api"
-          containerPort: 5080
-        - targetGroupArn: "{{ task_target_group_control_api }}"
-          containerName: "control-api"
-          containerPort: 5555
     register: "ecs_service"

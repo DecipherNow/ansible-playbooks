@@ -1,0 +1,161 @@
+---
+
+  - name: "register mongodb from secretsmanager jwt secret"
+    shell: "aws secretsmanager get-secret-value --secret-id jwt-secret | jq --raw-output '.SecretString' | jq -r .api_key"
+    register: jwt_secret_api_key
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager jwt secret"
+    shell: "aws secretsmanager get-secret-value --secret-id jwt-secret | jq --raw-output '.SecretString' | jq -r .private_key"
+    register: jwt_secret_private_key
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager jwt secret"
+    shell: "aws secretsmanager get-secret-value --secret-id jwt-secret | jq --raw-output '.SecretString' | jq -r .redis_pass"
+    register: jwt_secret_redis_pass
+    delegate_to: 127.0.0.1
+
+  - name: Create task definition jwt
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-jwt"
+      network_mode: bridge
+      launch_type: EC2
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
+      volumes:
+      - name: certs
+        host:
+          sourcePath: "/home/ec2-user/pki"
+      - name: users
+      containers:
+      - name: "sidecar-jwt"
+        essential: true
+        image: "{{ greymatter_proxy_image }}"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter_proxy }}"
+        dockerLabels:
+          gm-cluster: "jwt:4080"
+        secrets:
+        - name: INGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
+        - name: INGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-key-b64-jRhKhv
+        - name: EGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-b64-nf57aF
+        - name: EGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-key-b64-EwBU9t
+        - name: EGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        - name: INGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        environment:
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "false"
+        - name: "USE_HTTP2"
+          value: "false"
+        - name: "EGRESS_USE_TLS"
+          value: "false"
+        - name: "SERVICE_HOST"
+          value: "{{ elb_control }}"
+        - name: "SERVICE_PORT"
+          value: 80
+        - name: "XDS_CLUSTER"
+          value: jwt
+        - name: "XDS_HOST"
+          value: "{{ elb_control }}" # todo point to gm-control
+        - name: "XDS_PORT"
+          value: 50000
+        - name: "XDS_NODE_ID"
+          value: "default-node"
+        - name: "METRICS_PORT"
+          value: 4081
+        - name: "PORT"
+          value: 4080
+        portMappings:
+        - containerPort: 4080
+          hostPort: 4080
+          protocol: tcp
+        - containerPort: 4081
+          hostPort: 4081
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: certs
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: jwt
+        essential: false
+        links:
+        - redis
+        image: "docker.production.deciphernow.com/deciphernow/gm-jwt-security:0.2.0"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        environment:
+        - name: "REDIS_HOST"
+          value: redis
+        - name: "REDIS_PORT"
+          value: 6379
+        - name: "ENABLE_TLS"
+          value: "false" # gm-jwt doesn't parse "True" or "False"
+        - name: "USERS_JSON"
+          value: "{{ lookup('file', 'jwt-users.json') | b64encode }}"
+        - name: "PRIVATE_KEY"
+          value: "{{ jwt_secret_private_key.stdout }}"
+        - name: "JWT_API_KEY"
+          value: "{{ jwt_secret_api_key.stdout }}"
+        - name: "REDIS_PASS"
+          value: "{{ jwt_secret_redis_pass.stdout }}"
+        portMappings:
+        - containerPort: 8080
+          hostPort: 3080
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/gm-jwt-security/etc"
+          sourceVolume: users
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: redis
+        essential: false
+        image: "docker.io/centos/redis-32-centos7"
+        environment:
+        - name: "REDIS_PASSWORD"
+          value: "{{ jwt_secret_redis_pass.stdout }}"
+        portMappings:
+        - containerPort: 6379
+          hostPort: 6379
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service
+    ecs_service:
+      state: present
+      name: jwt
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: EC2
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      load_balancers:
+        - targetGroupArn: "{{ task_target_group_jwt }}"
+          containerName: jwt
+          containerPort: 8080
+    register: "ecs_service"
