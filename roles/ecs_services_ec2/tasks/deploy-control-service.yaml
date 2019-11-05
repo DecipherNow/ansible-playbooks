@@ -45,8 +45,6 @@
           value: ecs
         - name: "GM_CONTROL_CONSOLE_LEVEL"
           value: debug
-        - name: "GM_CONTROL_DIFF_IGNORE_CREATE"
-          value: "true"
         - name: "GM_CONTROL_XDS_ADS_ENABLED"
           value: "true"
         - name: "GM_CONTROL_ECS_AWS_REGION"
