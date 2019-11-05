@@ -6,8 +6,8 @@
       family: "greymatter-control"
       network_mode: bridge
       launch_type: EC2
-      cpu: 512
-      memory: 1024
+      cpu: "512"
+      memory: "1024"
       region: "{{ aws_region }}"
       execution_role_arn: "{{ ecs_instance_role }}"
       task_role_arn: "{{ ecs_instance_role }}"
@@ -45,6 +45,8 @@
           value: ecs
         - name: "GM_CONTROL_CONSOLE_LEVEL"
           value: debug
+        - name: "GM_CONTROL_DIFF_IGNORE_CREATE"
+          value: "true"
         - name: "GM_CONTROL_XDS_ADS_ENABLED"
           value: "true"
         - name: "GM_CONTROL_ECS_AWS_REGION"
