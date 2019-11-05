@@ -27,7 +27,7 @@ COPY dashboard/* /opt/mesh/dashboard/
 COPY catalog/* /opt/mesh/catalog/
 
 ENV EDITOR=/usr/bin/vi
-ENV GREYMATTER_API_HOST=internal-greymatter-ecs-alb-control-api-2029981198.us-east-1.elb.amazonaws.com:80
+ENV GREYMATTER_API_HOST="control-api:5555"
 ENV GREYMATTER_API_PREFIX=
 ENV GREYMATTER_API_SSLCERT=/opt/pki/cert.pem
 ENV GREYMATTER_API_SSLKEY=/opt/pki/private_key.pem
