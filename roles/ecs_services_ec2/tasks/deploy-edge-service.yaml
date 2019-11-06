@@ -31,7 +31,7 @@
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter_proxy }}"
         dockerLabels:
-           tbn-cluster: "edge:7080"
+           gm-cluster: "edge:7080"
         environment:
         - name: "PROXY_DYNAMIC"
           value: "true"

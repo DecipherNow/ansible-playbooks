@@ -53,7 +53,7 @@
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter_proxy }}"
         dockerLabels:
-          tbn-cluster: "data:9080"
+          gm-cluster: "data:9080"
         secrets:
         - name: INGRESS_TLS_CERT
           valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
