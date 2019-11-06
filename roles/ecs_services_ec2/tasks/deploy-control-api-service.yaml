@@ -21,7 +21,7 @@
          - containerName: control-api
            condition: START
         dockerLabels:
-          tbn-cluster: "sidecar-control-api:5080"
+          gm-cluster: "sidecar-control-api:5080"
         secrets:
         - name: INGRESS_TLS_CERT
           valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo

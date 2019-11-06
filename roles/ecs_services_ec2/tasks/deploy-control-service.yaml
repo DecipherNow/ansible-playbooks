@@ -51,8 +51,8 @@
           value: "us-east-1"
         - name: "GM_CONTROL_ECS_CLUSTERS"
           value: "greymatter-ecs-cluster"
-        #- name: "GM_CONTROL_ECS_CLUSTER_TAG"
-        #  value: "tbn-cluster"
+        - name: "GM_CONTROL_ECS_CLUSTER_TAG"
+          value: "gm-cluster"
         - name: "GM_CONTROL_API_HOST"
           value: "{{ elb_control_api }}:80"
         portMappings:
