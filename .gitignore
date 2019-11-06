@@ -1,3 +1,4 @@
 roles/ecs_secrets/vars/main.yml
 mesh/*.pub
 mesh/greymatter.linux
+mesh/grpcurl.linux

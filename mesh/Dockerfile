@@ -20,6 +20,9 @@ WORKDIR /opt/mesh
 COPY greymatter.linux /opt/mesh
 RUN mv greymatter.linux greymatter
 
+COPY grpcurl.linux /opt/mesh
+RUN mv grpcurl.linux grpcurl
+
 COPY *.sh /opt/mesh/
 
 COPY control-api/* /opt/mesh/control-api/

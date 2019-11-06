@@ -23,6 +23,8 @@
         environment:
         - name: "GREYMATTER_API_HOST"
           value: "{{ elb_control_api }}:80"
+        - name: "GREYMATTER_CONTROL_HOST"
+          value: "{{ control_ip }}:50000"
         logConfiguration:
           logDriver: awslogs
           options:
