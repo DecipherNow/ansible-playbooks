@@ -82,15 +82,9 @@
           value: debug
         - name: "GM_CONTROL_API_ORG_KEY"
           value: deciphernow
-        - name: "GM_CONTROL_API_PERSISTER_PATH"
-          value: "app/control-api/data/backend.json"
-        - name: "GM_CONTROL_CMD"
-          value: ecs
         - name: "GM_CONTROL_API_PERSISTER_TYPE"
-          value: file
+          value: "null"
         - name: "GM_CONTROL_API_ZONE_KEY"
-          value: "default-zone"
-        - name: "GM_CONTROL_API_ZONE_NAME"
           value: "default-zone"
         portMappings:
         - containerPort: 5555
