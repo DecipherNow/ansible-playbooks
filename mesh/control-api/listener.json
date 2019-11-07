@@ -1,7 +1,7 @@
 {
   "zone_key": "default-zone",
-  "listener_key": "control-api-listener",
-  "domain_keys": ["control-api"],
+  "listener_key": "listener-control-api",
+  "domain_keys": ["domain-control-api"],
   "name": "control-api",
   "ip": "0.0.0.0",
   "port": 5080,
