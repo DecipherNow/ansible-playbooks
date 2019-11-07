@@ -29,38 +29,37 @@
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
-          credentialsParameter: "{{ credentials_parameter }}"
+          credentialsParameter: "{{ credentials_parameter_proxy }}"
         dockerLabels:
-           tbn-cluster: "edge:8080"
+           gm-cluster: "edge:7080"
         environment:
         - name: "PROXY_DYNAMIC"
-          value: "false"
-        - name: "USE_HTTP2"
-          value: "false"
-        - name: "EGRESS_USE_TLS"
-          value: "false"
-        - name: "SERVICE_HOST"
-          value: "{{ elb_control }}"
-        - name: "SERVICE_PORT"
-          value: 80
+          value: "true"
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "XDS_CLUSTER"
-          value: edge-cluster
+          value: edge
         - name: "XDS_HOST"
-          value: "{{ elb_control }}"
+          value: "{{ control_ip }}"
         - name: "XDS_PORT"
-          value: 80
+          value: 50000
         - name: "XDS_NODE_ID"
-          value: "default-node"
-        - name: "ACCEPT_HTTP_10"
-          value: "true"
+          value: "default"
+        - name: "METRICS_PORT"
+          value: 7081
+        - name: "PORT"
+          value: 7080
+        - name: "ENVOY_ADMIN_PORT"
+          value: 7001
         portMappings:
-        - containerPort: 8081
-          hostPort: 8081
+        - containerPort: 7081
+          hostPort: 7081
           protocol: tcp
-        - containerPort: 8080
-          hostPort: 8080
+        - containerPort: 7080
+          hostPort: 7080
+          protocol: tcp
+        - containerPort: 7001
+          hostPort: 7001
           protocol: tcp
         logConfiguration:
           logDriver: awslogs
@@ -82,5 +81,5 @@
       load_balancers:
         - targetGroupArn: "{{ task_target_group_edge }}"
           containerName: edge
-          containerPort: 8080
+          containerPort: 7080
     register: "ecs_service"

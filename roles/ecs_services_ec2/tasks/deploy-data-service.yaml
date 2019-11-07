@@ -1,0 +1,226 @@
+---
+
+  - name: "register mongodb from secretsmanager data secret"
+    shell: "aws secretsmanager get-secret-value --secret-id data-secret | jq --raw-output '.SecretString' | jq -r .jwt_pub"
+    register: data_secret_jwt_pub
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager data secret"
+    shell: "aws secretsmanager get-secret-value --secret-id data-secret | jq --raw-output '.SecretString' | jq -r .mongo_pass"
+    register: data_secret_mongo_pass
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager data secret"
+    shell: "aws secretsmanager get-secret-value --secret-id data-secret | jq --raw-output '.SecretString' | jq -r .mongo_admin_pass"
+    register: data_secret_mongo_admin_pass
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager jwt secret"
+    shell: "aws secretsmanager get-secret-value --secret-id jwt-secret | jq --raw-output '.SecretString' | jq -r .api_key"
+    register: jwt_secret_api_key
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager jwt secret"
+    shell: "aws secretsmanager get-secret-value --secret-id jwt-secret | jq --raw-output '.SecretString' | jq -r .private_key"
+    register: jwt_secret_private_key
+    delegate_to: 127.0.0.1
+
+  - name: "register mongodb from secretsmanager jwt secret"
+    shell: "aws secretsmanager get-secret-value --secret-id jwt-secret | jq --raw-output '.SecretString' | jq -r .redis_pass"
+    register: jwt_secret_redis_pass
+    delegate_to: 127.0.0.1
+    
+  - name: Create task definition data
+    ecs_taskdefinition:
+      state: present
+      family: "greymatter-data"
+      network_mode: bridge
+      launch_type: EC2
+      cpu: 512
+      memory: 1024
+      region: "{{ aws_region }}"
+      execution_role_arn: "{{ ecs_instance_role }}"
+      task_role_arn: "{{ ecs_instance_role }}"
+      volumes:
+      - name: certs
+        host:
+          sourcePath: "/home/ec2-user/pki"
+      - name: "mongo-data"
+      containers:
+      - name: "sidecar-data"
+        essential: true
+        image: "{{ greymatter_proxy_image }}"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter_proxy }}"
+        dockerLabels:
+          gm-cluster: "data:9080"
+        secrets:
+        - name: INGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
+        - name: INGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-key-b64-jRhKhv
+        - name: EGRESS_TLS_CERT
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-b64-nf57aF
+        - name: EGRESS_TLS_KEY
+          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-key-b64-EwBU9t
+        - name: EGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        - name: INGRESS_TLS_TRUST
+          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+        environment:
+        - name: "ENVOY_ADMIN_LOG_PATH"
+          value: "/dev/stdout"
+        - name: "PROXY_DYNAMIC"
+          value: "false"
+        - name: "USE_HTTP2"
+          value: "false"
+        - name: "EGRESS_USE_TLS"
+          value: "false"
+        - name: "SERVICE_HOST"
+          value: "{{ elb_control }}"
+        - name: "SERVICE_PORT"
+          value: 80
+        - name: "XDS_CLUSTER"
+          value: data
+        - name: "XDS_HOST"
+          value: "{{ elb_control }}"
+        - name: "XDS_PORT"
+          value: 80
+        - name: "XDS_NODE_ID"
+          value: "default-node"
+        - name: "METRICS_PORT"
+          value: 9081
+        - name: "PORT"
+          value: 9080
+        portMappings:
+        - containerPort: 9080
+          hostPort: 9080
+          protocol: tcp
+        - containerPort: 9081
+          hostPort: 9081
+          protocol: tcp
+        mountPoints:
+        - containerPath: "/etc/proxy/tls/sidecar"
+          sourceVolume: certs
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: data
+        essential: false
+        image: "docker.production.deciphernow.com/deciphernow/gm-data:latest"
+        repositoryCredentials:
+          credentialsParameter: "{{ credentials_parameter }}"
+        dockerLabels:
+          gm-cluster: "service-data"
+        environment:
+        - name: "GMDATA_NAMESPACE"
+          value: world
+        - name: "GMDATA_NAMESPACE_USERFIELD"
+          value: email
+        - name: "USES3"
+          value: "true" # gm-data doesn't parse "True" or "False"
+        - name: "AWS_S3_BUCKET" # todo: use separate bucket for ECS-specific data
+          value: "greymatter-ecs-development-data"
+        - name: "AWS_S3_PARTITION"
+          value: gmdatax
+        - name: "AWS_REGION"
+          value: "{{ aws_region }}"
+        - name: "GMDATAX_CATCH_PANIC"
+          value: "true" # gm-data doesn't parse "True" or "False"
+        - name: "GMDATAX_SESSION_MAX"
+          value: 10000
+        - name: "HTTP_CACHE_SECONDS"
+          value: 10
+        - name: "OBS_TOPIC_ERROR"
+          value: "gmdatax-error"
+        - name: "OBS_TOPIC_READ"
+          value: "gmdatax-read"
+        - name: "OBS_TOPIC_UPDATE"
+          value: "gmdatax-update"
+        - name: "LESS_CHATTY_INFO"
+          value: "false" # gm-data doesn't parse "True" or "False"
+        - name: "MASTERKEY"
+          value: foo
+        - name: "MONGOHOST"
+          value: "mongo:27017"
+        - name: "MONGODB"
+          value: data
+        - name: "S3_TASKS"
+          value: 4096
+        - name: "CLIENT_PREFIX"
+          value: "/services/data/latest"
+        - name: "CLIENT_JWT_PREFIX"
+          value: "/jwt"
+        - name: "CLIENT_JWT_ENDPOINT_ADDRESS"
+          value: "{{ elb_jwt }}"
+        - name: "CLIENT_JWT_ENDPOINT_PORT"
+          value: 80
+        - name: "CLIENT_JWT_ENDPOINT_USE_TLS"
+          value: "false"
+        - name: "CLIENT_JWT_ENDPOINT_PREFIX"
+          value: "/jwt"
+        - name: "MONGO_INITDB_ROOT_USERNAME"
+          value: "data-user"
+        - name:  "MONGO_INITDB_ROOT_PASSWORD"
+          value: "{{ data_secret_mongo_pass.stdout }}"
+        - name: "JWT_API_KEY"
+          value: "{{ jwt_secret_api_key.stdout }}"
+        - name: "JWT_PUB"
+          value: "{{ data_secret_jwt_pub.stdout }}"
+        links:
+          - mongo
+        portMappings:
+        - containerPort: 8181
+          hostPort: 8181
+          protocol: tcp
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+      - name: mongo
+        essential: false
+        image: "docker.io/centos/mongodb-32-centos7"
+        environment:
+        - name: "MONGODB_DATABASE"
+          value: "data"
+        - name: "MONGODB_USER"
+          value: "data-user"
+        - name: "OBS_TOPIC_ERROR"
+          value: "/services/data/latest"
+        - name: "MONGODB_PASSWORD"
+          value: "{{ data_secret_mongo_pass.stdout }}"
+        - name: "MONGODB_ADMIN_PASSWORD"
+          value: "{{ data_secret_mongo_admin_pass.stdout }}"
+        portMappings:
+        - containerPort: 27017
+          hostPort: 27017
+        mountPoints:
+        - containerPath: "/var/lib/mongodb/data"
+          sourceVolume: "mongo-data"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: openjobs
+            awslogs-region: "{{ aws_region }}"
+            awslogs-stream-prefix: web
+    register: task_output
+
+  - name: ECS service data
+    ecs_service:
+      state: present
+      name: data
+      cluster: "{{ cluster_name }}"
+      region: "{{ aws_region }}"
+      launch_type: EC2
+      task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
+      desired_count: 1
+      load_balancers:
+        - targetGroupArn: "{{ task_target_group_data }}"
+          containerName: data
+          containerPort: 8181
+    register: "ecs_service"

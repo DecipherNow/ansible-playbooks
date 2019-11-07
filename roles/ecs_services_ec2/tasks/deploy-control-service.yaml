@@ -6,8 +6,8 @@
       family: "greymatter-control"
       network_mode: bridge
       launch_type: EC2
-      cpu: 512
-      memory: 1024
+      cpu: "512"
+      memory: "1024"
       region: "{{ aws_region }}"
       execution_role_arn: "{{ ecs_instance_role }}"
       task_role_arn: "{{ ecs_instance_role }}"
@@ -23,6 +23,8 @@
         environment:
         - name: "GREYMATTER_API_HOST"
           value: "{{ elb_control_api }}:80"
+        - name: "GREYMATTER_CONTROL_HOST"
+          value: "{{ control_ip }}:50000"
         logConfiguration:
           logDriver: awslogs
           options:
@@ -51,8 +53,8 @@
           value: "us-east-1"
         - name: "GM_CONTROL_ECS_CLUSTERS"
           value: "greymatter-ecs-cluster"
-        #- name: "GM_CONTROL_ECS_CLUSTER_TAG"
-        #  value: "tbn-cluster"
+        - name: "GM_CONTROL_ECS_CLUSTER_TAG"
+          value: "gm-cluster"
         - name: "GM_CONTROL_API_HOST"
           value: "{{ elb_control_api }}:80"
         portMappings:
@@ -76,6 +78,12 @@
       launch_type: EC2
       task_definition: "{{  task_output.taskdefinition[\"family\"]   }}:{{ task_output.taskdefinition[\"revision\"] }}"
       desired_count: 1
+      placement_constraints:
+        - type: memberOf
+          expression: 'attribute:constraint == control'
+      placement_strategy:
+        - type: spread
+          field: "attribute:constraint"
       load_balancers:
         - targetGroupArn: "{{ task_target_group_control }}"
           containerName: control

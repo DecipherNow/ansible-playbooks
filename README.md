@@ -46,13 +46,30 @@ Assuming you have `aws-vault` correctly configured for the Decipher dev environm
 1) You can run the Ansible playbook that just creates services with
 
  ``` console
- aws-vault exec dev -- ansible-playbook services_deployment.yml
+ aws-vault exec dev -- ansible-playbook services_deployment_?.yaml
  ```
 
 1) You can run the Ansible playbook that just creates secrets with
 
  ``` console
- aws-vault exec dev -- ansible-playbook secrets.yml
+ aws-vault exec dev -- ansible-playbook secrets.yaml
  ```
 
 Alternatively, you can skip the `aws-vault` part of the command (while we aren't using MFA) if you [export your AWS profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).
+
+
+### Infrastructure Deployment
+
+This is the most first ansible playbook you should run. It has only two vars to set at the highest level.
+
+If you want to change the `aws_region` you'll be running in, make sure you also change the `ecs_image_id` fact (found in `roles/ecs_infrastructure/tasks/network.yaml`) to an appropriate ami for that region.  There's a nice list of those ami id's [here](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html).
+
+If you want to change the `cluster_name` variable, make sure you also change the name in `roles/ecs_infrastructure/files/cloud-config.yaml` (without these two names matching, your cluster won't be able to find any ec2 instances).
+
+### Secrets Deployment
+
+Go to the README in `roles/ecs_secrets/vars/` to learn how to set up necessary secrets.
+
+### Services Deployment
+
+After running `infrastructure_deployment.yaml` and `secrets.yaml`, AWS should have all the infrastructure in place such that you can find the various arns and names to fill in one of the `services_deployment_X.yaml` files--one will spin up Fargate containers and one will spin up containers in EC2, the infrastructure yaml is set up to allow for either.

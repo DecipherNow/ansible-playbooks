@@ -25,5 +25,8 @@ echo "Define domain for sidecar route to its service"
 echo "Define listener for downstream requests to sidecar"
 /opt/mesh/greymatter create listener < control-api/listener.json
 
+echo "Define proxy"
+/opt/mesh/greymatter create proxy < control-api/proxy.json
+
 echo "Add route from sidecar to service cluster"
 /opt/mesh/greymatter create route < control-api/route-service.json

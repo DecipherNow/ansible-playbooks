@@ -12,16 +12,16 @@
       execution_role_arn: "{{ ecs_instance_role }}"
       task_role_arn: "{{ ecs_instance_role }}"
       containers:
-      - name: "proxy-control-api"
+      - name: "sidecar-control-api"
         essential: true
         image: "{{ greymatter_proxy_image }}"
         repositoryCredentials:
-          credentialsParameter: "{{ credentials_parameter }}"
+          credentialsParameter: "{{ credentials_parameter_proxy }}"
         dependsOn:
          - containerName: control-api
            condition: START
         dockerLabels:
-          tbn-cluster: "sidecar-control-api:5080"
+          gm-cluster: "sidecar-control-api:5080"
         secrets:
         - name: INGRESS_TLS_CERT
           valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
@@ -39,35 +39,30 @@
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
         - name: "PROXY_DYNAMIC"
-          value: "false"
-        - name: "USE_HTTP2"
-          value: "false"
-        - name: "EGRESS_USE_TLS"
-          value: "false"
-        - name: "SERVICE_HOST"
-          value: "{{ elb_control }}"
-        - name: "SERVICE_PORT"
-          value: 80
+          value: "true"
         - name: "XDS_CLUSTER"
           value: "sidecar-control-api"
         - name: "XDS_PORT"
-          value: 80
+          value: 50000
         - name: "XDS_NODE_ID"
           value: "default-node"
         - name: "XDS_HOST"
-          value: "{{ elb_control }}"
+          value: "{{ control_ip }}"
         - name: "METRICS_PORT"
           value: 5081
         - name: "PORT"
           value: 5080
-        - name: "ACCEPT_HTTP_10"
-          value: "true"
+        - name: "ENVOY_ADMIN_PORT"
+          value: 5001
         portMappings:
         - containerPort: 5080
           hostPort: 5080
           protocol: tcp
         - containerPort: 5081
           hostPort: 5081
+          protocol: tcp
+        - containerPort: 5001
+          hostPort: 5001
           protocol: tcp
         logConfiguration:
           logDriver: awslogs
@@ -87,15 +82,9 @@
           value: debug
         - name: "GM_CONTROL_API_ORG_KEY"
           value: deciphernow
-        - name: "GM_CONTROL_API_PERSISTER_PATH"
-          value: "app/control-api/data/backend.json"
-        - name: "GM_CONTROL_CMD"
-          value: ecs
         - name: "GM_CONTROL_API_PERSISTER_TYPE"
-          value: file
+          value: "null"
         - name: "GM_CONTROL_API_ZONE_KEY"
-          value: "default-zone"
-        - name: "GM_CONTROL_API_ZONE_NAME"
           value: "default-zone"
         portMappings:
         - containerPort: 5555
@@ -112,7 +101,7 @@
   - name: ECS service control api proxy
     ecs_service:
       state: present
-      name: sidecar-control-api
+      name: control-api
       cluster: "{{ cluster_name }}"
       region: "{{ aws_region }}"
       launch_type: EC2
@@ -120,7 +109,7 @@
       desired_count: 1
       load_balancers:
         - targetGroupArn: "{{ task_target_group_control_api_proxy }}"
-          containerName: "proxy-control-api"
+          containerName: "sidecar-control-api"
           containerPort: 5080
         - targetGroupArn: "{{ task_target_group_control_api }}"
           containerName: "control-api"
