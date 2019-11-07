@@ -1,5 +1,14 @@
 #!/bin/bash
 
+echo "purging all objects"
+for object in "cluster" "shared_rules" "proxy" "domain" "listener" "route"; do
+  for key in $(/opt/mesh/greymatter list $object | jq -r ".[] | .${object}_key"); do
+    echo "greymatter delete $object $key"
+    /opt/mesh/greymatter delete $object $key
+    sleep 1s
+  done
+done
+
 echo "start edge"
 /opt/mesh/edge.sh
 

@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN apt-get update && apt-get install vim -y && apt-get install -y openssh-server && apt-get install curl -y
+RUN apt-get update && apt-get install vim -y && apt-get install -y openssh-server && apt-get install curl -y && apt-get install jq -y
 
 RUN mkdir -p /opt/mesh/control-api
 RUN mkdir /opt/mesh/edge
