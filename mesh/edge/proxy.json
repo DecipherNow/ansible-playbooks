@@ -1,7 +1,7 @@
 {
   "zone_key": "default-zone",
   "proxy_key": "edge-proxy",
-  "domain_keys": ["edge"],
+  "domain_keys": ["edge-domain"],
   "listener_keys": ["edge-listener"],
   "name": "edge",
   "active_proxy_filters": ["gm.metrics", "gm.inheaders"],

@@ -2,8 +2,8 @@
   "proxy_key": "proxy-control-api",
   "zone_key": "default-zone",
   "name": "sidecar-control-api",
-  "domain_keys": ["domain-gm-control-api"],
-  "listener_keys": ["listener-gm-control-api"],
+  "domain_keys": ["domain-control-api"],
+  "listener_keys": ["listener-control-api"],
   "listeners": null,
   "active_proxy_filters": ["gm.metrics"],
   "proxy_filters": {
