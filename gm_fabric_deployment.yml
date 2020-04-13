@@ -1,6 +1,6 @@
 ---
 
-- hosts: gm-control-api
+- hosts: tag_Name_gm_control_api_ubuntu
   vars_files:
     - group_vars/all/vars-gm-control-api.yml
   user: ubuntu
@@ -9,20 +9,20 @@
   - import_role:
       name: gm-fabric
 
-# - hosts: gm-control
-#   vars_files:
-#     - group_vars/all/vars-gm-control.yml
-#   user: ubuntu
-#   become: yes
-#   tasks:
-#     - import_role:
-#         name: gm-fabric
+- hosts: tag_Name_gm_control_ubuntu
+  vars_files:
+    - group_vars/all/vars-gm-control.yml
+  user: ubuntu
+  become: yes
+  tasks:
+    - import_role:
+        name: gm-fabric
 
-# - hosts: gm-proxy
-#   vars_files:
-#     - group_vars/all/vars-gm-proxy.yml
-#   user: ubuntu
-#   become: yes
-#   tasks:
-#   - import_role:
-#       name: gm-fabric
+- hosts: tag_Name_gm_proxy_ubuntu
+  vars_files:
+    - group_vars/all/vars-gm-proxy.yml
+  user: ubuntu
+  become: yessys
+  tasks:
+  - import_role:
+      name: gm-fabric
