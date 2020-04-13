@@ -1,0 +1,12 @@
+---
+
+# User to run the binaries
+service_user: "gmuser"
+service_group: "gmuser"
+
+# Path where binaries/files are saved
+base_path: /var/{{ systemd_service }}
+
+# Nexus Repo
+nexus_user: "{{ lookup('env', 'NEXUS_USER') }}"
+nexus_pw: "{{ lookup('env', 'NEXUS_PW') }}"

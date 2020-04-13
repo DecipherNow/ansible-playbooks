@@ -1,0 +1,12 @@
+---
+# - name: Restart Service
+#   systemd:
+#     name: "{{ systemd_service }}.service"
+#     state: restarted
+#     daemon_reload: yes
+
+- name: Restart Rsyslog
+  systemd:
+    name: "rsyslog.service"
+    state: restarted
+    daemon_reload: yes

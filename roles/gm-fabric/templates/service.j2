@@ -1,0 +1,34 @@
+[Unit]
+Description={{ systemd_service }} service
+ConditionPathExists={{base_path}}/{{ systemd_service }}
+After=network.target
+
+[Service]
+Type=simple
+User={{ service_user }}
+Group={{ service_group }}
+LimitNOFILE=1048576
+LimitNPROC=1048576
+EnvironmentFile=/etc/environment
+
+Restart=on-failure
+RestartSec=5
+
+WorkingDirectory={{base_path}}
+{% if systemd_service=='gm-control' %}
+ExecStart={{base_path}}/{{ systemd_service }}.sh
+{% else %}
+ExecStart={{base_path}}/{{ systemd_service }}
+{% endif %}
+
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/log/{{ systemd_service }}
+ExecStartPre=/bin/chown -R syslog:adm /var/log/{{ systemd_service }}
+ExecStartPre=/bin/chmod 755 /var/log/{{ systemd_service }}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier={{ systemd_service }}
+
+[Install]
+WantedBy=multi-user.target

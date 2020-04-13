@@ -1,0 +1,102 @@
+---
+
+- name: Create Service group
+  group:
+    name: "{{ service_group }}"
+    state: present
+    system: yes
+
+- name: Creating Service User
+  user:
+    name: "{{ service_user }}"
+    groups: "{{ service_group }}"
+    system: yes
+    append: yes
+
+- name: Create Service Directory
+  file:
+    path: /var/{{ systemd_service }}
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+
+- name: Download Service Tar
+  get_url:
+    url: "{{ nexus_repo_url }}/{{ nexus_repo }}/{{ systemd_service }}/{{ nexus_tar_file }}"
+    dest: "{{ base_path }}/"
+    username: '{{ nexus_user }}'
+    password: '{{ nexus_pw }}'
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: '0664'
+
+- name: Extract Service Tar
+  unarchive:
+    src: "{{ base_path }}/{{ nexus_tar_file }}"
+    dest: "{{ base_path }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: Copy gm-control files to /usr/local/bin
+  copy:
+    src: "{{ base_path }}"
+    dest: /usr/local/bin/
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rx,g=r,o=r
+    remote_src: yes
+  when: ("{{ systemd_service }}" == "gm-control")
+
+- name: Create stdout file for gm-proxy Service
+  file:
+    path: "{{ base_path }}/stdout"
+    state: touch
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: '0644'
+  when: ("{{ systemd_service }}" == "gm-proxy")
+
+- name: Add Service Env Vars
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value}}"
+  with_items: "{{ service_env_vars }}"
+
+- name: Create Systemd Service
+  template:
+    src: "service.j2"
+    dest: "/lib/systemd/system/{{ systemd_service }}.service"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: 0755
+
+- name: Create Rsyslog Config
+  template:
+    src: "rsyslog.conf.j2"
+    dest: "/etc/rsyslog.d/30-{{ systemd_service }}.conf"
+  notify:
+    - Restart Rsyslog
+
+- name: Enable Service
+  systemd:
+    name: "{{ systemd_service }}.service"
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+    state: restarted
+
+- name: Add logs to logrotate.d
+  template:
+    src: "logrotate.j2"
+    dest: "/etc/logrotate.d/{{ systemd_service }}"
+
+- name: Confirm Service is Running
+  command: "systemctl status {{ systemd_service }}.service"
+  register: service_status
+  failed_when: "'running' not in service_status.stdout"
+  changed_when: False

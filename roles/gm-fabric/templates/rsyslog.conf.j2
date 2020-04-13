@@ -1,0 +1,10 @@
+template(name="OnlyMsg" type="string" string="%msg:2:$%\n")
+
+if ( $programname == '{{ systemd_service }}' or $syslogtag == '{{ systemd_service }}' ) then {
+    if ( $syslogseverity < 5 or $msg contains "\"Error\"" or $msg contains "[M] " or $msg contains "[A] " or $msg contains "[A] " or $msg contains "[C] " or $msg contains "[E] " or $msg contains "[W] "  ) then {
+        action(template="OnlyMsg" type="omfile" file="/var/log/{{ systemd_service }}/error.log")
+    } else {
+        action(template="OnlyMsg" type="omfile" file="/var/log/{{ systemd_service }}/access.log")
+    }
+    stop
+}
