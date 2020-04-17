@@ -12,8 +12,10 @@ service_env_vars:
   - key: XDS_NODE_ID 
     value : default-node  
   - key: XDS_HOST
-    value : "3.93.152.17"
+    value : "{{ XDS_HOST_VALUE }}"
   - key: XDS_PORT 
     value : 50000
   - key: ENVOY_ADMIN_LOG_PATH 
     value : /var/gm-proxy/stdout
+  - key: XDS_ZONE 
+    value : zone-default-zone

@@ -1,0 +1,7 @@
+---
+
+- name: Create and run gm-control binary as a service
+  include_role:
+    name: ansible-role-systemd
+    public: yes
+  when: ( ansible_distribution == 'Ubuntu' )

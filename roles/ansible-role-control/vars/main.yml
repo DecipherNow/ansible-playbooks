@@ -1,0 +1,38 @@
+systemd_service: 'gm-control'
+
+nexus_repo_url: "https://nexus.production.deciphernow.com"
+nexus_repo: "repository/raw-dev/greymatter"
+nexus_tar_file: "gm-control-1.2.2.tar.gz"
+
+service_env_vars:
+  - key: GM_CONTROL_CONSOLE_LEVEL 
+    value : info  
+  - key: GM_CONTROL_API_KEY 
+    value : xxxx
+  - key: GM_CONTROL_API_ZONE_NAME 
+    value : zone-default-zone  
+  - key: GM_CONTROL_API_SSL 
+    value : false
+  - key: GM_CONTROL_API_HOST 
+    value : "{{ GM_CONTROL_API_HOST_VALUE }}:5555"
+  - key: GM_CONTROL_CMD 
+    value : "aws"
+  - key: GM_CONTROL_FILE_FORMAT 
+    value : yaml
+  - key: GM_CONTROL_FILE_FILENAME 
+    value : /app/routes.yaml  
+  - key: GM_CONTROL_XDS_RESOLVE_DNS 
+    value : true
+  - key: GM_CONTROL_AWS_AWS_ACCESS_KEY_ID 
+    value : "{{ GM_CONTROL_AWS_AWS_ACCESS_KEY_ID_VALUE }}"
+  - key: GM_CONTROL_AWS_AWS_SECRET_ACCESS_KEY 
+    value : "{{ GM_CONTROL_AWS_AWS_SECRET_ACCESS_KEY_VALUE }}"
+  - key: GM_CONTROL_AWS_AWS_REGION 
+    value : "{{ GM_CONTROL_AWS_AWS_REGION_VALUE }}"
+  - key: GM_CONTROL_AWS_VPC_ID 
+    value : "{{ GM_CONTROL_AWS_VPC_ID_VALUE }}"
+
+gm_control_files:
+  - envcheck.sh
+  - gm-control
+  - gm-control.sh

@@ -1,6 +1,10 @@
 [Unit]
 Description={{ systemd_service }} service
+{% if systemd_service=='gm-control' %}
+ConditionPathExists=/usr/local/bin/{{ systemd_service }}
+{% else %}
 ConditionPathExists={{base_path}}/{{ systemd_service }}
+{% endif %}
 After=network.target
 
 [Service]
@@ -14,9 +18,13 @@ EnvironmentFile=/etc/environment
 Restart=on-failure
 RestartSec=5
 
-WorkingDirectory={{base_path}}
 {% if systemd_service=='gm-control' %}
-ExecStart={{base_path}}/{{ systemd_service }}.sh
+WorkingDirectory=/usr/local/bin
+{% else %}
+WorkingDirectory={{base_path}}
+{% endif %}
+{% if systemd_service=='gm-control' %}
+ExecStart=/usr/local/bin/{{ systemd_service }}.sh
 {% else %}
 ExecStart={{base_path}}/{{ systemd_service }}
 {% endif %}

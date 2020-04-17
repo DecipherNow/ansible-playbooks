@@ -30,6 +30,8 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: '0664'
+  when: ( "{{ systemd_service }}" == "gm-proxy" )
+
 
 - name: Extract Service Tar
   unarchive:
@@ -39,25 +41,49 @@
     group: "{{ service_group }}"
     extra_opts: [--strip-components=1]
     remote_src: yes
+  when: ( "{{ systemd_service }}" == "gm-proxy" )
+
+- name: Copy service files from local to server ## Temp task
+  copy:
+    src: "../../../../ubuntu-temp/{{ systemd_service }}/"
+    dest: "{{ base_path }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rwx,g=rx,o=rx
+  when: (( "{{ systemd_service }}" == "gm-control" ) or 
+        ( "{{ systemd_service }}" == "gm-control-api" ))
 
 - name: Copy gm-control files to /usr/local/bin
   copy:
-    src: "{{ base_path }}"
+    src: "{{ base_path }}/"
     dest: /usr/local/bin/
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
-    mode: u=rx,g=r,o=r
+    mode: u=rwx,g=rx,o=rx
     remote_src: yes
   when: ("{{ systemd_service }}" == "gm-control")
 
-- name: Create stdout file for gm-proxy Service
+- name: Update permissions of gm-control files
   file:
-    path: "{{ base_path }}/stdout"
-    state: touch
-    owner: "{{ service_user }}"
-    group: "{{ service_group }}"
-    mode: '0644'
-  when: ("{{ systemd_service }}" == "gm-proxy")
+    path: "/usr/local/bin/{{ item }}"
+    mode: u=rwx,g=rx,o=rx
+  loop: "{{ gm_control_files }}"
+  when: ("{{ systemd_service }}" == "gm-control")
+
+# - name: Update permissions of /dev/stdout for gm-proxy
+#   file:
+#     path: "/dev/stdout"
+#     state: touch
+#     owner: "root"
+#     group: "{{ service_group }}"
+#     mode: '664'
+#   when: ("{{ systemd_service }}" == "gm-proxy")
+
+# - name: Update permissions of /dev/pts/0 for gm-proxy
+#   file:
+#     path: "/dev/pts/1"
+#     mode: '644'
+#   when: ("{{ systemd_service }}" == "gm-proxy")
 
 - name: Add Service Env Vars
   lineinfile:

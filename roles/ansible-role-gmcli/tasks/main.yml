@@ -1,0 +1,35 @@
+- name: Create Service Directory
+  file:
+    path: "{{ cli_download_dir }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+
+- name: Download Service Tar
+  get_url:
+    url: "{{ nexus_repo_url }}/{{ nexus_repo }}/{{ nexus_tar_file }}"
+    dest: "{{ cli_download_dir }}"
+    username: '{{ nexus_user }}'
+    password: '{{ nexus_pw }}'
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: '0655'
+
+- name: Extract Service Tar
+  unarchive:
+    src: "{{ cli_download_dir }}/{{ nexus_tar_file }}"
+    dest: "{{ cli_download_dir }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: Copy service files from local to server
+  copy:
+    src: "{{ cli_download_dir }}/greymatter.linux"
+    dest: "{{ cli_home_dir }}/greymatter"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rx,g=rx,o=rx
+    remote_src: yes

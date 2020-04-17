@@ -1,0 +1,19 @@
+systemd_service: 'gm-control-api'
+
+nexus_repo_url: "https://nexus.production.deciphernow.com"
+nexus_repo: "repository/raw-dev/greymatter"
+nexus_tar_file: "gm-control-api-1.2.2.tar.gz"
+
+service_env_vars:
+  - key: GM_CONTROL_API_LOG_LEVEL 
+    value : debug  
+  - key: GM_CONTROL_API_ADDRESS 
+    value : 0.0.0.0:5555
+  - key: GM_CONTROL_API_ORG_KEY 
+    value : deciphernow  
+  - key: GM_CONTROL_API_PERSISTER_TYPE 
+    value : file
+  - key: GM_CONTROL_API_PERSISTER_PATH 
+    value : /var/gm-control-api/gm_control_api_backend.json
+  - key: GM_CONTROL_API_ZONE_NAME 
+    value : zone-default-zone
