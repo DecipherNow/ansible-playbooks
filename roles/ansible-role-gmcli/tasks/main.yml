@@ -5,6 +5,7 @@
     mode: u=rwx,g=rx,o=rx
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
+  tags: gmcli
 
 - name: Download Service Tar
   get_url:
@@ -15,6 +16,7 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: '0655'
+  tags: gmcli
 
 - name: Extract Service Tar
   unarchive:
@@ -24,6 +26,7 @@
     group: "{{ service_group }}"
     extra_opts: [--strip-components=1]
     remote_src: yes
+  tags: gmcli
 
 - name: Copy service files from local to server
   copy:
@@ -33,3 +36,13 @@
     group: "{{ service_group }}"
     mode: u=rx,g=rx,o=rx
     remote_src: yes
+  tags: gmcli
+
+- name: Add gmcli Env Vars
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value}}"
+  with_items: "{{ gmcli_env_vars }}"
+  tags: gmcli

@@ -4,4 +4,8 @@
   include_role:
     name: ansible-role-systemd
     public: yes
+    apply:
+      tags:
+        - control-api
   when: ( ansible_distribution == 'Ubuntu' )
+  tags: control-api

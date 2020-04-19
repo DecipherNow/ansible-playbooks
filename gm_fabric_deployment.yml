@@ -6,6 +6,7 @@
   roles:
     - ansible-role-control-api
     - ansible-role-gmcli
+    - ansible-role-jsons
 
 - hosts: tag_Name_gm_control_ubuntu
   user: ubuntu

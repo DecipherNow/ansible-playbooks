@@ -32,7 +32,6 @@
     mode: '0664'
   when: ( "{{ systemd_service }}" == "gm-proxy" )
 
-
 - name: Extract Service Tar
   unarchive:
     src: "{{ base_path }}/{{ nexus_tar_file }}"

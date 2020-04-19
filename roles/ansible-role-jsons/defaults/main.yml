@@ -1,0 +1,7 @@
+# User to save jsons
+service_user: "gmuser"
+service_group: "gmuser"
+
+# Path where jsons are saved
+jsons_dir: /etc/jsons_config
+

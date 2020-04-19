@@ -4,4 +4,8 @@
   include_role:
     name: ansible-role-systemd
     public: yes
+    apply:
+      tags:
+        - proxy
   when: ( ansible_distribution == 'Ubuntu' )
+  tags: proxy
