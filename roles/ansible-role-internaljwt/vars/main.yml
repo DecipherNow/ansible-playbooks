@@ -1,0 +1,123 @@
+systemd_service: 'gm-jwt-security'
+
+nexus_repo_url: "https://nexus.production.deciphernow.com"
+nexus_repo: "repository/raw-dev/greymatter"
+nexus_tar_file: "gm-jwt-security-1.0.1.tar.gz"
+
+service_env_vars:
+  - key: POLICY_CACHE_LIFETIME 
+    value : 10  
+  - key: LISTING_DEBUG 
+    value : true
+  - key: DELETE_EXPIRED 
+    value : true  
+  - key: DELETE_EXPIRED_POLL_SECONDS
+    value : 600
+  - key: CRASH_ON_ERROR 
+    value : false
+  - key: GMDATA_FABRIC_CLUSTER 
+    value : false
+  - key: GMDATA_NAMESPACE 
+    value : world  
+  - key: GMDATA_NAMESPACE_USERFIELD 
+    value : email
+  - key: GMDATA_TRUST 
+    value :
+  - key: GMDATA_CERT 
+    value :
+  - key: GMDATA_KEY 
+    value :
+  - key: CLIENT_JWT_PREFIX
+    value :
+  - key: CLIENT_JWT_PREFIX_CERT
+    value :
+  - key: CLIENT_JWT_PREFIX_KEY
+    value :
+  - key: CLIENT_JWT_PREFIX_TRUST
+    value :
+  - key: CLIENT_JWT_ENDPOINT_ADDRESS 
+    value :
+  - key: CLIENT_JWT_ENDPOINT_PORT 
+    value : 8080
+  - key: CLIENT_JWT_ENDPOINT_CERT 
+    value :
+  - key: CLIENT_JWT_ENDPOINT_KEY
+    value :
+  - key: CLIENT_JWT_ENDOPINT_TRUST
+    value :
+  - key: CLIENT_JWT_ENDPOINT_PREFIX
+    value : /services/jwt-server/1.0
+  - key: GMDATAX_SESSION_MAX
+    value : 1000
+  - key: S3_TASKS 
+    value : 4096
+  - key: LESS_CHATTY_INFO 
+    value :
+  - key: GMDATAX_CATCH_PANIC 
+    value : true
+  - key: DISABLE_LOOKUPS
+    value :
+  - key: DONT_PANIC
+    value :
+  - key: KAFKA_PEERS
+    value :
+  - key: KAFKA_TOPIC_UPDATE
+    value : gmdatax-update
+  - key: KAFKA_TOPIC_READ 
+    value : gmdatax-read
+  - key: KAFKA_TOPIC_ERROR 
+    value : gmdatax-error
+  - key: KAFKA_CONSUMER_GROUP 
+    value :
+  - key: JWT_PUB 
+    value :
+  - key: MASTERKEY
+    value :
+  - key: AWS_REGION
+    value :
+  - key: FILE_BUCKET
+    value : ${AWS_S3_BUCKET}
+  - key: FILE_PARTITION
+    value : ${AWS_S3_PARTITION}
+  - key: AWS_S3_ENDPOINT 
+    value :
+  - key: AWS_ACCESS_KEY_ID 
+    value :
+  - key: AWS_SECRET_ACCESS_KEY 
+    value :
+  - key: HTTP_CACHE_SECONDS 
+    value : 10
+  - key: USES3
+    value :
+  - key: JWT_API_KEY
+    value :
+  - key: MONGOHOST
+    value : localhost:27017
+  - key: MONGODB
+    value : gmdata
+  - key: MONGO_CERT 
+    value :
+  - key: MONGO_KEY 
+    value :
+  - key: MONGO_TRUST 
+    value :
+  - key: MONGO_USE_TLS
+    value : false
+  - key: MONGO_CN
+    value : localhost
+  - key: MONGO_INITDB_ROOT_USERNAME 
+    value :
+  - key: MONGO_INITDB_ROOT_PASSWORD 
+    value :
+  - key: BIND_ADDRESS 
+    value : 0.0.0.0
+  - key: BIND_PORT
+    value : 8080
+  - key: PRETTY_PRINT
+    value :
+  - key: ZEROLOG_LEVEL
+    value : debug
+  - key: REKOGNITION_FACE_INDEX
+    value :
+  - key: GMDATA_PPROF_BIND 
+    value : 0.0.0.0:6060

@@ -1,0 +1,21 @@
+---
+
+- include_tasks: setup-Ubuntu.yml
+  tags: redis
+
+- name: Ensure Redis is configured.
+  template:
+    src: redis.conf.j2
+    dest: "{{ redis_conf_path }}/redis.conf"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: 0644
+  notify: restart redis
+  tags: redis
+
+- name: Ensure Redis is running and enabled on boot.
+  service: 
+    name: "{{ redis_daemon }}"
+    state: started 
+    enabled: yes
+  tags: redis

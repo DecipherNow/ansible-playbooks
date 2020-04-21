@@ -1,0 +1,10 @@
+
+{% if mongodb_version == '4.0' %}
+  {% if mongodb_ubuntu_version == 'trusty' %}
+deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/4.0 multiverse
+  {% elif mongodb_ubuntu_version == 'xenial' %}
+deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse
+  {% elif mongodb_ubuntu_version == 'bionic' %}
+deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse
+  {% endif %}
+{% endif %}

@@ -1,0 +1,98 @@
+---
+
+# - name: Upload SSL certificate
+#   copy: >
+#     src={{ item }}
+#     dest=/etc/ssl/{{ item }}
+#     mode=0644
+#   with_items:
+#     - "{{ certfile }}"
+#     - "{{ keyfile }}"
+#   tags: mongo
+
+- name: Install mongodv-org and python-pip (for pymongo)
+  apt:
+    state: present
+    name:
+      - mongodb-org
+      - python-pip
+  tags: mongo
+
+- name: Install pymongo
+  pip:
+    name: pymongo
+  tags: mongo
+
+- name: Add MongoDB {{ mongodb_version }} GPG Key
+  apt_key:
+    url: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
+    state: present
+  register: result
+  until: result is success
+  retries: 5
+  delay: 5
+  tags: mongo
+
+- name: Add MongoDB {{ mongodb_version }} source
+  template:
+    src: mongodb.list.j2
+    dest: "/etc/apt/sources.list.d/mongodb-{{ mongodb_version }}.list"
+  tags: mongo
+
+- name: Install MongoDB {{ mongodb_version }}
+  apt:
+    name: "mongodb-org={{ mongodb_version }}*"
+    state: present
+    update_cache: true
+  register: result
+  until: result is success
+  retries: 5
+  delay: 5
+  notify: Restart MongoDB
+  tags: mongo
+
+- name: Check if admin user already exists
+  command: "{{ mongodb_mongocmd }}"
+  args:
+    stdin: "db.version()"
+  register: mongodb_user_admin_check
+  changed_when: false
+  ignore_errors: true
+  tags: mongo
+
+- name: Create admin user
+  mongodb_user:
+    database: admin
+    name: "{{ mongodb_user_admin_name }}"
+    password: "{{ mongodb_user_admin_password }}"
+    update_password: always
+    roles: root
+    login_port: "{{ mongodb_port }}"
+    ssl: True
+  when: >
+    mongodb_user_admin_check.rc != 0
+  tags: mongo
+
+# - name: Create {{ database_name }}
+#   mongodb_user:
+#     database: "{{ database_name }}"
+#     name: "{{ mongodb_user_admin_name }}"
+#     password: "{{ mongodb_user_admin_password }}"
+#     state: present
+#   tags: mongo
+
+- name: Create {{ database_name }} users
+  mongodb_user:
+    login_user: "{{ mongodb_user_admin_name }}"
+    login_password: "{{ mongodb_user_admin_password }}"
+    database: admin
+    user: "{{ gmdata_username }}"
+    password: "{{ gmdata_password }}"
+    state: present
+    # replica_set:
+    roles:
+      - { db: "{{ database_name }}", role: "{{ gmdata_role }}" }
+  tags: mongo
+
+- include_tasks: replica_set.yml
+  when: mongo_init_replica_set | default(false)

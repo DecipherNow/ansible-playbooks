@@ -1,11 +1,11 @@
 ---
 
-- name: Create and run gm-proxy binary as a service
+- name: Create and run gm-jwt-security binary as a service
   include_role:
     name: ansible-role-systemd
     public: yes
     apply:
       tags:
-        - proxy
+        - ijwt
   when: ( ansible_distribution == 'Ubuntu' )
-  tags: proxy
+  tags: ijwt

@@ -19,3 +19,12 @@
   become: yes
   roles:
     - ansible-role-proxy
+
+- hosts: tag_Name_gm_data_ubuntu
+  user: ubuntu
+  become: yes
+  roles:
+    - ansible-role-mongodb
+    - ansible-role-redis
+    - ansible-role-internaljwt
+    - ansible-role-data

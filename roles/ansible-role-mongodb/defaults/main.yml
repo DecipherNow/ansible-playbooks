@@ -1,0 +1,50 @@
+---
+
+mongodb_version: '4.0'
+mongodb_ubuntu_version: "{{ ansible_distribution_release }}"
+mongodb_bindips:
+    - "127.0.0.1"
+mongodb_port: 27017
+mongodb_user_admin_name: mongo
+mongodb_user_admin_password: mongo
+database_name: gmdata
+gmdata_username: gmdata
+gmdata_password: gmdata_password
+gmdata_role: readWrite
+
+
+mongo_process_name: mongod
+mongo_db_dir: /data/db
+mongo_conf_file: /etc/mongod.conf
+mongo_pid_file: /var/run/mongodb/mongod.pid
+mongo_log_path: /var/log/mongodb/mongod.log
+
+mongo_log_append: false
+mongo_log_rotate: rename
+mongo_log_verbosity: 0
+
+mongo_fork_process: true
+mongo_cluster_role: shardsvr
+mongo_authorization: disabled
+
+mongo_config_db: ''
+mongo_chunk_size: 0
+
+mongo_ssl_enabled: false
+# the following are required if mongo_ssl_enabled is true:
+#mongo_ssl_mode:
+#mongo_ssl_pem_key_file:
+#mongo_ssl_pem_key_password:
+#mongo_ssl_ca_file:
+#mongo_ssl_allow_invalid_certificates:
+#mongo_ssl_allow_invalid_hostnames:
+
+# enable to initialize replica set
+mongo_init_replica_set: false
+mongo_replica_servers: []
+mongo_replica_set_name: rs0
+mongo_replica_sleep_millis: 10000
+
+mongo_cmd: /usr/bin/mongo
+
+mongo_cmd_opts:   

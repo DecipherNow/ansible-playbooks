@@ -1,0 +1,29 @@
+---
+- name: Add redis group
+  group:
+    name: "{{ redis_group }}"
+    state: present
+  tags: redis
+
+- name: Add redis user
+  user:
+    name: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    shell: /bin/false
+    system: yes
+  tags: redis
+
+- name: Create "{{ redis_conf_path }}"
+  file:
+    path: "{{ redis_conf_path }}"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: 0755
+  tags: redis
+
+- name: Install Redis
+  apt:
+    name: "{{ redis_package }}"
+    state: present
+  tags: redis

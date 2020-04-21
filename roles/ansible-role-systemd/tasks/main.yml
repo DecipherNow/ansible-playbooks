@@ -30,7 +30,8 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: '0664'
-  when: ( "{{ systemd_service }}" == "gm-proxy" )
+  when: (( "{{ systemd_service }}" != "gm-control" ) or 
+        ( "{{ systemd_service }}" != "gm-control-api" )) 
 
 - name: Extract Service Tar
   unarchive:
@@ -40,7 +41,8 @@
     group: "{{ service_group }}"
     extra_opts: [--strip-components=1]
     remote_src: yes
-  when: ( "{{ systemd_service }}" == "gm-proxy" )
+  when: (( "{{ systemd_service }}" != "gm-control" ) or 
+        ( "{{ systemd_service }}" != "gm-control-api" ))
 
 - name: Copy service files from local to server ## Temp task
   copy:
