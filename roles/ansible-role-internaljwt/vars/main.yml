@@ -5,119 +5,35 @@ nexus_repo: "repository/raw-dev/greymatter"
 nexus_tar_file: "gm-jwt-security-1.0.1.tar.gz"
 
 service_env_vars:
-  - key: POLICY_CACHE_LIFETIME 
-    value : 10  
-  - key: LISTING_DEBUG 
-    value : true
-  - key: DELETE_EXPIRED 
-    value : true  
-  - key: DELETE_EXPIRED_POLL_SECONDS
-    value : 600
-  - key: CRASH_ON_ERROR 
-    value : false
-  - key: GMDATA_FABRIC_CLUSTER 
-    value : false
-  - key: GMDATA_NAMESPACE 
-    value : world  
-  - key: GMDATA_NAMESPACE_USERFIELD 
-    value : email
-  - key: GMDATA_TRUST 
-    value :
-  - key: GMDATA_CERT 
-    value :
-  - key: GMDATA_KEY 
-    value :
-  - key: CLIENT_JWT_PREFIX
-    value :
-  - key: CLIENT_JWT_PREFIX_CERT
-    value :
-  - key: CLIENT_JWT_PREFIX_KEY
-    value :
-  - key: CLIENT_JWT_PREFIX_TRUST
-    value :
-  - key: CLIENT_JWT_ENDPOINT_ADDRESS 
-    value :
-  - key: CLIENT_JWT_ENDPOINT_PORT 
-    value : 8080
-  - key: CLIENT_JWT_ENDPOINT_CERT 
-    value :
-  - key: CLIENT_JWT_ENDPOINT_KEY
-    value :
-  - key: CLIENT_JWT_ENDOPINT_TRUST
-    value :
-  - key: CLIENT_JWT_ENDPOINT_PREFIX
-    value : /services/jwt-server/1.0
-  - key: GMDATAX_SESSION_MAX
-    value : 1000
-  - key: S3_TASKS 
-    value : 4096
-  - key: LESS_CHATTY_INFO 
-    value :
-  - key: GMDATAX_CATCH_PANIC 
-    value : true
-  - key: DISABLE_LOOKUPS
-    value :
-  - key: DONT_PANIC
-    value :
-  - key: KAFKA_PEERS
-    value :
-  - key: KAFKA_TOPIC_UPDATE
-    value : gmdatax-update
-  - key: KAFKA_TOPIC_READ 
-    value : gmdatax-read
-  - key: KAFKA_TOPIC_ERROR 
-    value : gmdatax-error
-  - key: KAFKA_CONSUMER_GROUP 
-    value :
-  - key: JWT_PUB 
-    value :
-  - key: MASTERKEY
-    value :
-  - key: AWS_REGION
-    value :
-  - key: FILE_BUCKET
-    value : ${AWS_S3_BUCKET}
-  - key: FILE_PARTITION
-    value : ${AWS_S3_PARTITION}
-  - key: AWS_S3_ENDPOINT 
-    value :
-  - key: AWS_ACCESS_KEY_ID 
-    value :
-  - key: AWS_SECRET_ACCESS_KEY 
-    value :
-  - key: HTTP_CACHE_SECONDS 
-    value : 10
-  - key: USES3
-    value :
-  - key: JWT_API_KEY
-    value :
-  - key: MONGOHOST
-    value : localhost:27017
-  - key: MONGODB
-    value : gmdata
-  - key: MONGO_CERT 
-    value :
-  - key: MONGO_KEY 
-    value :
-  - key: MONGO_TRUST 
-    value :
-  - key: MONGO_USE_TLS
-    value : false
-  - key: MONGO_CN
-    value : localhost
-  - key: MONGO_INITDB_ROOT_USERNAME 
-    value :
-  - key: MONGO_INITDB_ROOT_PASSWORD 
-    value :
+  - key: USERS_JSON 
+    value : ewogICJ1c2VycyI6IFsKICAgIHsKICAgICAgImxhYmVsIjogInJvYiIsCiAgICAgICJ2YWx1ZXMiOiB7CiAgICAgICAgImVtYWlsIjogWwogICAgICAgICAgInJvYi5maWVsZGluZ0BkZWNpcGhlcm5vdy5jb20iCiAgICAgICAgXSwKICAgICAgICAib3JnIjogWwogICAgICAgICAgInd3dy5kZWNpcGhlcm5vdy5jb20iCiAgICAgICAgXQogICAgICB9CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiZGFuaWVsIiwKICAgICAgInZhbHVlcyI6IHsKICAgICAgICAiZW1haWwiOiBbCiAgICAgICAgICAiZGFuaWVsLmNveEBkZWNpcGhlcm5vdy5jb20iCiAgICAgICAgXSwKICAgICAgICAib3JnIjogWwogICAgICAgICAgInd3dy5kZWNpcGhlcm5vdy5jb20iCiAgICAgICAgXQogICAgICB9CiAgICB9LAogICAgewogICAgICAibGFiZWwiOiAiaGlyb21pIiwKICAgICAgInZhbHVlcyI6IHsKICAgICAgICAiZW1haWwiOiBbCiAgICAgICAgICAiaGlyb21pLnN1ZW5hZ2FAZGVjaXBoZXJub3cuY29tIgogICAgICAgIF0sCiAgICAgICAgIm9yZyI6IFsKICAgICAgICAgICJ3d3cuZGVjaXBoZXJub3cuY29tIgogICAgICAgIF0KICAgICAgfQogICAgfSwKICAgIHsKICAgICAgImxhYmVsIjogIm1hcnRpbiIsCiAgICAgICJ2YWx1ZXMiOiB7CiAgICAgICAgImVtYWlsIjogWwogICAgICAgICAgIm1hcnRpbi50ZXJza2luQGRlY2lwaGVybm93LmNvbSIKICAgICAgICBdLAogICAgICAgICJvcmciOiBbCiAgICAgICAgICAid3d3LmRlY2lwaGVybm93LmNvbSIKICAgICAgICBdCiAgICAgIH0KICAgIH0KICBdCn0=
+  - key: PRIVATE_KEY 
+    value : LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1JSGNBZ0VCQkVJQkhRY01yVUh5ZEFFelNnOU1vQWxneFF1a3lqQTROL2laa21ETVIvdFRkVmg3U3hNYk8xVE4KeXdzRkJDdTYvZEZXTE5rUDJGd1FFQmtqREpRZU9mc3hKZWlnQndZRks0RUVBQ09oZ1lrRGdZWUFCQUJEWklJeAp6a082cWpkWmF6ZG1xWFg1dnRFcWtodzlkcVREeTN6d0JkcXBRUmljWDRlS2lZUUQyTTJkVFJtWk0yZE9FRHh1Clhja0hzcVMxZDNtWHBpcDh2UUZHTWJCM1hRVm9DZWN0SUlLMkczRUlwWmhGZFNGdG1sa2t5U1N4angzcS9UcloKaVlRTjhJakpPbUNueUdXZ1VWUkdERURiNWlZdkZXc3dpSkljSWYyOGVRPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
   - key: BIND_ADDRESS 
-    value : 0.0.0.0
-  - key: BIND_PORT
+    value : 0.0.0.0  
+  - key: HTTP_PORT
     value : 8080
-  - key: PRETTY_PRINT
+  - key: HTTPS_PORT 
+    value : 9443
+  - key: TOKEN_EXP_TIME 
+    value : 28800
+  - key: REDIS_HOST 
+    value : 127.0.0.1
+  - key: REDIS_PORT 
+    value : 6379
+  - key: REDIS_DB 
+    value : 15
+  - key: REDIS_PASS 
+    value : password123
+  - key: JWT_API_KEY 
+    value : MTIzCg==
+  - key: ENABLE_TLS
+    value : "false"
+  - key: SERVER_TRUST
+    value :
+  - key: SERVER_CERT
+    value :
+  - key: SERVER_KEY
     value :
   - key: ZEROLOG_LEVEL
-    value : debug
-  - key: REKOGNITION_FACE_INDEX
-    value :
-  - key: GMDATA_PPROF_BIND 
-    value : 0.0.0.0:6060
+    value : info

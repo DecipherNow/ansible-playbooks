@@ -54,6 +54,22 @@
   when: (( "{{ systemd_service }}" == "gm-control" ) or 
         ( "{{ systemd_service }}" == "gm-control-api" ))
 
+- name: Update gm-jwt-security file name
+  copy:
+    src: "{{ base_path }}/gm-jwt-security.linux"
+    dest: "{{ base_path }}/gm-jwt-security"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rwx,g=rx,o=rx
+    remote_src: yes
+  when: ("{{ systemd_service }}" == "gm-jwt-security")
+
+- name: Delete old gm-jwt-security file name
+  file: 
+    path: "{{ base_path }}/gm-jwt-security.linux" 
+    state: absent
+  when: ("{{ systemd_service }}" == "gm-jwt-security")
+
 - name: Copy gm-control files to /usr/local/bin
   copy:
     src: "{{ base_path }}/"

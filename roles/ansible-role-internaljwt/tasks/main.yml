@@ -1,5 +1,12 @@
 ---
 
+# Restart redis server. Otherwise get connection error
+- name: Restart Redis server
+  service: 
+    name: redis-server
+    state: restarted 
+  tags: ijwt
+
 - name: Create and run gm-jwt-security binary as a service
   include_role:
     name: ansible-role-systemd
