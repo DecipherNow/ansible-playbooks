@@ -64,6 +64,22 @@
     remote_src: yes
   when: ("{{ systemd_service }}" == "gm-jwt-security")
 
+- name: Update gm-data file name
+  copy:
+    src: "{{ base_path }}/gmdatax.linux"
+    dest: "{{ base_path }}/gmdatax"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rwx,g=rx,o=rx
+    remote_src: yes
+  when: ("{{ systemd_service }}" == "gm-data")
+
+# - name: Delete old gm-data file name
+#   file: 
+#     path: "{{ base_path }}/gmdatax.linux" 
+#     state: absent
+#   when: ("{{ systemd_service }}" == "gm-data"")
+
 - name: Delete old gm-jwt-security file name
   file: 
     path: "{{ base_path }}/gm-jwt-security.linux" 
@@ -86,21 +102,6 @@
     mode: u=rwx,g=rx,o=rx
   loop: "{{ gm_control_files }}"
   when: ("{{ systemd_service }}" == "gm-control")
-
-# - name: Update permissions of /dev/stdout for gm-proxy
-#   file:
-#     path: "/dev/stdout"
-#     state: touch
-#     owner: "root"
-#     group: "{{ service_group }}"
-#     mode: '664'
-#   when: ("{{ systemd_service }}" == "gm-proxy")
-
-# - name: Update permissions of /dev/pts/0 for gm-proxy
-#   file:
-#     path: "/dev/pts/1"
-#     mode: '644'
-#   when: ("{{ systemd_service }}" == "gm-proxy")
 
 - name: Add Service Env Vars
   lineinfile:
