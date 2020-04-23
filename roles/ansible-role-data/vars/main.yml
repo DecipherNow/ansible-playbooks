@@ -8,15 +8,15 @@ service_env_vars:
   - key: POLICY_CACHE_LIFETIME 
     value : 10  
   - key: LISTING_DEBUG 
-    value : true
+    value : 'true'
   - key: DELETE_EXPIRED 
-    value : true  
+    value : 'true'  
   - key: DELETE_EXPIRED_POLL_SECONDS
     value : 600
   - key: CRASH_ON_ERROR 
-    value : false
+    value : 'false'
   - key: GMDATA_FABRIC_CLUSTER 
-    value : false
+    value : 'false'
   - key: GMDATA_NAMESPACE 
     value : world  
   - key: GMDATA_NAMESPACE_USERFIELD 
@@ -30,11 +30,11 @@ service_env_vars:
   - key: CLIENT_JWT_PREFIX
     value :
   - key: CLIENT_JWT_PREFIX_CERT
-    value :
+    value : 
   - key: CLIENT_JWT_PREFIX_KEY
-    value :
+    value : 
   - key: CLIENT_JWT_PREFIX_TRUST
-    value :
+    value : 
   - key: CLIENT_JWT_ENDPOINT_ADDRESS 
     value :
   - key: CLIENT_JWT_ENDPOINT_PORT 
@@ -44,7 +44,7 @@ service_env_vars:
   - key: CLIENT_JWT_ENDPOINT_KEY
     value :
   - key: CLIENT_JWT_ENDOPINT_TRUST
-    value :
+    value : 
   - key: CLIENT_JWT_ENDPOINT_PREFIX
     value : /services/jwt-server/1.0
   - key: GMDATAX_SESSION_MAX
@@ -54,7 +54,7 @@ service_env_vars:
   - key: LESS_CHATTY_INFO 
     value :
   - key: GMDATAX_CATCH_PANIC 
-    value : true
+    value : 'true'
   - key: DISABLE_LOOKUPS
     value :
   - key: DONT_PANIC
@@ -70,9 +70,9 @@ service_env_vars:
   - key: KAFKA_CONSUMER_GROUP 
     value :
   - key: JWT_PUB 
-    value :
+    value : 
   - key: MASTERKEY
-    value :
+    value : ac8923[lkn43589vi23kl4rfgv0ws
   - key: AWS_REGION
     value :
   - key: FILE_BUCKET
@@ -88,21 +88,21 @@ service_env_vars:
   - key: HTTP_CACHE_SECONDS 
     value : 10
   - key: USES3
-    value :
+    value : 'false'
   - key: JWT_API_KEY
     value :
   - key: MONGOHOST
     value : localhost:27017
   - key: MONGODB
     value : gmdata
-  - key: MONGO_CERT 
-    value :
-  - key: MONGO_KEY 
-    value :
-  - key: MONGO_TRUST 
-    value :
+  # - key: MONGO_CERT 
+  #   value : {{ mongo_leaf_cert_value }}
+  # - key: MONGO_KEY 
+  #   value : {{ mongo_leaf_key_value }}
+  # - key: MONGO_TRUST 
+  #   value : {{ rootCA_authroity }}
   - key: MONGO_USE_TLS
-    value : false
+    value : 'false'
   - key: MONGO_CN
     value : localhost
   - key: MONGO_INITDB_ROOT_USERNAME 

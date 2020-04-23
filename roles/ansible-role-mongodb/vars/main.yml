@@ -1,6 +1,3 @@
-mongodb_mongocmd: >
-  mongo --quiet
-  --host {{ mongodb_bindips[0] }}
-  --port {{ mongodb_port }}
-  -u {{ mongodb_user_admin_name }}
-  -p {{ mongodb_user_admin_password }} admin
+---
+mongodb_repository:
+    "4.2": "deb http://repo.mongodb.org/apt/ubuntu {{ ansible_distribution_release }}/mongodb-org/4.2 multiverse"
