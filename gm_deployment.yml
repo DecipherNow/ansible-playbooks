@@ -4,6 +4,7 @@
   user: ubuntu
   become: yes
   roles:
+    - ansible-role-acert
     - ansible-role-control-api
     - ansible-role-gmcli
     - ansible-role-jsons
@@ -24,7 +25,11 @@
   user: ubuntu
   become: yes
   roles:
+    - ansible-role-incert
     - ansible-role-mongodb
     - ansible-role-redis
     - ansible-role-internaljwt
     - ansible-role-data
+    - ansible-role-acert
+  vars:
+    acert_service: gm-data

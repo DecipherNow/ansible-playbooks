@@ -2,3 +2,5 @@ roles/ecs_secrets/vars/main.yml
 mesh/*.pub
 mesh/greymatter.linux
 mesh/grpcurl.linux
+!roles/ansible-role-acert/files/acert
+roles/ansible-role-acert/files/*

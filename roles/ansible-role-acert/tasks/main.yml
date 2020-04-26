@@ -1,0 +1,146 @@
+- name: Create service group if it doesnt exist
+  group:
+    name: "{{ service_group }}"
+    state: present
+    system: yes
+  tags: acert
+  
+- name: Creating service user if it doesnt exist
+  user:
+    name: "{{ service_user }}"
+    groups: "{{ service_group }}"
+    system: yes
+    append: yes
+  tags: acert
+
+- name: Create acert home directory
+  file:
+    path: "{{ acert_home_dir }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=rwx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    recurse: yes
+  tags: acert, acert-service
+
+- name: Add acert binary
+  copy:
+    src: acert
+    dest: /usr/local/bin
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rwx,g=rx,o=rx
+  tags: acert, acert-service
+
+- name: Check if {{ env_name }}-rootCA authority already exist
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep {{ env_name }}-rootCA
+  register: rootCA_authority_status
+  tags: acert
+  ignore_errors: yes
+
+- name: Create {{ env_name }}-rootCA ascert authority
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities create -n {{ env_name }}-rootCA
+  when: rootCA_authority_status.rc != 0
+  tags: acert
+
+- name: Update .acert dir permissions
+  file:
+    path: "{{ acert_home_dir }}/.acert"
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    recurse: yes
+  tags: acert
+
+- name: Extract {{ env_name }}-rootCA authority fingerprint
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep test-rootCA | sed -e 's/\s.*$//'
+  register: "rootCA_fingerprint"
+  when: rootCA_authority_status.rc != 0
+  tags: acert
+
+- name: Extract {{ env_name }}-rootCA authority, cert and key
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities export "{{ rootCA_fingerprint.stdout }}" -f pem -t authority >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-authority.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities export "{{ rootCA_fingerprint.stdout }}" -f pem -t certificate >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-certificate.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities export "{{ rootCA_fingerprint.stdout }}" -f pem -t key >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-key.pem
+  when: rootCA_authority_status.rc != 0
+  tags: acert
+
+- name: Save {{ env_name }}-rootCA authority fingerprint
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep test-rootCA | sed -e 's/\s.*$//' >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-fingerprint
+  when: rootCA_authority_status.rc != 0
+  tags: acert
+
+- name: Compress directory {{ acert_home_dir }} into {{ acert_home_dir }}.tgz
+  archive:
+    path: "{{ acert_home_dir }}"
+    dest: "{{ acert_home_dir }}.tgz"
+  when: rootCA_authority_status.rc != 0
+  tags: acert
+
+- name: Download {{ env_name }}-rootCA authority content
+  fetch:
+    src: "{{ acert_home_dir }}.tgz"
+    dest: roles/ansible-role-acert/files/
+    flat: yes
+  when: rootCA_authority_status.rc != 0
+  tags: acert
+
+## Create leaf cert for different services ## Move it into separate task
+
+- name: Copy service files from local to server ## Temp task
+  copy:
+    src: "files/acert_dir.tgz"
+    dest: "/tmp"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rwx,g=rx,o=rx
+  # when: acert_service | length > 0
+  tags: acert-service
+
+- name: Extract Service Tar
+  unarchive:
+    src: "/tmp/acert_dir.tgz"
+    dest: "{{ acert_home_dir }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+  # when: acert_service | length > 0
+  tags: acert-service 
+
+- name: Check if {{ env_name }}-rootCA authority already exist
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves list | grep {{ env_name }}-{{ acert_service }}-leaf
+  register: leaf_service_status
+  tags: acert-service
+  ignore_errors: yes
+
+- name: Extract "{{ env_name }}"-rootCA authority fingerprint
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep test-rootCA | sed -e 's/\s.*$//'
+  register: rootCA_fingerprint_service
+  # when: acert_service | length > 0
+  when: leaf_service_status.rc != 0
+  tags: acert-service
+
+- name: Create leaf authority for "{{ acert_service }}"
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities issue "{{ rootCA_fingerprint_service.stdout }}" -n {{ env_name }}-{{ acert_service }}-leaf
+  register: leaf_fingerprint
+  # when: service | length > 0
+  when: leaf_service_status.rc != 0
+  tags: acert-service
+
+- name: Extract "{{ env_name }}"-"{{ acert_service }}"-leaf authority, cert and key
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves export "{{ leaf_fingerprint.stdout }}" -f pem -t authority >> "{{ acert_home_dir }}"/{{ env_name }}-{{ acert_service }}-leaf-authority.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves export "{{ leaf_fingerprint.stdout }}" -f pem -t certificate >> "{{ acert_home_dir }}"/{{ env_name }}-{{ acert_service }}-leaf-certificate.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves export "{{ leaf_fingerprint.stdout }}" -f pem -t key >> "{{ acert_home_dir }}"/{{ env_name }}-{{ acert_service }}-leaf-key.pem
+  # when: service | length > 0
+  when: leaf_service_status.rc != 0
+  tags: acert-service

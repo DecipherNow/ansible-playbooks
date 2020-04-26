@@ -1,0 +1,4 @@
+service_user: gmuser
+service_group: gmuser
+env_name: test
+certs_directory: /tmp/certs_dir
