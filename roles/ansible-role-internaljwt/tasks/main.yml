@@ -18,18 +18,18 @@
   register: trust_cert_base64_value
   tags: ijwt
 
-# - name: Create private_key base64 value
-#   slurp:
-#     src: /tmp/certs_dir/localhost.key
-#   register: private_key_base64_value
-#   tags: ijwt
+- name: Create jwtES512 key base64 value
+  slurp:
+    src: /tmp/certs_dir/jwtES512.key
+  register: jwtES512_key_base64_value
+  tags: ijwt
 
 - name: Set trust, cert, key and private_key value for internal jwt env vars
   set_fact:
     CERT_VALUE="{{ localhost_cert_base64_value.content }}"
     KEY_VALUE="{{ localhost_key_base64_value.content }}"
     TRUST_VALUE="{{ trust_cert_base64_value.content }}"
-    PRIVATE_KEY_VALUE="{{ localhost_key_base64_value.content }}"
+    JWT_KEY_VALUE="{{ jwtES512_key_base64_value.content }}"
   tags: ijwt
 
 # Restart redis server. Otherwise get connection error

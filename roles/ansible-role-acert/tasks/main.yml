@@ -1,17 +1,4 @@
-- name: Create service group if it doesnt exist
-  group:
-    name: "{{ service_group }}"
-    state: present
-    system: yes
-  tags: acert
-  
-- name: Creating service user if it doesnt exist
-  user:
-    name: "{{ service_user }}"
-    groups: "{{ service_group }}"
-    system: yes
-    append: yes
-  tags: acert
+---
 
 - name: Create acert home directory
   file:

@@ -43,12 +43,18 @@
   register: trust_cert_base64_value
   tags: data
 
+- name: Create jwtES512 pub key base64 value
+  slurp:
+    src: /tmp/certs_dir/jwtES512.key.pub
+  register: jwtES512_key_pub_base64_value
+  tags: data
+
 - name: Set trust, cert, and key value for internal jwt env vars
   set_fact:
     CERT_VALUE="{{ localhost_cert_base64_value.content }}"
     KEY_VALUE="{{ localhost_key_base64_value.content }}"
     TRUST_VALUE="{{ trust_cert_base64_value.content }}"
-    PRIVATE_KEY_VALUE="{{ localhost_key_base64_value.content }}"
+    JWT_PUB_KEY_VALUE="{{ jwtES512_key_pub_base64_value.content }}"
   tags: data
   
 - name: Create and run gm-data binary as a service

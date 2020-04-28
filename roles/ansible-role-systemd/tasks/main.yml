@@ -1,18 +1,5 @@
 ---
 
-- name: Create Service group
-  group:
-    name: "{{ service_group }}"
-    state: present
-    system: yes
-
-- name: Creating Service User
-  user:
-    name: "{{ service_user }}"
-    groups: "{{ service_group }}"
-    system: yes
-    append: yes
-
 - name: Create Service Directory
   file:
     path: /var/{{ systemd_service }}
@@ -30,8 +17,7 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: '0664'
-  when: (( "{{ systemd_service }}" != "gm-control" ) or 
-        ( "{{ systemd_service }}" != "gm-control-api" )) 
+  when: systemd_service == "gm-proxy"  or systemd_service == "gm-data" or systemd_service == "gm-jwt-security"
 
 - name: Extract Service Tar
   unarchive:
@@ -41,8 +27,7 @@
     group: "{{ service_group }}"
     extra_opts: [--strip-components=1]
     remote_src: yes
-  when: (( "{{ systemd_service }}" != "gm-control" ) or 
-        ( "{{ systemd_service }}" != "gm-control-api" ))
+  when: systemd_service == "gm-proxy"  or systemd_service == "gm-data" or systemd_service == "gm-jwt-security"
 
 - name: Copy service files from local to server ## Temp task
   copy:
@@ -51,8 +36,7 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: u=rwx,g=rx,o=rx
-  when: (( "{{ systemd_service }}" == "gm-control" ) or 
-        ( "{{ systemd_service }}" == "gm-control-api" ))
+  when: systemd_service == "gm-control"  or systemd_service == "gm-control-api"
 
 - name: Update gm-jwt-security file name
   copy:
@@ -62,7 +46,7 @@
     group: "{{ service_group }}"
     mode: u=rwx,g=rx,o=rx
     remote_src: yes
-  when: ("{{ systemd_service }}" == "gm-jwt-security")
+  when: systemd_service == "gm-jwt-security"
 
 - name: Update gm-data file name
   copy:
@@ -72,7 +56,7 @@
     group: "{{ service_group }}"
     mode: u=rwx,g=rx,o=rx
     remote_src: yes
-  when: ("{{ systemd_service }}" == "gm-data")
+  when: systemd_service == "gm-data"
 
 # - name: Delete old gm-data file name
 #   file: 
@@ -84,7 +68,7 @@
   file: 
     path: "{{ base_path }}/gm-jwt-security.linux" 
     state: absent
-  when: ("{{ systemd_service }}" == "gm-jwt-security")
+  when: systemd_service == "gm-jwt-security"
 
 - name: Copy gm-control files to /usr/local/bin
   copy:
@@ -94,14 +78,14 @@
     group: "{{ service_group }}"
     mode: u=rwx,g=rx,o=rx
     remote_src: yes
-  when: ("{{ systemd_service }}" == "gm-control")
+  when: systemd_service == "gm-control"
 
 - name: Update permissions of gm-control files
   file:
     path: "/usr/local/bin/{{ item }}"
     mode: u=rwx,g=rx,o=rx
   loop: "{{ gm_control_files }}"
-  when: ("{{ systemd_service }}" == "gm-control")
+  when: systemd_service == "gm-control"
 
 - name: Add Service Env Vars
   lineinfile:

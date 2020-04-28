@@ -6,7 +6,7 @@ gmcli_env_vars:
   - key: GREYMATTER_API_SSL 
     value : 'false' 
   - key: GREYMATTER_API_INSECURE
-    value : true
+    value : 'true'
   - key: GREYMATTER_API_SSLCERT 
     value : "/path/to/my.crt"
   - key: GREYMATTER_API_SSLCERT 

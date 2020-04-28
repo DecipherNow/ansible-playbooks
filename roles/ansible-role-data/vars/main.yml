@@ -23,6 +23,8 @@ service_env_vars:
     value : world  
   - key: GMDATA_NAMESPACE_USERFIELD 
     value : email
+  - key: GMDATA_USE_TLS 
+    value : 'false'
   - key: GMDATA_TRUST 
     value :
   - key: GMDATA_CERT 
@@ -39,6 +41,10 @@ service_env_vars:
   #   value : 
   # - key: CLIENT_JWT_PREFIX_TRUST
   #   value : 
+  - key: JWT_PUB 
+    value : "{{ JWT_PUB_KEY_VALUE }}"
+  - key: JWT_API_KEY
+    value : dm9sY2Fuby1lcGlkZW1pYy10d2VsZnRoLXRhbWFsZQ==
   - key: CLIENT_JWT_ENDPOINT_ADDRESS 
     value : localhost
   - key: CLIENT_JWT_ENDPOINT_PORT 
@@ -73,10 +79,10 @@ service_env_vars:
     value : gmdatax-error
   - key: KAFKA_CONSUMER_GROUP 
     value :
-  - key: JWT_PUB 
-    value : 
   - key: MASTERKEY
     value : ac8923[lkn43589vi23kl4rfgv0ws
+  - key: USES3
+    value : 'false'
   - key: AWS_REGION
     value :
   - key: FILE_BUCKET
@@ -91,10 +97,6 @@ service_env_vars:
     value :
   - key: HTTP_CACHE_SECONDS 
     value : 10
-  - key: USES3
-    value : 'false'
-  - key: JWT_API_KEY
-    value : dm9sY2Fuby1lcGlkZW1pYy10d2VsZnRoLXRhbWFsZQ==
   - key: MONGOHOST
     value : localhost:27017
   - key: MONGODB
@@ -110,9 +112,9 @@ service_env_vars:
   - key: MONGO_CN
     value : localhost
   - key: MONGO_INITDB_ROOT_USERNAME 
-    value : mongo
+    value : gmdata
   - key: MONGO_INITDB_ROOT_PASSWORD 
-    value : mongo
+    value : gmdata
   - key: BIND_ADDRESS 
     value : 0.0.0.0
   - key: BIND_PORT

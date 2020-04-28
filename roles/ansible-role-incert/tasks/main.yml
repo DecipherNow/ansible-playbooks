@@ -1,17 +1,4 @@
-- name: Create service group if it doesnt exist
-  group:
-    name: "{{ service_group }}"
-    state: present
-    system: yes
-  tags: incert
-  
-- name: Creating service user if it doesnt exist
-  user:
-    name: "{{ service_user }}"
-    groups: "{{ service_group }}"
-    system: yes
-    append: yes
-  tags: incert
+---
 
 - name: Create certs directory
   file:
@@ -20,7 +7,6 @@
     mode: u=rwx,g=rx,o=rx
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
-    recurse: yes
   tags: incert
 
 - name: Add incert binary
@@ -34,13 +20,24 @@
 
 - name: Check if the localhost certs where created within 4 days
   shell: |
-    find "{{ certs_directory }}" -type f -newermt $(date '+%Y-%m-%d' --date="4 days ago") ! -newermt $(date '+%Y-%m-%d') | grep localhost
+    find "{{ certs_directory }}" -type f -newermt $(date '+%Y-%m-%d' --date="4 days ago") | grep localhost
   register: cert_result
+  ignore_errors: yes
   tags: incert
 
 - name: Create localhost certificates
   shell: |
     /usr/local/bin/incert issue single -c localhost -e 432000s -d /tmp/certs_dir
   when: cert_result.rc == 1
+  tags: incert
+
+- name: Update certs directory permissions
+  file:
+    path: "{{ certs_directory }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    recurse: yes
   tags: incert
     

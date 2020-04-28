@@ -7,9 +7,9 @@
     group: "{{ service_group }}"
   tags: gmcli
 
-- name: Download Service Tar
+- name: Download cli Tar
   get_url:
-    url: "{{ nexus_repo_url }}/{{ nexus_repo }}/{{ nexus_tar_file }}"
+    url: "{{ gm_cli_nexus_repo_url }}/{{ gm_cli_nexus_repo }}/{{ gm_cli_nexus_tar_file }}"
     dest: "{{ cli_download_dir }}"
     username: '{{ nexus_user }}'
     password: '{{ nexus_pw }}'
@@ -18,9 +18,9 @@
     mode: '0655'
   tags: gmcli
 
-- name: Extract Service Tar
+- name: Extract cli Tar
   unarchive:
-    src: "{{ cli_download_dir }}/{{ nexus_tar_file }}"
+    src: "{{ cli_download_dir }}/{{ gm_cli_nexus_tar_file }}"
     dest: "{{ cli_download_dir }}"
     owner: "{{ service_user }}"
     group: "{{ service_group }}"

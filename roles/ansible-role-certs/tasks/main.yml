@@ -1,0 +1,13 @@
+---
+
+- name: Create ijwt/gm-data cert
+  shell: |
+    openssl ecparam -genkey -name secp521r1 -noout -out /tmp/certs_dir/jwtES512.key
+  tags: cert
+
+- name: Extract pubkey of ijwt/gm-data cert
+  shell: |
+    openssl ec -in /tmp/certs_dir/jwtES512.key -pubout -out /tmp/certs_dir/jwtES512.key.pub
+  tags: cert
+
+# - name: Update ijwt/gm-data cert persmisisons

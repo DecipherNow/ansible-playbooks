@@ -1,0 +1,14 @@
+- name: Create Service group
+  group:
+    name: "{{ service_group }}"
+    state: present
+    system: yes
+  tags: prepare
+
+- name: Creating Service User
+  user:
+    name: "{{ service_user }}"
+    groups: "{{ service_group }}"
+    system: yes
+    append: yes
+  tags: prepare

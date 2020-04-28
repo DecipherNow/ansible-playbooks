@@ -4,6 +4,7 @@
   user: ubuntu
   become: yes
   roles:
+    - ansible-role-preparatory
     - ansible-role-acert
     - ansible-role-control-api
     - ansible-role-gmcli
@@ -13,21 +14,25 @@
   user: ubuntu
   become: yes
   roles:
+    - ansible-role-preparatory
     - ansible-role-control
 
 - hosts: tag_Name_gm_proxy_ubuntu
   user: ubuntu
   become: yes
   roles:
+    - ansible-role-preparatory
     - ansible-role-proxy
 
 - hosts: tag_Name_gm_data_ubuntu
   user: ubuntu
   become: yes
   roles:
+    - ansible-role-preparatory
     - ansible-role-incert
     - ansible-role-mongodb
     - ansible-role-redis
+    - ansible-role-certs
     - ansible-role-internaljwt
     - ansible-role-data
     - ansible-role-acert
