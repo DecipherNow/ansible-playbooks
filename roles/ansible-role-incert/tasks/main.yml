@@ -18,7 +18,7 @@
     mode: u=rwx,g=rx,o=rx
   tags: incert
 
-- name: Check if the localhost certs where created within 4 days
+- name: Check if the localhost certs were created within 4 days
   shell: |
     find "{{ certs_directory }}" -type f -newermt $(date '+%Y-%m-%d' --date="4 days ago") | grep localhost
   register: cert_result

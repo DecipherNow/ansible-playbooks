@@ -1,0 +1,53 @@
+systemd_service: 'gm-catalog'
+
+nexus_repo_url: "https://nexus.production.deciphernow.com"
+nexus_repo: "repository/raw-hosted/greymatter"
+nexus_tar_file: "gm-catalog-1.0.6.tar.gz"
+
+service_env_vars:
+  - key: CONFIG_SOURCE 
+    value : gmdata 
+  - key: CONFIG_POLLING_INTERVAL 
+    value : 300s
+  - key: PORT 
+    value : 9080
+  - key: CONTROL_SERVER_0_ADDRESS
+    value : 
+  - key: CONTROL_SERVER_0_ZONE_NAME 
+    value :
+  - key: CONTROL_SERVER_0_REQUEST_CLUSTER_NAME 
+    value : edge
+  - key: USE_TLS 
+    value : 'false'
+  - key: CA_CERT_PATH 
+    value : /etc/pki/ca.crt
+  - key: SERVER_CERT_PATH 
+    value : '/etc/pki/server.crt' 
+  - key: SERVER_KEY_PATH 
+    value : '/etc/pki/server.key'
+  - key: CLIENT_ADDRESS 
+    value : localhost
+  - key: CLIENT_PORT
+    value : 8080
+  - key: CLIENT_PREFIX
+    value : /data
+  - key: CLIENT_USE_TLS
+    value : 'false'
+  - key: CLIENT_CERT 
+    value : #sidecar-certs
+  - key: CLIENT_KEY 
+    value :
+  - key: CLIENT_TRUST 
+    value :
+  - key: GMDATA_STARTUP_DELAY
+    value : 10s
+  - key: GMDATA_MAX_RETRIES
+    value : 100
+  - key: GMDATA_RETRY_DELAY
+    value : 5S
+  - key: GMDATA_ROOT_EVENT_NAME 
+    value : world
+  - key: CLIENT_IDENTITY
+    value : CN=gm-control,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US
+  - key: CLIENT_EMAIL 
+    value : gm-control@deciphernow.com

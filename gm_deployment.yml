@@ -38,3 +38,14 @@
     - ansible-role-acert
   vars:
     acert_service: gm-data
+
+
+- hosts: tag_Name_gm_catalog_ubuntu
+  user: ubuntu
+  become: yes
+  roles:
+    - ansible-role-preparatory
+    # - ansible-role-acert
+    - ansible-role-catalog
+  vars:
+    acert_service: gm-catalog
