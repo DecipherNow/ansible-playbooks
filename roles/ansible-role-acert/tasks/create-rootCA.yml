@@ -1,0 +1,51 @@
+---
+
+- name: Check if {{ env_name }}-rootCA authority already exist
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep {{ env_name }}-rootCA
+  register: rootCA_authority_status
+  ignore_errors: yes
+
+- name: Create {{ env_name }}-rootCA ascert authority
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities create -n {{ env_name }}-rootCA
+  when: rootCA_authority_status.rc != 0
+
+- name: Update .acert dir permissions
+  file:
+    path: "{{ acert_home_dir }}/.acert"
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    recurse: yes
+
+- name: Extract {{ env_name }}-rootCA authority fingerprint
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep test-rootCA | sed -e 's/\s.*$//'
+  register: "rootCA_fingerprint"
+  when: rootCA_authority_status.rc != 0
+
+- name: Extract {{ env_name }}-rootCA authority, cert and key
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities export "{{ rootCA_fingerprint.stdout }}" -f pem -t authority >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-authority.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities export "{{ rootCA_fingerprint.stdout }}" -f pem -t certificate >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-certificate.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities export "{{ rootCA_fingerprint.stdout }}" -f pem -t key >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-key.pem
+  when: rootCA_authority_status.rc != 0
+
+- name: Save {{ env_name }}-rootCA authority fingerprint
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep test-rootCA | sed -e 's/\s.*$//' >> "{{ acert_home_dir }}"/{{ env_name }}-rootCA-fingerprint
+  when: rootCA_authority_status.rc != 0
+
+- name: Compress directory {{ acert_home_dir }} into {{ acert_home_dir }}.tgz
+  archive:
+    path: "{{ acert_home_dir }}"
+    dest: "{{ acert_home_dir }}.tgz"
+  when: rootCA_authority_status.rc != 0
+
+- name: Download {{ env_name }}-rootCA authority content
+  fetch:
+    src: "{{ acert_home_dir }}.tgz"
+    dest: roles/ansible-role-acert/files/
+    flat: yes
+  when: rootCA_authority_status.rc != 0

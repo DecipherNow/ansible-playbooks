@@ -1,13 +1,22 @@
-# User to run the cli
-service_user: "gmuser"
-service_group: "gmuser"
-
-cli_download_dir: "/tmp/gm_cli"
-cli_home_dir: "/usr/local/bin"
-
 # Nexus Repo
 nexus_user: "{{ lookup('env', 'NEXUS_USER') }}"
 nexus_pw: "{{ lookup('env', 'NEXUS_PW') }}"
 gm_cli_nexus_repo_url: "https://nexus.production.deciphernow.com"
 gm_cli_nexus_repo: "repository/raw-dev/greymatter/gm-cli"
 gm_cli_nexus_tar_file: "greymatter-v1.2.1.tar.gz"
+
+gmcli_env_vars:
+  - key: GREYMATTER_API_HOST 
+    value : 'localhost:5555'  
+  - key: GREYMATTER_API_PREFIX 
+    value : ''
+  - key: GREYMATTER_API_SSL 
+    value : 'false' 
+  - key: GREYMATTER_API_INSECURE
+    value : 'true'
+  - key: GREYMATTER_API_SSLCERT 
+    value : "/path/to/my.crt"
+  - key: GREYMATTER_API_SSLCERT 
+    value : "/path/to/my.key"
+  - key: EDITOR 
+    value : "vim"

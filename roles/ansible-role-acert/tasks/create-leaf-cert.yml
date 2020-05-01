@@ -1,0 +1,51 @@
+---
+
+- name: Copy rootCA files from local to server ## Temp task
+  copy:
+    src: "files/acert_dir.tgz"
+    dest: "/tmp"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: u=rwx,g=rx,o=rx
+
+- name: Extract Service Tar
+  unarchive:
+    src: "/tmp/acert_dir.tgz"
+    dest: "{{ acert_home_dir }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: Check if {{ env_name }}-{{ acert_service }}-leaf already exist
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves list | grep {{ env_name }}-{{ acert_service }}-leaf
+  register: leaf_service_status
+  ignore_errors: yes
+
+- name: Extract "{{ env_name }}"-rootCA authority fingerprint
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities list | grep test-rootCA | sed -e 's/\s.*$//'
+  register: rootCA_fingerprint_service
+  when: leaf_service_status.rc != 0
+
+- name: Create leaf authority for "{{ acert_service }}"
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert authorities issue "{{ rootCA_fingerprint_service.stdout }}" -n {{ env_name }}-{{ acert_service }}-leaf
+  register: leaf_fingerprint
+  when: leaf_service_status.rc != 0
+
+- name: Extract "{{ env_name }}"-"{{ acert_service }}"-leaf authority, cert and key
+  shell: |
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves export "{{ leaf_fingerprint.stdout }}" -f pem -t authority >> "{{ acert_home_dir }}"/{{ env_name }}-{{ acert_service }}-leaf-authority.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves export "{{ leaf_fingerprint.stdout }}" -f pem -t certificate >> "{{ acert_home_dir }}"/{{ env_name }}-{{ acert_service }}-leaf-certificate.pem
+    HOME="{{ acert_home_dir }}/" /usr/local/bin/acert leaves export "{{ leaf_fingerprint.stdout }}" -f pem -t key >> "{{ acert_home_dir }}"/{{ env_name }}-{{ acert_service }}-leaf-key.pem
+  when: leaf_service_status.rc != 0
+
+- name: Update the certs dir permissions
+  file:
+    path: "{{ acert_home_dir }}"
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    recurse: yes

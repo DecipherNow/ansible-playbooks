@@ -1,10 +1,11 @@
-systemd_service: 'gm-catalog'
+---
+systemd_service: gm-catalog
 
 nexus_repo_url: "https://nexus.production.deciphernow.com"
 nexus_repo: "repository/raw-hosted/greymatter"
 nexus_tar_file: "gm-catalog-1.0.6.tar.gz"
 
-service_env_vars:
+gm-catalog_env_vars:
   - key: CONFIG_SOURCE 
     value : gmdata 
   - key: CONFIG_POLLING_INTERVAL 

@@ -15,7 +15,7 @@ User={{ service_user }}
 Group={{ service_group }}
 LimitNOFILE=1048576
 LimitNPROC=1048576
-EnvironmentFile=/etc/environment
+EnvironmentFile={{base_path}}/environment
 
 Restart=on-failure
 RestartSec=5

@@ -18,12 +18,16 @@
 #   register: localhost_key_value
 #   tags: data
 
-# - name: Set trust, cert, and key value for gm-data env vars
-#   set_fact:
-#     CERT_VALUE="{{ localhost_cert_value.stdout }}"
-#     KEY_VALUE="{{ localhost_key_value.stdout }}"
-#     TRUST_VALUE="{{ trust_cert_value.stdout }}"
-#   tags: data
+- name: Create gm-data leaf certs
+  include_role:
+    name: ansible-role-acert
+    apply:
+      tags:
+        - data
+  vars:
+    acert_service: gm-data
+  when: ( ansible_distribution == 'Ubuntu' )
+  tags: data
 
 - name: Create localhost cert base64 value
   slurp:
@@ -66,4 +70,3 @@
         - data
   when: ( ansible_distribution == 'Ubuntu' )
   tags: data
-  

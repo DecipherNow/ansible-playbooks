@@ -1,5 +1,16 @@
 ---
 
+- name: Create acert rootCA
+  include_role:
+    name: ansible-role-acert
+    apply:
+      tags:
+        - control-api
+  vars:
+    create_rootCA: true
+  when: ( ansible_distribution == 'Ubuntu' )
+  tags: control-api
+
 - name: Create and run gm-control-api binary as a service
   include_role:
     name: ansible-role-systemd

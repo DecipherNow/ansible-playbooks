@@ -1,7 +1,7 @@
 ---
 
-systemd_service: gm-control-api
+systemd_service: gm-proxy
 
 nexus_repo_url: "https://nexus.production.deciphernow.com"
 nexus_repo: "repository/raw-dev/greymatter"
-nexus_tar_file: "gm-control-api-1.2.2.tar.gz"
+nexus_tar_file: "gm-proxy-1.2.2.tar.gz"

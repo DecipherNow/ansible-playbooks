@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+GM_CONTROL_API_LOG_LEVEL=debug
+GM_CONTROL_API_ADDRESS=0.0.0.0:5555
+GM_CONTROL_API_ORG_KEY=deciphernow
+GM_CONTROL_API_PERSISTER_TYPE=file
+GM_CONTROL_API_PERSISTER_PATH=/var/gm-control-api/gm_control_api_backend.json
+GM_CONTROL_API_ZONE_NAME={{ GM_CONTROL_API_ZONE_NAME | default('zone-default-zone') }}

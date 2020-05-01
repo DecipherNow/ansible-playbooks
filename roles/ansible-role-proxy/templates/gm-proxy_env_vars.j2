@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+PROXY_DYNAMIC=true
+XDS_CLUSTER=client-server
+XDS_NODE_ID=default-node
+GM_CONTROL_API_SSL=False
+XDS_HOST={{ XDS_HOST }}
+XDS_PORT=50000
+ENVOY_ADMIN_LOG_PATH=/var/gm-proxy/stdout
+XDS_ZONE={{ XDS_ZONE | default('zone-default-zone') }}

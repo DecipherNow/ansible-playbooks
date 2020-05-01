@@ -5,7 +5,6 @@
   become: yes
   roles:
     - ansible-role-preparatory
-    - ansible-role-acert
     - ansible-role-control-api
     - ansible-role-gmcli
     - ansible-role-jsons
@@ -35,17 +34,10 @@
     - ansible-role-certs
     - ansible-role-internaljwt
     - ansible-role-data
-    - ansible-role-acert
-  vars:
-    acert_service: gm-data
 
-
-- hosts: tag_Name_gm_catalog_ubuntu
-  user: ubuntu
-  become: yes
-  roles:
-    - ansible-role-preparatory
-    # - ansible-role-acert
-    - ansible-role-catalog
-  vars:
-    acert_service: gm-catalog
+# - hosts: tag_Name_gm_catalog_ubuntu
+#   user: ubuntu
+#   become: yes
+#   roles:
+#     - ansible-role-preparatory
+#     - ansible-role-catalog
