@@ -17,7 +17,7 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: '0664'
-  when: "{{ 'control' not in systemd_service}}"
+  # when: "{{ 'control' not in systemd_service}}"
 
 - name: Extract Service Tar
   unarchive:
@@ -27,16 +27,16 @@
     group: "{{ service_group }}"
     extra_opts: [--strip-components=1]
     remote_src: yes
-  when: "{{ 'control' not in systemd_service}}"
+  # when: "{{ 'control' not in systemd_service}}"
 
-- name: Copy service files from local to server ## Temp task
-  copy:
-    src: "../../../../ubuntu-temp/{{ systemd_service }}/"
-    dest: "{{ base_path }}"
-    owner: "{{ service_user }}"
-    group: "{{ service_group }}"
-    mode: u=rwx,g=rx,o=rx
-  when: systemd_service == "gm-control"  or systemd_service == "gm-control-api"
+# - name: Copy service files from local to server ## Temp task
+#   copy:
+#     src: "../../../../ubuntu-temp/{{ systemd_service }}/"
+#     dest: "{{ base_path }}"
+#     owner: "{{ service_user }}"
+#     group: "{{ service_group }}"
+#     mode: u=rwx,g=rx,o=rx
+#   when: systemd_service == "gm-control"  or systemd_service == "gm-control-api"
 
 - name: Update gm-jwt-security file name
   copy:
@@ -94,23 +94,6 @@
     owner: "{{ service_user }}"
     group: "{{ service_group }}"
     mode: 0755
-
-# - name: Add Service Env Vars
-#   lineinfile:
-#     dest: "/etc/environment"
-#     state: present
-#     regexp: "^{{ item.key }}="
-#     line: "{{ item.key }}={{ item.value}}"
-#   with_items: "{{ vars [systemd_service + '_env_vars'] }}"
-
-# - name: Configuring environment
-#   lineinfile:
-#     dest: "/etc/environment"
-#     state: present
-#     regexp: '^{{ item.key }}\ ?='
-#     line: "{{ item.key }}='{{ item.value }}'"
-#   loop: "{{ q('dict',systemd_service_env_vars) }}"
-#   # with_dict: "{{ vars [systemd_service + '_env_vars'] }}"
 
 - name: Create Systemd Service
   template:

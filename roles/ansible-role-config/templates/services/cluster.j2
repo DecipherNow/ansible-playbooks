@@ -1,0 +1,27 @@
+{
+  "cluster_key": "cluster-{{ global.service_name }}",
+  "zone_key": "{{ global.zone_key }}",
+  "name": "{{ global.service_name }}-service",
+  "instances": [
+    {
+        "host": "0.0.0.0",
+        "port": {{ cluster.port }}
+    }
+  ],
+  {% if global.secret.enabled is sameas true %}
+  "require_tls": {{ cluster.require_tls }},
+  "ssl_config": {
+    "require_client_certs": true,
+    "trust_file": "{{ global.secret.ssl_config_trust_file }}",
+    "cert_key_pairs": [
+      {
+        "certificate_path": "{{ global.secret.ssl_config_certificate_path }}",
+        "key_path": "{{ global.secret.ssl_config_key_path }}"
+      }
+    ]
+  },
+  {% endif %}
+  "circuit_breakers": null,
+  "outlier_detection": null,
+  "health_checks": []
+}

@@ -1,89 +1,50 @@
 ---
 
-# - name: Extract localhost trust
-#   shell: |
-#     cat /tmp/certs_dir/intermediate.crt
-#   register: trust_cert_value
-#   tags: data
+- name: Create gm-catalog leaf certs
+  include_role:
+    name: ansible-role-acert
+    apply:
+      tags:
+        - catalog
+  vars:
+    acert_service: gm-catalog
+  when: ( ansible_distribution == 'Ubuntu' )
+  tags: catalog
 
-# - name: Extract  localhost cert
-#   shell: |
-#     cat /tmp/certs_dir/localhost.crt
-#   register: localhost_cert_value
-#   tags: data
+- name: Create gm-catalog authority base64 value
+  slurp:
+    src: /tmp/acert_dir/test-gm-catalog-leaf-authority.pem
+  register: gm_catalog_authority_base64_value
+  tags: catalog
 
-# - name: Extract localhost key
-#   shell: |
-#     cat /tmp/certs_dir/localhost.key
-#   register: localhost_key_value
-#   tags: data
+- name: Create gm-catalog key base64 value
+  slurp:
+    src: /tmp/acert_dir/test-gm-catalog-leaf-key.pem
+  register: gm_catalog_key_base64_value
+  tags: catalog
 
-# - name: Create gm-catalog leaf certs
-#   include_role:
-#     name: ansible-role-acert
-#     apply:
-#       tags:
-#         - catalog
-#   vars:
-#     acert_service: gm-catalog
-#   when: ( ansible_distribution == 'Ubuntu' )
-#   tags: catalog
+- name: Create gm-catalog cert base64 value
+  slurp:
+    src: /tmp/acert_dir/test-gm-catalog-leaf-certificate.pem
+  register: gn_catalog_cert_base64_value
+  tags: catalog
 
-# - name: Create gm-catalog-sidecar leaf certs
-#   include_role:
-#     name: ansible-role-acert
-#     apply:
-#       tags:
-#         - catalog
-#   vars:
-#     acert_service: gm-catalog-sidecar
-#   when: ( ansible_distribution == 'Ubuntu' )
-#   tags: catalog
+- name: Set trust, cert, and key value
+  set_fact:
+    CERT_VALUE="{{ gn_catalog_cert_base64_value.content }}"
+    KEY_VALUE="{{ gm_catalog_key_base64_value.content }}"
+    AUTHORITY_VALUE="{{ gm_catalog_authority_base64_value.content }}"
+  tags: catalog
 
-# - name: Create and run gm-catalog sidecar
-#   include_role:
-#     name: ansible-role-proxy
-#     apply:
-#       tags:
-#         - catalog
-#   vars:
-#     systemd_service: gm-catalog-sidecar
-#     XDS_HOST_VALUE: localhost
-#   when: ( ansible_distribution == 'Ubuntu' )
-#   tags: catalog
+- name: Create and run gm-catalog sidecar
+  include_role:
+    name: ansible-role-proxy
+    apply:
+      tags:
+        - catalog    
+  when: ( ansible_distribution == 'Ubuntu' )
+  tags: catalog
 
-# - name: Create localhost cert base64 value
-#   slurp:
-#     src: /tmp/certs_dir/localhost.crt
-#   register: localhost_cert_base64_value
-#   tags: data
-
-# - name: Create localhost key base64 value
-#   slurp:
-#     src: /tmp/certs_dir/localhost.key
-#   register: localhost_key_base64_value
-#   tags: data
-
-# - name: Create trust cert base64 value
-#   slurp:
-#     src: /tmp/certs_dir/intermediate.crt
-#   register: trust_cert_base64_value
-#   tags: data
-
-# - name: Create jwtES512 pub key base64 value
-#   slurp:
-#     src: /tmp/certs_dir/jwtES512.key.pub
-#   register: jwtES512_key_pub_base64_value
-#   tags: data
-
-# - name: Set trust, cert, and key value for internal jwt env vars
-#   set_fact:
-#     CERT_VALUE="{{ localhost_cert_base64_value.content }}"
-#     KEY_VALUE="{{ localhost_key_base64_value.content }}"
-#     TRUST_VALUE="{{ trust_cert_base64_value.content }}"
-#     JWT_PUB_KEY_VALUE="{{ jwtES512_key_pub_base64_value.content }}"
-#   tags: data
-  
 - name: Create and run gm-catalog binary as a service
   include_role:
     name: ansible-role-systemd
@@ -92,5 +53,5 @@
       tags:
         - catalog
   when: ( ansible_distribution == 'Ubuntu' )
-  tags: data
+  tags: catalog
   

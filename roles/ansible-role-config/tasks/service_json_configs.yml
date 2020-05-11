@@ -1,0 +1,46 @@
+---
+
+- name: Create json config directory for {{ global.service_name }}
+  file:
+    path: "{{ services_config_dir }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+  register: services_config_dir_status
+  tags: config
+
+- name: Create/Update json configs files for {{ global.service_name }}
+  template:
+    src: "{{ item.location }}"
+    dest: "{{ services_config_dir }}/{{ item.name }}.json"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+  with_items: "{{ services }}"
+  register: services_config_files_status
+  tags: config
+
+- name: Update greymatter service objects for {{ global.service_name }}
+  shell: |
+    object_name=$(jq -r .{{ item.item.type }}_key {{ services_config_dir }}/{{ item.item.name }}.json)
+
+    greymatter delete {{ item.item.type }} $object_name
+
+    greymatter create {{ item.item.type }} < {{ services_config_dir }}/{{ item.item.name }}.json
+
+    exit 0
+  when: 
+    - item.changed
+    - not services_config_dir_status.changed
+  with_items: "{{ services_config_files_status.results }}"
+  tags: config
+
+- name: Create greymatter service objects for {{ global.service_name  }}
+  shell: |
+    greymatter create {{ item.type }} < {{ services_config_dir }}/{{ item.name }}.json
+
+    exit 0
+  when:
+    - services_config_dir_status.changed
+  with_items: "{{ services }}"
+  tags: config

@@ -1,0 +1,17 @@
+{
+  "listener_key": "listener-{{ global.service_name }}-egress",
+  "zone_key": "{{ global.zone_key }}",
+  "name": "{{ global.service_name }}",
+  "ip": "{{ listener_egress.ip }}",
+  "port": {{ listener_egress.port }},
+  "protocol": "http_auto",
+  "domain_keys": [
+    "domain-{{ global.service_name }}",
+    "domain-{{ global.service_name }}-egress"
+  ],
+  "tracing_config": null,
+  "active_http_filters": ["gm.inheaders"],
+  "http_filters": {
+    "gm_inheaders": {}
+  }
+}

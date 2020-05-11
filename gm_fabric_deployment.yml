@@ -1,0 +1,18 @@
+---
+
+# Run gm-control-api
+- hosts: tag_Name_gm_control_api_ubuntu
+  user: ubuntu
+  become: yes
+  roles:
+    - ansible-role-preparatory
+    - ansible-role-control-api
+    - ansible-role-gmcli
+
+# Run gm-control
+- hosts: tag_Name_gm_control_ubuntu
+  user: ubuntu
+  become: yes
+  roles:
+    - ansible-role-preparatory
+    - ansible-role-control

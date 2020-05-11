@@ -1,0 +1,50 @@
+---
+
+- name: Create json config directory for special
+  file:
+    path: "{{ special_config_dir }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+  register: special_config_dir_status
+  tags: config
+
+- name: Create/Update json configs files for special
+  template:
+    src: "{{ item.location }}"
+    dest: "{{ special_config_dir }}/{{ item.name }}.json"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+  with_items: "{{ special }}"
+  register: special_config_files_status
+  tags: config
+
+- name: Update greymatter service objects for special
+  shell: |
+    object_name=$(jq -r .{{ item.item.type }}_key {{ special_config_dir }}/{{ item.item.name }}.json)
+
+    greymatter delete {{ item.item.type }} $object_name
+
+    greymatter create {{ item.item.type }} < {{ special_config_dir }}/{{ item.item.name }}.json
+
+    exit 0
+  when: 
+    - item.changed
+    - not special_config_dir_status.changed
+  with_items: "{{ special_config_files_status.results }}"
+  tags: config
+
+- name: Create greymatter service objects for special
+  shell: |
+    object_name=$(jq -r .{{ item.type }}_key {{ special_config_dir }}/{{ item.name }}.json)
+
+    greymatter delete {{ item.type }} $object_name
+
+    greymatter create {{ item.type }} < {{ special_config_dir }}/{{ item.name }}.json
+
+    exit 0
+  when:
+    - special_config_dir_status.changed
+  with_items: "{{ special }}"
+  tags: config

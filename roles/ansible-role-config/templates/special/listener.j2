@@ -1,0 +1,69 @@
+{
+  "zone_key": "{{ global.zone_key }}",
+  "listener_key": "edge-listener",
+  "domain_keys": ["edge", "edge-egress"],
+  "name": "edge",
+  "ip": "0.0.0.0",
+  "port": 10808,
+  "protocol": "http_auto",
+  "tracing_config": null,
+  "active_http_filters": ["gm.metrics", "gm.inheaders", "gm.jwtsecurity", "envoy.rbac"],
+  "http_filters": {
+    "gm_inheaders": {},
+    "gm_metrics": {
+      "metrics_port": 8081,
+      "metrics_host": "0.0.0.0",
+      "metrics_dashboard_uri_path": "/metrics",
+      "metrics_prometheus_uri_path": "/prometheus",
+      "metrics_ring_buffer_size": 4096,
+      "prometheus_system_metrics_interval_seconds": 15,
+      "metrics_key_function": "depth",
+      "metrics_key_depth": "5"
+    },
+    "envoy_rbac": {
+      "rules": {
+          "action": 0,
+          "policies": {
+              "service-admin": {
+                  "permissions": [{
+                      "any": true
+                  }],
+                  "principals": [{
+                      "header": {
+                        "name": "{{ global.rbac.admin.header_name }}",
+                        "{{ global.rbac.admin.match_type }}": "{{ global.rbac.admin.header_value }}"
+                      }
+                  }]
+              },
+              "product-viewer": {
+                  "permissions": [{
+                      "header": {
+                          "name": ":method",
+                          "exact_match": "GET"
+                      }
+                  }],
+                  "principals": [{
+                      "any": true
+                  }]
+              }
+          }
+      }
+  },
+    "gm_jwtsecurity": {
+      {% if global.spire.enabled is sameas true %}
+      "apiKey": "{{ global.jwt_api_key }}",
+      "endpoint": "http://localhost:10909/jwt",
+      "jwtHeaderName": "userpolicy"
+      {% else %}
+      "apiKey": "{{ global.jwt_api_key }}",
+      "endpoint": "https://localhost:10909/jwt",
+      "jwtHeaderName": "userpolicy"{% if values.edge.egress.secret.enabled is sameas true %},
+      "useTls": true,
+      "caPath": "{{ values.edge.egress.secret.mount_point }}/{{ values.edge.egress.secret.secret_keys.ca }}",
+      "certPath": "{{ values.edge.egress.secret.mount_point }}/{{ values.edge.egress.secret.secret_keys.cert }}",
+      "keyPath": "{{ values.edge.egress.secret.mount_point }}/{{ values.edge.egress.secret.secret_keys.key }}",
+      "insecureSkipVerify": true{% endif %}
+      {% endif %}
+    }
+  }
+}

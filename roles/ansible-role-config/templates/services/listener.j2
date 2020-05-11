@@ -1,0 +1,112 @@
+{
+  "listener_key": "listener-{{ global.service_name }}",
+  "zone_key": "{{ global.zone_key }}",
+  "name": "{{ global.service_name }}",
+  "ip": "{{ listener.ip }}",
+  "port": {{ listener.port }},
+  "protocol": "http_auto",
+  "domain_keys": ["domain-{{ global.service_name }}"],
+  "tracing_config": null,
+  {% if global.spire.enabled is sameas true %}
+  "secret": {
+    "secret_key": "secret-{{ global.service_name }}-secret",
+    "secret_name": "spiffe://{{ global.spire.trust_domain }}/{{ global.service_name}}",
+    "secret_validation_name": "spiffe://{{ global.spire.trust_domain }}",
+    "forward_client_cert_details": "APPEND_FORWARD",
+    "set_current_client_cert_details": {
+      "uri": true
+    },
+    "ecdh_curves": [
+        "X25519:P-256:P-521:P-384"
+    ],
+    "subject_names": [
+      {% if global.service_name == 'gm-jwt-security' %}
+      "spiffe://{{ global.spire.trust_domain }}/edge",
+      {% elif global.service_name== 'gm-data-internal' %}
+      "spiffe://{{ global.spire.trust_domain }}/data",
+      {% elif global.service_name== 'gm-internal-jwt-security' %}
+      "spiffe://{{ global.spire.trust_domain }}/catalog",
+      {% else %}
+      "spiffe://{{ global.spire.trust_domain }}/data-internal"
+      {% endif %}
+    ]
+  },
+  {% endif %}
+  "active_http_filters": [
+    {% if listener.gm_metric.enabled is sameas true %}
+    "gm.metrics",
+    {% endif %}
+    {% if listener.gm_observables.enabled is sameas true %}
+    "gm.observables",
+    {% endif %}
+    {% if listener.envoy_rbac.enabled is sameas true %}
+    "envoy.rbac"
+    {% endif %}
+  ],
+  "http_filters": {
+    "envoy_rbac": {
+      "rules": {
+          "action": 0,
+          "policies": {
+              "service-admin": {
+                  "permissions": [{
+                      "any": true
+                  }],
+                  "principals": [{
+                      "header": {
+                          "name": "{{ global.rbac.admin.header_name }}",
+                          "{{ global.rbac.admin.match_type }}": "{{ global.rbac.admin.header_value }}"
+                      }
+                }]
+              },
+              "services": {
+                "permissions": [
+                  {
+                    "any": true
+                  }
+                ],
+                "principals": [
+                  {
+                    "authenticated": {
+                      "principal_name": {
+                        "safe_regex": {
+                          "google_re2": {},
+                          "regex": "spiffe:\/\/{{ global.spire.trust_domain }}\/(.+)"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "product-viewer": {
+                  "permissions": [{
+                      "header": {
+                          "name": ":method",
+                          "exact_match": "GET"
+                      }
+                  }],
+                  "principals": [{
+                      "any": true
+                  }]
+              }
+          }
+      }
+  },
+    "gm_metrics": {
+      "metrics_port": 8081,
+      "metrics_host": "0.0.0.0",
+      "metrics_dashboard_uri_path": "/metrics",
+      "metrics_prometheus_uri_path": "/prometheus",
+      "metrics_ring_buffer_size": 4096,
+      "prometheus_system_metrics_interval_seconds": 15,
+      "metrics_key_function": "none"
+    }{% if listener.gm_observables.enabled is sameas true %},
+    "gm_observables": {
+      "useKafka": true,
+      "topic": "{{ global.service_name }}",
+      "eventTopic": "{{ listener.gm_observables.eventTopic }}",
+      "kafkaServerConnection": "{{ listener.gm_observables.kafkaServerConnection }}"
+    }
+    {% endif %}
+  }
+}

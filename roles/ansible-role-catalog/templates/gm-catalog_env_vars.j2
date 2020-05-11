@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+
+CONFIG_SOURCE={{ CONFIG_SOURCE | default('gmdata') }}
+CONFIG_POLLING_INTERVAL={{ CONFIG_POLLING_INTERVAL | default('300s') }}
+PORT={{ PORT | default('9080') }}
+CONTROL_SERVER_0_ADDRESS={{ CONTROL_SERVER_0_ADDRESS }}:50000
+CONTROL_SERVER_0_ZONE_NAME={{ CONTROL_SERVER_0_ZONE_NAME | default('zone-default-zone') }}
+CONTROL_SERVER_0_REQUEST_CLUSTER_NAME={{ CONTROL_SERVER_0_REQUEST_CLUSTER_NAME | default('edge') }}
+USE_TLS={{USE_TLS | default('true') }}
+CA_CERT_PATH={{ CA_CERT_PATH | default('/tmp/acert_dir/test-gm-catalog-leaf-authority.pem') }}
+SERVER_CERT_PATH={{ SERVER_CERT_PATH | default('/tmp/acert_dir/test-gm-catalog-leaf-certificate.pem') }}
+SERVER_KEY_PATH={{ SERVER_KEY_PATH | default('/tmp/acert_dir/test-gm-catalog-leaf-key.pem') }}
+CLIENT_ADDRESS={{ CLIENT_ADDRESS | default('localhost') }}
+CLIENT_PORT={{ CLIENT_PORT | default('8080') }}
+CLIENT_PREFIX={{ CLIENT_PREFIX | default('/data') }}
+CLIENT_USE_TLS={{ CLIENT_USE_TLS | default('true') }}
+CLIENT_CERT={{ CERT_VALUE }}
+CLIENT_KEY={{ KEY_VALUE }}
+CLIENT_TRUST={{ AUTHORITY_VALUE }}
+GMDATA_STARTUP_DELAY={{ GMDATA_STARTUP_DELAY | default('10s') }}
+GMDATA_MAX_RETRIES={{ GMDATA_MAX_RETRIES | default('100') }}
+GMDATA_RETRY_DELAY={{ GMDATA_RETRY_DELAY | default('5S') }}
+GMDATA_ROOT_EVENT_NAME={{ GMDATA_ROOT_EVENT_NAME | default('world') }}
+CLIENT_IDENTITY={{ CLIENT_IDENTITY | default('CN=gm-control,OU=Engineering,O=Decipher Technology Studios,=Alexandria,=Virginia,C=US') }}
+CLIENT_EMAIL={{ CLIENT_EMAIL | default('gm-control@greymatter.io') }} 

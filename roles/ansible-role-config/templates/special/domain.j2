@@ -1,0 +1,22 @@
+{
+    "domain_key": "edge",
+    "zone_key": "{{ global.zone_key }}",
+    "name": "*",
+    "port": 10808,
+    "redirects": null,
+    "gzip_enabled": false,
+    "cors_config": null,
+    "aliases": null{% if values.edge.ingress.secret.enabled is sameas true %},
+    "force_https": true,
+    "ssl_config": {
+        "require_client_certs": true,
+        "trust_file": "{{ values.edge.ingress.secret.mount_point }}/{{ values.edge.ingress.secret.secret_keys.ca }}",
+        "cert_key_pairs": [
+            {
+                "certificate_path": "{{ values.edge.ingress.secret.mount_point }}/{{ values.edge.ingress.secret.secret_keys.cert }}",
+                "key_path": "{{ values.edge.ingress.secret.mount_point }}/{{ values.edge.ingress.secret.secret_keys.key }}"
+            }
+        ]
+    }
+   {% endif %}
+}

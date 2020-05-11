@@ -1,5 +1,29 @@
 ---
 
+- name: Create edge egress leaf certs
+  include_role:
+    name: ansible-role-acert
+    apply:
+      tags:
+        - data
+  vars:
+    acert_service: edge
+    acert_home_dir: /etc/proxy/tls/sidecar
+  when: ( ansible_distribution == 'Ubuntu' )
+  tags: proxy
+
+- name: Create edge ingress leaf certs # Only use when customer is not sending its own certs
+  include_role:
+    name: ansible-role-acert
+    apply:
+      tags:
+        - data
+  vars:
+    acert_service: edge
+    acert_home_dir: /etc/proxy/tls/edge
+  when: ( ansible_distribution == 'Ubuntu' )
+  tags: proxy
+
 - name: Create and run gm-proxy binary as a service
   include_role:
     name: ansible-role-systemd

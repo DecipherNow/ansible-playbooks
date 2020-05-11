@@ -1,0 +1,21 @@
+{
+    "route_key": "route-data-internal-internal-jwt-slash",
+    {% if global.spire.enabled is sameas true %}
+    "domain_key": "domain-data-internal-egress",
+    {% else %}
+    "domain_key": "domain-data-internal",
+    {% endif %}
+    "zone_key": "{{ global.zone_key }}",
+    "path": "/jwt/",
+    "prefix_rewrite": "/",
+    "redirects": null,
+    {% if global.spire.enabled is sameas true %}
+    "shared_rules_key": "shared-rules-data-internal-to-internal-jwt",
+    {% else %}
+    "shared_rules_key": "edge-internal-jwt-security-shared-rules",
+    {% endif %}
+    "rules": null,
+    "response_data": {},
+    "cohort_seed": null,
+    "retry_policy": null
+  }

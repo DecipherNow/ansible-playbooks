@@ -3,7 +3,7 @@ nexus_user: "{{ lookup('env', 'NEXUS_USER') }}"
 nexus_pw: "{{ lookup('env', 'NEXUS_PW') }}"
 gm_cli_nexus_repo_url: "https://nexus.production.deciphernow.com"
 gm_cli_nexus_repo: "repository/raw-dev/greymatter/gm-cli"
-gm_cli_nexus_tar_file: "greymatter-v1.2.1.tar.gz"
+gm_cli_nexus_tar_file: "greymatter-v1.4.0.tar.gz"
 
 gmcli_env_vars:
   - key: GREYMATTER_API_HOST 

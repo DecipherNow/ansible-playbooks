@@ -1,0 +1,46 @@
+---
+
+- name: Create json config directory for edge
+  file:
+    path: "{{ edge_config_dir }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+  register: edge_config_dir_status
+  tags: config
+
+- name: Create/Update json configs files for edge
+  template:
+    src: "{{ item.location }}"
+    dest: "{{ edge_config_dir }}/{{ item.name }}.json"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+  with_items: "{{ edge }}"
+  register: edge_config_files_status
+  tags: config
+
+- name: Update greymatter objects for edge
+  shell: |
+    object_name=$(jq -r .{{ item.item.type }}_key {{ edge_config_dir }}/{{ item.item.name }}.json)
+
+    greymatter delete {{ item.item.type }} $object_name
+
+    greymatter create {{ item.item.type }} < {{ edge_config_dir }}/{{ item.item.name }}.json
+
+    exit 0
+  when: 
+    - item.changed
+    - not edge_config_dir_status.changed
+  with_items: "{{ edge_config_files_status.results }}"
+  tags: config
+
+- name: Create greymatter objects for edge
+  shell: |
+    greymatter create {{ item.type }} < {{ edge_config_dir }}/{{ item.name }}.json
+
+    exit 0
+  when:
+    - edge_config_dir_status.changed
+  with_items: "{{ edge }}"
+  tags: config

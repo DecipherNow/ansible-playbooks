@@ -1,0 +1,21 @@
+{
+  "route_key": "catalog-internal-data-route-slash",
+  {% if global.spire.enabled is sameas true %}
+  "domain_key": "domain-catalog-egress",
+  {% else %}
+  "domain_key": "domain-catalog",
+  {% endif %}
+  "zone_key": "{{ global.zone_key }}",
+  "path": "{{ values.catalog.data_prefix }}",
+  "prefix_rewrite": "{{ values.catalog.data_prefix }}/",
+  "redirects": null,
+  {% if global.spire.enabled is sameas true %}
+  "shared_rules_key": "catalog-data-internal-shared-rules",
+  {% else %}
+  "shared_rules_key": "edge-data-internal-shared-rules",
+  {% endif %}
+  "rules": null,
+  "response_data": {},
+  "cohort_seed": null,
+  "retry_policy": null
+}

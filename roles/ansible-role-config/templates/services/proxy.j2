@@ -1,0 +1,14 @@
+{
+  "proxy_key": "proxy-{{ global.service_name }}",
+  "zone_key": "{{ global.zone_key }}",
+  "name": "{{ global.service_name }}",
+  "domain_keys": [
+    "domain-{{ global.service_name }}",
+    "domain-{{ global.service_name }}-egress"
+  ],
+  "listener_keys": [
+    "listener-{{ global.service_name }}",
+    "listener-{{ global.service_name }}-egress"
+  ],
+  "listeners": null
+}

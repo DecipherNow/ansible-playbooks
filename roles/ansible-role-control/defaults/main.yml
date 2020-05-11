@@ -4,7 +4,7 @@ systemd_service: gm-control
 
 nexus_repo_url: "https://nexus.production.deciphernow.com"
 nexus_repo: "repository/raw-dev/greymatter"
-nexus_tar_file: "gm-control-1.2.2.tar.gz"
+nexus_tar_file: "gm-control-1.4.1.tar.gz"
 
 gm_control_files:
   - envcheck.sh

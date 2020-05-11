@@ -83,10 +83,10 @@
   notify:
     - reload systemd
 
-# - name: Install PyMongo package
-#   apt:
-#     name: python-pymongo
-#   when: not mongodb_pymongo_from_pip
+- name: Install PyMongo package
+  apt:
+    name: python-pymongo
+  when: not mongodb_pymongo_from_pip
 
 - name: Install PIP
   apt:

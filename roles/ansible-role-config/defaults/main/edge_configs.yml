@@ -1,0 +1,7 @@
+---
+
+# Config jsons creation flag
+edge_config: false
+
+# Path where configs are saved
+edge_config_dir: /etc/edge-configs

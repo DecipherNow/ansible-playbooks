@@ -1,0 +1,62 @@
+---
+
+# Config jsons creation flag
+service_config: false
+
+# Path where configs are saved
+services_config_dir: /etc/{{ global.service_name }}-configs
+
+# Global config values
+global:  
+  service_name:
+  zone_key: zone-default-zone
+  jwt_api_key: dm9sY2Fuby1lcGlkZW1pYy10d2VsZnRoLXRhbWFsZQ==
+  secret:
+    enabled: 'false'
+    ssl_require_client_certs: true
+    ssl_config_trust_file: /etc/proxy/tls/sidecar/ca.crt
+    ssl_config_certificate_path: /etc/proxy/tls/sidecar/server.crt
+    ssl_config_key_path: /etc/proxy/tls/sidecar/server.key
+  rbac:
+    admin:
+      header_name: user_dn
+      match_type: exact_match
+      header_value: CN=quickstart,OU=Engineering,O=Decipher Technology Studios,L=Alexandria,ST=Virginia,C=US
+  spire:
+    enabled: false
+    trust_domain: quickstart.greymatter.io
+
+# Domain config values
+domain:
+  port: 8080
+
+# Domain egress config values
+domain_egress:
+  port: 10909
+
+# Cluster config values
+cluster:
+  port: 8080
+  require_tls: true
+
+# Listener egress config values
+listener_egress:
+  ip: "127.0.0.1"
+  port: 10909
+
+# Listener config values
+listener:
+  ip: "0.0.0.0"
+  port: 8080
+  gm_metric:
+    enabled: true
+  gm_observables:
+    enabled: false
+    useKafka: true
+    eventTopic: "greymatter"
+    kafkaServerConnection: "kafkaServerConnection"
+  envoy_rbac:
+    enabled: true
+
+# Proxy config values
+proxy:

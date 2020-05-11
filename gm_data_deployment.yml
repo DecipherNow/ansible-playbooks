@@ -1,0 +1,31 @@
+---
+
+#  Create gm-data jsons
+- hosts: tag_Name_gm_control_api_ubuntu
+  user: ubuntu
+  become: yes
+  roles:
+    - ansible-role-config
+  vars:
+    service_config: true
+    edge_config: true
+    global.service_name: gm-data
+    cluster.port: 9080
+    global.ssl_config_trust_file: /tmp/acert_dir/test-gm-catalog-leaf-authority.pem
+    global.ssl_config_certificate_path: /tmp/acert_dir/test-gm-catalog-leaf-certificate.pem
+    global.ssl_config_key_path: /tmp/acert_dir/test-gm-catalog-leaf-key.pem
+  tags: gm-data, gm-data-jsons
+
+# Run gm-data and its sidecar
+- hosts: tag_Name_gm_data_ubuntu
+  user: ubuntu
+  become: yes
+  roles:
+    - ansible-role-preparatory
+    - ansible-role-incert
+    - ansible-role-mongodb
+    - ansible-role-redis
+    - ansible-role-certs
+    - ansible-role-internaljwt
+    - ansible-role-data
+  tags: gm-data

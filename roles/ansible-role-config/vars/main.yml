@@ -1,0 +1,110 @@
+services:
+  - name: domain
+    type: domain
+    location: services/domain.j2
+  - name: domain-egress
+    type: domain
+    location: services/domain-egress.j2
+  - name: cluster
+    type: cluster
+    location: services/cluster.j2
+  - name: listener
+    type: listener
+    location: services/listener.j2
+  - name: listener-egress
+    type: listener
+    location: services/listener-egress.j2
+  - name: proxy
+    type: proxy
+    location: services/proxy.j2
+  - name: shared_rules
+    type: shared_rules
+    location: services/shared_rules.j2
+  - name: route
+    type: route
+    location: services/route.j2
+
+edge:
+  - name: cluster
+    type: cluster
+    location: edge/cluster.j2
+  - name: route-1
+    type: route
+    location: edge/route-1.j2
+  - name: route-2
+    type: route
+    location: edge/route-2.j2
+  - name: shared_rules
+    type: shared_rules
+    location: edge/shared_rules.j2
+
+special:
+  - name: cluster
+    type: cluster
+    location: special/cluster.j2
+  - name: domain-egress
+    type: domain
+    location: special/domain-egress.j2
+  - name: domain
+    type: domain
+    location: special/domain.j2
+  - name: internal-cluster-catalog-data-internal
+    type: cluster
+    location: special/internal-cluster-catalog-data-internal.j2
+  - name: internal-cluster-data-to-jwt
+    type: cluster
+    location: special/internal-cluster-data-to-jwt.j2
+  - name: internal-cluster-int-data-to-int-jwt
+    type: cluster
+    location: special/internal-cluster-int-data-to-int-jwt.j2
+  - name: internal-shared-rules-catalog-data-internal
+    type: shared_rules
+    location: special/internal-shared-rules-catalog-data-internal.j2
+  - name: internal-shared-rules-data-jwt
+    type: shared_rules
+    location: special/internal-shared-rules-data-jwt.j2
+  - name: internal-shared-rules-int-data-int-jwt
+    type: shared_rules
+    location: special/internal-shared-rules-int-data-int-jwt.j2
+  - name: listener-egress
+    type: listener
+    location: special/listener-egress.j2
+  - name: listener
+    type: listener
+    location: special/listener.j2
+  - name: proxy
+    type: proxy
+    location: special/proxy.j2
+  - name: route-catalog-to-internal-data-slash
+    type: route
+    location: special/route-catalog-to-internal-data-slash.j2
+  - name: route-catalog-to-internal-data
+    type: route
+    location: special/route-catalog-to-internal-data.j2
+  - name: route-dashboard-slash
+    type: route
+    location: special/route-dashboard-slash.j2
+  - name: route-data-jwt-slash
+    type: route
+    location: special/route-data-jwt-slash.j2
+  - name: route-data-jwt
+    type: route
+    location: special/route-data-jwt.j2
+  - name: route-int-data-int-jwt-slash
+    type: route
+    location: special/route-int-data-int-jwt-slash.j2
+  - name: route-int-data-int-jwt
+    type: route
+    location: special/route-int-data-int-jwt.j2
+  - name: route-jwt-slash
+    type: route
+    location: special/route-jwt-slash.j2
+  - name: route-jwt
+    type: route
+    location: special/route-jwt.j2
+  - name: route
+    type: route
+    location: special/route.j2
+  - name: shared_rules
+    type: shared_rules
+    location: special/shared_rules.j2
