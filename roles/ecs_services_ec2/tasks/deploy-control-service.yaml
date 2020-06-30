@@ -16,7 +16,7 @@
         essential: false
         image: "docker-greymatter.di2e.net/misc/configure-mesh:latest"
         repositoryCredentials:
-          credentialsParameter: "arn:aws:secretsmanager:us-east-1:706634194319:secret:greymatter-di2e-docker-secret-KLbLa6"
+          credentialsParameter: "arn:aws:secretsmanager:us-east-1:269783025111:secret:ecs-greymatter-di2e-cTE8Sw"
         dependsOn:
          - containerName: control
            condition: START
@@ -33,9 +33,9 @@
             awslogs-stream-prefix: web
       - name: control
         essential: true
-        image: "docker.production.deciphernow.com/deciphernow/gm-control:0.5.1"
+        image: "deciphernow/gm-control:testecs"
         repositoryCredentials:
-          credentialsParameter: "{{ credentials_parameter }}"
+          credentialsParameter: "{{ credentials_parameter_proxy }}"
         environment:
         - name: "GM_CONTROL_API_KEY"
           value: xxx

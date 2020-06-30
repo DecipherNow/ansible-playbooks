@@ -20,8 +20,8 @@ WORKDIR /opt/mesh
 COPY greymatter.linux /opt/mesh
 RUN mv greymatter.linux greymatter
 
-COPY grpcurl.linux /opt/mesh
-RUN mv grpcurl.linux grpcurl
+#COPY grpcurl.linux /opt/mesh
+#RUN mv grpcurl.linux grpcurl
 
 COPY *.sh /opt/mesh/
 
@@ -32,7 +32,7 @@ COPY catalog/* /opt/mesh/catalog/
 COPY data/* /opt/mesh/data/
 
 ENV EDITOR=/usr/bin/vi
-ENV GREYMATTER_API_HOST="control-api:5555"
+ENV GREYMATTER_API_HOST="internal-greymatter-ecs-alb-control-api-1758321780.us-east-1.elb.amazonaws.com:81"
 ENV GREYMATTER_API_PREFIX=
 ENV GREYMATTER_API_SSLCERT=/opt/pki/cert.pem
 ENV GREYMATTER_API_SSLKEY=/opt/pki/private_key.pem
@@ -40,4 +40,4 @@ ENV GREYMATTER_CONSOLE_LEVEL=debug
 ENV GREYMATTER_API_SSL=false
 ENV GREYMATTER_API_INSECURE=true
 
-CMD  /opt/mesh/mesh.sh
+CMD  /opt/mesh/mesh.sh && /usr/sbin/sshd -D

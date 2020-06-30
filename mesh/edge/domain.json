@@ -1,8 +1,8 @@
 {
   "zone_key": "default-zone",
   "domain_key": "edge-domain",
-  "name": "external-greymatter-ecs-alb-edge-1449114554.us-east-1.elb.amazonaws.com",
-  "port": 80,
+  "name": "external-greymatter-ecs-alb-edge-396432892.us-east-1.elb.amazonaws.com",
+  "port": 8080,
   "ssl_config": {
     "cipher_filter": "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH",
     "protocols": ["SSLv3", "SSLv2", "TLSv1", "TLSv1.1", "TLSv1.2"],

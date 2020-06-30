@@ -149,7 +149,7 @@
       
   - name: set image id fact
     set_fact:
-      ecs_image_id: "ami-05085b57e47cdc27d"
+      ecs_image_id: "ami-04f5f2a3b0e67d15f"
 
   - name: create instance target group for autoscaling
     elb_target_group:
@@ -376,7 +376,7 @@
       instance_type: t2.medium
       assign_public_ip: yes
       user_data: "{{ lookup('file', 'cloud-config.yml')}}"
-      instance_profile_name: "arn:aws:iam::706634194319:instance-profile/ecsInstanceRole"
+      instance_profile_name: "arn:aws:iam::269783025111:instance-profile/ecsInstanceRole"
       state: present
     register: setup_lc
       

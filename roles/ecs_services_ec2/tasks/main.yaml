@@ -1,8 +1,8 @@
 ---
-#- include: deploy-catalog-service.yaml
+- include: deploy-catalog-service.yaml
 - include: deploy-control-api-service.yaml
 - include: deploy-control-service.yaml
-#- include: deploy-dashboard-service.yaml
+- include: deploy-dashboard-service.yaml
 #- include: deploy-data-service.yaml
 - include: deploy-edge-service.yaml
 #- include: deploy-jwt-service.yaml

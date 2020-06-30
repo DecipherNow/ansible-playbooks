@@ -4,6 +4,6 @@
   "domain_keys": ["dashboard"],
   "name": "dashboard",
   "ip": "0.0.0.0",
-  "port": 9080,
+  "port": 5080,
   "protocol": "http_auto"
 }

@@ -1,6 +1,6 @@
 {
   "zone_key": "default-zone",
-  "domain_key": "control-api",
+  "domain_key": "domain-control-api",
   "shared_rules_key": "control-api-sidecar-to-service-rule",
   "route_key": "service-control-api-route",
   "path": "/"

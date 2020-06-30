@@ -3,7 +3,7 @@
   "listener_key": "listener-control-api",
   "domain_keys": ["domain-control-api"],
   "name": "control-api",
-  "ip": "0.0.0.0",
+  "ip": "127.0.0.1",
   "port": 5080,
   "protocol": "http_auto"
 }

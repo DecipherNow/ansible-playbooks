@@ -8,7 +8,7 @@
   "proxy_filters": {
     "gm_metrics": {
       "metrics_port": 7081,
-      "metrics_host": "0.0.0.0",
+      "metrics_host": "localhost",
       "metrics_dashboard_uri_path": "/metrics",
       "metrics_prometheus_uri_path": "/prometheus",
       "metrics_ring_buffer_size": 4096,

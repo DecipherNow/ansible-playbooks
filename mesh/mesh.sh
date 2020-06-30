@@ -28,12 +28,12 @@ echo "done control-api"
 
 # echo "done catalog"
 
-# sleep 10s
+sleep 10s
 
-# echo "start dashboard"
-# /opt/mesh/dashboard.sh
+echo "start dashboard"
+/opt/mesh/dashboard.sh
 
-# echo "done dashboard"
+echo "done dashboard"
 
 # echo "start data"
 # /opt/mesh/data.sh

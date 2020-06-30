@@ -24,17 +24,17 @@
           gm-cluster: "sidecar-control-api:5080"
         secrets:
         - name: INGRESS_TLS_CERT
-          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-cert-b64-ZCdDOo
+          valueFrom: arn:aws:secretsmanager:us-east-1:269783025111:secret:sidecar-certs-cert-b64-GvrspG
         - name: INGRESS_TLS_KEY
-          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-key-b64-jRhKhv
+          valueFrom: arn:aws:secretsmanager:us-east-1:269783025111:secret:sidecar-certs-key-b64-m46Nvr
         - name: EGRESS_TLS_CERT
-          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-b64-nf57aF
+          valueFrom: arn:aws:secretsmanager:us-east-1:269783025111:secret:sidecar-certs-server-b64-uIFYGU
         - name: EGRESS_TLS_KEY
-          valueFrom: arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-server-key-b64-EwBU9t
+          valueFrom: arn:aws:secretsmanager:us-east-1:269783025111:secret:sidecar-certs-server-key-b64-L0xcew
         - name: EGRESS_TLS_TRUST
-          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+          valueFrom:  arn:aws:secretsmanager:us-east-1:269783025111:secret:sidecar-certs-ca-oyDcNY
         - name: INGRESS_TLS_TRUST
-          valueFrom:  arn:aws:secretsmanager:us-east-1:706634194319:secret:sidecar-certs-ca-7w0voA
+          valueFrom:  arn:aws:secretsmanager:us-east-1:269783025111:secret:sidecar-certs-ca-oyDcNY
         environment:
         - name: "ENVOY_ADMIN_LOG_PATH"
           value: "/dev/stdout"
@@ -72,7 +72,7 @@
             awslogs-stream-prefix: web
       - name: "control-api"
         essential: true
-        image: "docker.production.deciphernow.com/deciphernow/gm-control-api:0.8.1"
+        image: "docker.production.deciphernow.com/deciphernow/gm-control-api:1.4.4"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:

@@ -1,5 +1,5 @@
 {
-  "proxy_key": "proxy-control-api",
+  "proxy_key": "control-api-proxy",
   "zone_key": "default-zone",
   "name": "sidecar-control-api",
   "domain_keys": ["domain-control-api"],
@@ -9,7 +9,7 @@
   "proxy_filters": {
     "gm_metrics": {
       "metrics_port": 5081,
-      "metrics_host": "0.0.0.0",
+      "metrics_host": "localhost",
       "metrics_dashboard_uri_path": "/metrics",
       "metrics_prometheus_uri_path": "/prometheus",
       "prometheus_system_metrics_interval_seconds": 15,
