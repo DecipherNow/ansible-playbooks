@@ -65,7 +65,7 @@
           sourceVolume: certs
       - name: catalog
         essential: false
-        image: "docker.production.deciphernow.com/deciphernow/gm-catalog:1.0.1"
+        image: "docker.greymatter.io/release/deciphernow/gm-catalog:1.0.1"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         secrets:

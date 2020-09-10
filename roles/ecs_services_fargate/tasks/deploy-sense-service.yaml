@@ -52,7 +52,7 @@
             awslogs-stream-prefix: web
       - name: sense
         essential: false
-        image: "docker.production.deciphernow.com/deciphernow/gm-sense:latest"
+        image: "docker.greymatter.io/release/deciphernow/gm-sense:latest"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:

@@ -55,7 +55,7 @@
             awslogs-stream-prefix: web
       - name: slo
         essential: false
-        image: "docker.production.deciphernow.com/deciphernow/gm-slo:latest"
+        image: "docker.greymatter.io/release/deciphernow/gm-slo:latest"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         dockerLabels:

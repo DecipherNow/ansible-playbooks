@@ -12,7 +12,7 @@
       ecs_instance_role: 'arn:aws:iam::706634194319:role/ecsInstanceRole'
       elb_control: 'internal-greymatter-ecs-alb-control-445335798.us-east-1.elb.amazonaws.com'
       elb_control_api: 'internal-greymatter-ecs-alb-control-api-2029981198.us-east-1.elb.amazonaws.com'
-      greymatter_proxy_image: 'docker.production.deciphernow.com/deciphernow/gm-proxy:0.8.1'
+      greymatter_proxy_image: 'docker.greymatter.io/release/deciphernow/gm-proxy:0.8.1'
       security_group: 'sg-058ff37fcba82d64e'
       subnet_list: 'subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8'
       task_target_group_control: 'arn:aws:elasticloadbalancing:us-east-1:706634194319:targetgroup/gm-ecs-alb-tg-ip-control/e27b15d6c8ba30a9'
