@@ -16,7 +16,7 @@
       elb_control_api: 'internal-greymatter-ecs-alb-control-api-196872388.us-east-1.elb.amazonaws.com'
       elb_data: 'internal-greymatter-ecs-alb-data-153575526.us-east-1.elb.amazonaws.com'
       elb_jwt: 'internal-greymatter-ecs-alb-jwt-1368369169.us-east-1.elb.amazonaws.com'
-      # greymatter_proxy_image: 'docker.production.deciphernow.com/deciphernow/gm-proxy:0.8.1'
+      # greymatter_proxy_image: 'docker.greymatter.io/release/deciphernow/gm-proxy:0.8.1'
       greymatter_proxy_image: 'deciphernow/gm-proxy:http2'
       security_group: 'sg-058ff37fcba82d64e'
       subnet_list: 'subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8,subnet-0e06fb4f956d9f5f8'

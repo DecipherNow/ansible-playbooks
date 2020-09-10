@@ -33,7 +33,7 @@
             awslogs-stream-prefix: web
       - name: control
         essential: true
-        image: "docker.production.deciphernow.com/deciphernow/gm-control:0.5.1"
+        image: "docker.greymatter.io/release/deciphernow/gm-control:0.5.1"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:

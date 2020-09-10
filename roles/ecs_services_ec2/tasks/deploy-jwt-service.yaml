@@ -97,7 +97,7 @@
         essential: false
         links:
         - redis
-        image: "docker.production.deciphernow.com/deciphernow/gm-jwt-security:0.2.0"
+        image: "docker.greymatter.io/release/deciphernow/gm-jwt-security:0.2.0"
         repositoryCredentials:
           credentialsParameter: "{{ credentials_parameter }}"
         environment:
